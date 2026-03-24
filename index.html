@@ -2359,13 +2359,37 @@
                 }
                 const data = await response.json();
                 apiAvailable = true;
-                console.log('[API] Data received:', data);
-                return data.agents || data;
+                console.log('[API] Raw data received:', data);
+                const agents = data.agents || data;
+                const normalizedAgents = normalizeAgentsData(agents);
+                console.log('[API] Normalized agents:', normalizedAgents.map(a => ({ id: a.id, name: a.name, issuesCount: a.issues.length })));
+                return normalizedAgents;
             } catch (error) {
                 console.warn('[API] Error fetching agents:', error.message);
                 apiAvailable = false;
                 return [];
             }
+        }
+
+        // ==================== NORMALIZE AGENT DATA ====================
+        // API возвращает поле 'agent' вместо 'name', нормализуем данные
+        function normalizeAgentData(agent) {
+            return {
+                ...agent,
+                id: agent.id || agent.agent || 'unknown',
+                name: agent.name || agent.agent || 'Unknown',
+                role: agent.role || 'Developer',
+                status: agent.status || 'working',
+                emoji: agent.emoji || '🧑‍💻',
+                task: agent.task || agent.currentTask || 'Нет задачи',
+                project: agent.project || 'No Project',
+                progress: agent.progress || 0,
+                issues: agent.issues || []
+            };
+        }
+
+        function normalizeAgentsData(agents) {
+            return agents.map(normalizeAgentData);
         }
 
         // ==================== RENDER WORK AREA ====================
@@ -2377,10 +2401,10 @@
             const workingAgents = agents.filter(a => a.status === 'working');
             
             workArea.innerHTML = workingAgents.map(agent => `
-                <div class="desk-station" role="button" tabindex="0" 
-                     aria-label="${agent.name}, ${agent.role}. Задача: ${agent.task || 'Нет задачи'}" 
-                     data-agent-id="${agent.id}" 
-                     onclick="openModal('${agent.name}')">
+                <div class="desk-station" role="button" tabindex="0"
+                     aria-label="${agent.name}, ${agent.role}. Задача: ${agent.task || 'Нет задачи'}"
+                     data-agent-id="${agent.id}"
+                     onclick="openModal('${agent.id}')">
                     <div class="computer-setup">
                         <div class="monitor">
                             <div class="screen-content">
@@ -2491,16 +2515,13 @@
         // ==================== MODAL FUNCTIONS ====================
         let currentAgentId = null;
 
-        async function openModal(agentKey) {
-            currentAgentId = agentKey;
-            // Попробовать найти по id
-            let agent = agentsData[agentKey];
-            // Если не найден, попробовать по name (для кириллических id)
+        async function openModal(agentId) {
+            currentAgentId = agentId;
+            // Ищем агента по id в agentsData
+            let agent = agentsData[agentId];
+            
             if (!agent) {
-                agent = Object.values(agentsData).find(a => a.name === agentKey || a.id === agentKey);
-            }
-            if (!agent) {
-                console.warn('[Modal] Agent not found:', agentKey);
+                console.warn('[Modal] Agent not found in agentsData:', agentId);
                 return;
             }
 
@@ -2670,10 +2691,11 @@
                 socket.on('agents-status-update', (data) => {
                     console.log('[WebSocket] Status update received:', data);
                     if (data.agents && Array.isArray(data.agents)) {
-                        updateAgentsData(data.agents);
-                        renderWorkArea(data.agents);
-                        renderRestRoom(data.agents);
-                        updateStatusBar(data.agents);
+                        const normalizedAgents = normalizeAgentsData(data.agents);
+                        updateAgentsData(normalizedAgents);
+                        renderWorkArea(normalizedAgents);
+                        renderRestRoom(normalizedAgents);
+                        updateStatusBar(normalizedAgents);
                     }
                 });
                 
