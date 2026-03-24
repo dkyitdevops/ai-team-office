@@ -1,0 +1,2308 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Team Office - Визуализация команды</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="animations.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-dark: #0a0a0f;
+            --bg-panel: #12121a;
+            --bg-card: #1a1a25;
+            --border: #2a2a3a;
+            --text-primary: #ffffff;
+            --text-secondary: #8b8b9e;
+            --neon-blue: #00d4ff;
+            --neon-purple: #a855f7;
+            --neon-green: #22c55e;
+            --neon-orange: #f59e0b;
+            --neon-pink: #ec4899;
+            --screen-glow: rgba(0, 212, 255, 0.3);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated background grid */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Header */
+        .header {
+            position: relative;
+            z-index: 10;
+            padding: 20px 40px;
+            background: linear-gradient(180deg, rgba(10,10,15,0.95) 0%, transparent 100%);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            font-size: 32px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .status-bar {
+            display: flex;
+            gap: 30px;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--neon-green);
+            box-shadow: 0 0 10px var(--neon-green);
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot.resting {
+            background: var(--neon-orange);
+            box-shadow: 0 0 10px var(--neon-orange);
+        }
+
+        .status-value {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .status-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        /* Main Office Container */
+        .office-container {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        .office-title {
+            text-align: center;
+            margin-bottom: 40px;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        .office-title h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .office-title p {
+            color: var(--text-secondary);
+        }
+
+        /* Floor Plan */
+        .floor-plan {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+        }
+
+        /* Work Area */
+        .work-area {
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 30px;
+            position: relative;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease 0.2s forwards;
+        }
+
+        .work-area::before {
+            content: '💻 РАБОЧАЯ ЗОНА';
+            position: absolute;
+            top: -12px;
+            left: 30px;
+            background: var(--bg-dark);
+            padding: 0 15px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--neon-blue);
+            letter-spacing: 2px;
+        }
+
+        .desks-layout {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            padding: 20px 0;
+        }
+
+        /* Desk with Computer */
+        .desk-station {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            opacity: 0;
+            animation: fadeInScale 0.6s ease forwards;
+        }
+
+        .desk-station:nth-child(1) { animation-delay: 0.1s; }
+        .desk-station:nth-child(2) { animation-delay: 0.2s; }
+        .desk-station:nth-child(3) { animation-delay: 0.3s; }
+        .desk-station:nth-child(4) { animation-delay: 0.4s; }
+        .desk-station:nth-child(5) { animation-delay: 0.5s; }
+        .desk-station:nth-child(6) { animation-delay: 0.6s; }
+
+        .desk-station:hover {
+            transform: translateY(-5px);
+        }
+
+        .desk-station:hover .agent-emoji {
+            transform: scale(1.1);
+        }
+
+        /* Computer Setup */
+        .computer-setup {
+            position: relative;
+            width: 140px;
+            height: 100px;
+            margin-bottom: 10px;
+        }
+
+        /* Monitor */
+        .monitor {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 65px;
+            background: linear-gradient(180deg, #1a1a2e 0%, #0f0f1a 100%);
+            border: 2px solid #2a2a3a;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 
+                0 0 30px var(--screen-glow),
+                inset 0 0 20px rgba(0, 212, 255, 0.1);
+        }
+
+        .monitor::before {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            right: 5px;
+            bottom: 5px;
+            background: linear-gradient(180deg, 
+                rgba(0, 212, 255, 0.2) 0%, 
+                rgba(0, 212, 255, 0.05) 100%);
+            border-radius: 4px;
+            animation: screenFlicker 4s infinite;
+        }
+
+        .monitor::after {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 60%;
+            height: 3px;
+            background: rgba(0, 212, 255, 0.5);
+            border-radius: 2px;
+            box-shadow: 0 10px 0 rgba(0, 212, 255, 0.3),
+                        0 20px 0 rgba(0, 212, 255, 0.2);
+            animation: codeTyping 2s infinite;
+        }
+
+        /* Monitor Stand */
+        .monitor-stand {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 15px;
+            background: #2a2a3a;
+            border-radius: 0 0 4px 4px;
+        }
+
+        .monitor-base {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 8px;
+            background: #2a2a3a;
+            border-radius: 4px;
+        }
+
+        /* Desk Surface */
+        .desk-surface {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 140px;
+            height: 15px;
+            background: linear-gradient(180deg, #2a2a3a 0%, #1a1a25 100%);
+            border-radius: 4px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        /* Keyboard */
+        .keyboard {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70px;
+            height: 8px;
+            background: #1a1a25;
+            border: 1px solid #3a3a4a;
+            border-radius: 3px;
+        }
+
+        .keyboard::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 5px;
+            right: 5px;
+            height: 2px;
+            background: repeating-linear-gradient(
+                90deg,
+                #4a4a5a 0px,
+                #4a4a5a 3px,
+                transparent 3px,
+                transparent 5px
+            );
+        }
+
+        /* Mouse */
+        .mouse {
+            position: absolute;
+            bottom: 20px;
+            right: 25px;
+            width: 12px;
+            height: 18px;
+            background: #1a1a25;
+            border: 1px solid #3a3a4a;
+            border-radius: 6px;
+        }
+
+        /* Cables */
+        .cable {
+            position: absolute;
+            bottom: 15px;
+            width: 2px;
+            height: 30px;
+            background: #1a1a25;
+            opacity: 0.5;
+        }
+
+        .cable-left { left: 30px; }
+        .cable-right { right: 30px; }
+
+        /* Agent Avatar */
+        .agent-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: -10px;
+        }
+
+        .agent-emoji {
+            font-size: 48px;
+            transition: transform 0.3s ease;
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5));
+            animation: agentIdle 3s ease-in-out infinite;
+        }
+
+        .agent-emoji.typing {
+            animation: agentTyping 0.5s ease-in-out infinite;
+        }
+
+        /* Status Indicator */
+        .agent-status-ring {
+            position: absolute;
+            top: -5px;
+            right: -10px;
+            width: 16px;
+            height: 16px;
+            background: var(--neon-green);
+            border-radius: 50%;
+            border: 3px solid var(--bg-panel);
+            box-shadow: 0 0 10px var(--neon-green);
+            animation: statusPulse 2s infinite;
+        }
+
+        .agent-status-ring.resting {
+            background: var(--neon-orange);
+            box-shadow: 0 0 10px var(--neon-orange);
+        }
+
+        /* Agent Info */
+        .agent-info {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .agent-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .agent-role {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        /* Rest Room */
+        .rest-room {
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 30px;
+            position: relative;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease 0.4s forwards;
+        }
+
+        .rest-room::before {
+            content: '🌴 КОМНАТА ОТДЫХА';
+            position: absolute;
+            top: -12px;
+            left: 30px;
+            background: var(--bg-dark);
+            padding: 0 15px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--neon-orange);
+            letter-spacing: 2px;
+        }
+
+        .rest-room-content {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            height: 100%;
+        }
+
+        /* Lounge Area */
+        .lounge-area {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(234, 179, 8, 0.05));
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            position: relative;
+            min-height: 140px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            opacity: 0;
+            animation: fadeInScale 0.6s ease 0.5s forwards;
+        }
+
+        .lounge-scene {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .lounge-furniture {
+            font-size: 70px;
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3));
+            line-height: 1;
+        }
+
+        .lounge-person {
+            position: absolute;
+            top: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 40px;
+            filter: drop-shadow(0 3px 5px rgba(0,0,0,0.3));
+            animation: loungeSleep 3s ease-in-out infinite;
+            z-index: 2;
+        }
+
+        /* Rest Status Ring (Yellow) */
+        .rest-status-ring {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 14px;
+            height: 14px;
+            background: var(--neon-orange);
+            border-radius: 50%;
+            border: 3px solid var(--bg-panel);
+            box-shadow: 0 0 10px var(--neon-orange);
+            animation: statusPulse 2s infinite;
+        }
+
+        @keyframes loungeSleep {
+            0%, 100% { transform: translateX(-50%) scale(1) rotate(0deg); }
+            25% { transform: translateX(-50%) scale(1.05) rotate(-3deg); }
+            50% { transform: translateX(-50%) scale(1) rotate(0deg); }
+            75% { transform: translateX(-50%) scale(1.05) rotate(3deg); }
+        }
+
+        .lounge-info {
+            text-align: center;
+            margin-top: 10px;
+            padding: 10px 16px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            min-width: 160px;
+        }
+
+        .lounge-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--neon-orange);
+            white-space: nowrap;
+        }
+
+        .lounge-status {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .lounge-label {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 11px;
+            color: var(--neon-orange);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Gaming Area */
+        .gaming-area {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(236, 72, 153, 0.05));
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            position: relative;
+            min-height: 140px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            opacity: 0;
+            animation: fadeInScale 0.6s ease 0.6s forwards;
+        }
+
+        .gaming-scene {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .gaming-tv-setup {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .tv-screen {
+            width: 80px;
+            height: 50px;
+            background: linear-gradient(180deg, #1a1a2e, #0f0f1a);
+            border: 2px solid #2a2a3a;
+            border-radius: 4px;
+            position: relative;
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+        }
+
+        .tv-screen::before {
+            content: '';
+            position: absolute;
+            inset: 3px;
+            background: linear-gradient(135deg, 
+                rgba(168, 85, 247, 0.3), 
+                rgba(236, 72, 153, 0.2));
+            border-radius: 2px;
+            animation: gameGlow 3s infinite;
+        }
+
+        .gaming-setup {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: -5px;
+        }
+
+        .gaming-furniture {
+            font-size: 50px;
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3));
+            line-height: 1;
+        }
+
+        .gaming-person {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 38px;
+            filter: drop-shadow(0 3px 5px rgba(0,0,0,0.3));
+            animation: gamingIntensity 1.5s ease-in-out infinite;
+            z-index: 2;
+        }
+
+        @keyframes gamingIntensity {
+            0%, 100% { transform: translateX(-50%) rotate(-5deg) scale(1); }
+            25% { transform: translateX(-50%) rotate(5deg) scale(1.1); }
+            50% { transform: translateX(-50%) rotate(-3deg) scale(1); }
+            75% { transform: translateX(-50%) rotate(3deg) scale(1.05); }
+        }
+
+        .gaming-info {
+            text-align: center;
+            margin-top: 8px;
+            padding: 10px 16px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            min-width: 160px;
+        }
+
+        .gaming-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--neon-purple);
+            white-space: nowrap;
+        }
+
+        .gaming-status {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .gaming-label {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 11px;
+            color: var(--neon-purple);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Coffee Area */
+        .coffee-area {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(34, 197, 94, 0.05));
+            border: 1px solid rgba(34, 197, 94, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            position: relative;
+            min-height: 80px;
+            opacity: 0;
+            animation: fadeInScale 0.6s ease 0.7s forwards;
+        }
+
+        .coffee-machine {
+            font-size: 40px;
+            position: absolute;
+            bottom: 15px;
+            left: 20px;
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3));
+        }
+
+        .coffee-steam {
+            position: absolute;
+            bottom: 50px;
+            left: 35px;
+            font-size: 20px;
+            opacity: 0.6;
+            animation: steamRise 2s ease-in-out infinite;
+        }
+
+        .coffee-label {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 11px;
+            color: var(--neon-green);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Door */
+        .door-frame {
+            position: absolute;
+            top: 50%;
+            left: -1px;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 80px;
+            background: linear-gradient(180deg, var(--neon-orange), var(--neon-orange));
+            border-radius: 0 4px 4px 0;
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.5);
+        }
+
+        .door-label {
+            position: absolute;
+            top: 50%;
+            left: -25px;
+            transform: translateY(-50%) rotate(-90deg);
+            font-size: 10px;
+            color: var(--neon-orange);
+            letter-spacing: 2px;
+            white-space: nowrap;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 30px;
+            text-align: center;
+            border-top: 1px solid var(--border);
+            opacity: 0;
+            animation: fadeInUp 0.8s ease 0.8s forwards;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .legend-dot.working {
+            background: var(--neon-green);
+            box-shadow: 0 0 10px var(--neon-green);
+            animation: pulse 2s infinite;
+        }
+
+        .legend-dot.resting {
+            background: var(--neon-orange);
+            box-shadow: 0 0 10px var(--neon-orange);
+        }
+
+        .copyright {
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        /* Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        @keyframes screenFlicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.9; }
+            52% { opacity: 0.7; }
+            54% { opacity: 1; }
+        }
+
+        @keyframes codeTyping {
+            0%, 100% { width: 60%; }
+            50% { width: 80%; }
+        }
+
+        @keyframes agentIdle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+
+        @keyframes agentTyping {
+            0%, 100% { transform: translateY(0) rotate(-2deg); }
+            50% { transform: translateY(-2px) rotate(2deg); }
+        }
+
+        @keyframes statusPulse {
+            0%, 100% { box-shadow: 0 0 5px currentColor; }
+            50% { box-shadow: 0 0 15px currentColor, 0 0 25px currentColor; }
+        }
+
+        @keyframes restBreathing {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes gameGlow {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        @keyframes steamRise {
+            0% { transform: translateY(0); opacity: 0.6; }
+            100% { transform: translateY(-15px); opacity: 0; }
+        }
+
+        /* New Entry Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .floor-plan {
+                grid-template-columns: 1fr;
+            }
+
+            .desks-layout {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .rest-room {
+                order: -1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .status-bar {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .desks-layout {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .computer-setup {
+                transform: scale(0.9);
+            }
+        }
+
+        /* Tooltip */
+        .desk-station::after {
+            display: none;
+        }
+
+        .agent-task-tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-10px);
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            min-width: 220px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            pointer-events: none;
+            z-index: 100;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+
+        .agent-task-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 8px solid transparent;
+            border-top-color: var(--bg-card);
+        }
+
+        .desk-station:hover .agent-task-tooltip {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(-5px);
+        }
+
+        .tooltip-header {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tooltip-task {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        .tooltip-progress {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 6px;
+            background: var(--bg-dark);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--neon-green), var(--neon-blue));
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--neon-green);
+            min-width: 35px;
+            text-align: right;
+        }
+
+        /* ==================== MODAL STYLES ==================== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow: hidden;
+            transform: scale(0.9) translateY(20px);
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active .modal {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), transparent);
+        }
+
+        .modal-agent-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .modal-agent-avatar {
+            font-size: 48px;
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5));
+        }
+
+        .modal-agent-details h2 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .modal-agent-details p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .modal-close {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 24px;
+            max-height: calc(90vh - 100px);
+            overflow-y: auto;
+        }
+
+        .modal-section {
+            margin-bottom: 24px;
+        }
+
+        .modal-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .modal-section-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .modal-task-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            cursor: grab;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .modal-task-card:hover {
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
+        }
+
+        .modal-task-card.dragging {
+            opacity: 0.5;
+            cursor: grabbing;
+            transform: scale(1.02);
+        }
+
+        .modal-task-card.drag-over {
+            border-color: var(--neon-green);
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
+        }
+
+        .modal-task-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .modal-task-name {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .modal-task-status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .modal-task-status.in-progress {
+            background: rgba(0, 212, 255, 0.2);
+            color: var(--neon-blue);
+        }
+
+        .modal-task-status.pending {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--neon-orange);
+        }
+
+        .modal-task-status.completed {
+            background: rgba(34, 197, 94, 0.2);
+            color: var(--neon-green);
+        }
+
+        .modal-task-progress {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .modal-task-progress-bar {
+            flex: 1;
+            height: 8px;
+            background: var(--bg-dark);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .modal-task-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--neon-green), var(--neon-blue));
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .modal-task-progress-text {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--neon-green);
+            min-width: 40px;
+            text-align: right;
+        }
+
+        .modal-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .modal-stat {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .modal-stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--neon-blue);
+            margin-bottom: 4px;
+        }
+
+        .modal-stat-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .modal-skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .modal-skill {
+            padding: 6px 14px;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* ==================== CHAT STYLES ==================== */
+        .chat-widget {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 100;
+        }
+
+        .chat-toggle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 5px 30px rgba(0, 212, 255, 0.4);
+            transition: all 0.3s ease;
+            animation: chatPulse 2s infinite;
+        }
+
+        @keyframes chatPulse {
+            0%, 100% { box-shadow: 0 5px 30px rgba(0, 212, 255, 0.4); }
+            50% { box-shadow: 0 5px 40px rgba(0, 212, 255, 0.6); }
+        }
+
+        .chat-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .chat-container {
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            width: 380px;
+            height: 500px;
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            overflow: hidden;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px) scale(0.95);
+            transition: all 0.3s ease;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .chat-container.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+
+        .chat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), transparent);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .chat-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chat-title-icon {
+            font-size: 20px;
+        }
+
+        .chat-title-text {
+            font-weight: 600;
+        }
+
+        .chat-title-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--neon-green);
+        }
+
+        .chat-status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--neon-green);
+            animation: pulse 2s infinite;
+        }
+
+        .chat-close {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .chat-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        .chat-messages {
+            height: calc(100% - 140px);
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .chat-message {
+            display: flex;
+            gap: 10px;
+            animation: fadeInUp 0.3s ease;
+        }
+
+        .chat-message.own {
+            flex-direction: row-reverse;
+        }
+
+        .chat-message-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .chat-message-content {
+            max-width: 70%;
+        }
+
+        .chat-message-bubble {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 12px 16px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .chat-message.own .chat-message-bubble {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(168, 85, 247, 0.1));
+            border-color: rgba(0, 212, 255, 0.3);
+        }
+
+        .chat-message-name {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+            padding: 0 4px;
+        }
+
+        .chat-message.own .chat-message-name {
+            text-align: right;
+        }
+
+        .chat-message-time {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+            padding: 0 4px;
+        }
+
+        .chat-message.own .chat-message-time {
+            text-align: right;
+        }
+
+        .chat-input-area {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 16px 20px;
+            background: var(--bg-card);
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 12px;
+        }
+
+        .chat-input {
+            flex: 1;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 12px 20px;
+            color: var(--text-primary);
+            font-size: 14px;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .chat-input:focus {
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.2);
+        }
+
+        .chat-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .chat-send {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.2s ease;
+        }
+
+        .chat-send:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(0, 212, 255, 0.4);
+        }
+
+        /* Drag and Drop Zone */
+        .drop-zone {
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+        }
+
+        .drop-zone.drag-over {
+            border-color: var(--neon-green);
+            background: rgba(34, 197, 94, 0.1);
+        }
+
+        /* Task List for Drag and Drop */
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <span class="logo-icon">🏢</span>
+                <span class="logo-text">AI Team Office</span>
+            </div>
+            <div class="status-bar">
+                <div class="status-item">
+                    <span class="status-dot"></span>
+                    <div>
+                        <div class="status-value">8</div>
+                        <div class="status-label">Всего</div>
+                    </div>
+                </div>
+                <div class="status-item">
+                    <span class="status-dot"></span>
+                    <div>
+                        <div class="status-value">6</div>
+                        <div class="status-label">Работают</div>
+                    </div>
+                </div>
+                <div class="status-item">
+                    <span class="status-dot resting"></span>
+                    <div>
+                        <div class="status-value">2</div>
+                        <div class="status-label">Отдыхают</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="office-container">
+        <div class="office-title">
+            <h1>👥 Наша команда</h1>
+            <p>Визуализация AI-агентов в реальном времени</p>
+        </div>
+
+        <div class="floor-plan">
+            <!-- Work Area -->
+            <div class="work-area">
+                <div class="desks-layout">
+                    <!-- Desk 1 -->
+                    <div class="desk-station" data-agent-id="1" data-task="Дизайн нового интерфейса" data-progress="75">
+                        <div class="computer-setup">
+                            <div class="monitor"></div>
+                            <div class="monitor-stand"></div>
+                            <div class="monitor-base"></div>
+                            <div class="keyboard"></div>
+                            <div class="mouse"></div>
+                            <div class="cable cable-left"></div>
+                            <div class="cable cable-right"></div>
+                            <div class="desk-surface"></div>
+                        </div>
+                        <div class="agent-container">
+                            <div class="agent-emoji typing">👨‍🎨</div>
+                            <span class="agent-status-ring"></span>
+                            <div class="agent-info">
+                                <div class="agent-name">Алексей (UI Дизайнер)</div>
+                                <div class="agent-role">UI Designer</div>
+                                <div class="agent-task-tooltip">
+                                    <div class="tooltip-header">👨‍🎨 Алексей</div>
+                                    <div class="tooltip-task">📝 Дизайн нового интерфейса</div>
+                                    <div class="tooltip-progress">
+                                        <div class="progress-bar"><div class="progress-fill" style="width: 75%"></div></div>
+                                        <span class="progress-text">75%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Desk 2 -->
+                    <div class="desk-station" data-agent-id="2" data-task="Разработка API endpoints" data-progress="60">
+                        <div class="computer-setup">
+                            <div class="monitor"></div>
+                            <div class="monitor-stand"></div>
+                            <div class="monitor-base"></div>
+                            <div class="keyboard"></div>
+                            <div class="mouse"></div>
+                            <div class="cable cable-left"></div>
+                            <div class="cable cable-right"></div>
+                            <div class="desk-surface"></div>
+                        </div>
+                        <div class="agent-container">
+                            <div class="agent-emoji typing">👨‍💼</div>
+                            <span class="agent-status-ring"></span>
+                            <div class="agent-info">
+                                <div class="agent-name">Мария (Fullstack разработчик)</div>
+                                <div class="agent-role">Fullstack разработчик</div>
+                                <div class="agent-task-tooltip">
+                                    <div class="tooltip-header">👨‍💼 Мария</div>
+                                    <div class="tooltip-task">📝 Разработка API endpoints</div>
+                                    <div class="tooltip-progress">
+                                        <div class="progress-bar"><div class="progress-fill" style="width: 60%"></div></div>
+                                        <span class="progress-text">60%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Desk 3 -->
+                    <div class="desk-station" data-agent-id="3" data-task="Тестирование нового релиза" data-progress="85">
+                        <div class="computer-setup">
+                            <div class="monitor"></div>
+                            <div class="monitor-stand"></div>
+                            <div class="monitor-base"></div>
+                            <div class="keyboard"></div>
+                            <div class="mouse"></div>
+                            <div class="cable cable-left"></div>
+                            <div class="cable cable-right"></div>
+                            <div class="desk-surface"></div>
+                        </div>
+                        <div class="agent-container">
+                            <div class="agent-emoji typing">👩‍🔬</div>
+                            <span class="agent-status-ring"></span>
+                            <div class="agent-info">
+                                <div class="agent-name">Иван (QA)</div>
+                                <div class="agent-role">QA Engineer</div>
+                                <div class="agent-task-tooltip">
+                                    <div class="tooltip-header">👩‍🔬 Иван</div>
+                                    <div class="tooltip-task">📝 Тестирование нового релиза</div>
+                                    <div class="tooltip-progress">
+                                        <div class="progress-bar"><div class="progress-fill" style="width: 85%"></div></div>
+                                        <span class="progress-text">85%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Desk 4 -->
+                    <div class="desk-station" data-agent-id="4" data-task="Настройка CI/CD пайплайнов" data-progress="45">
+                        <div class="computer-setup">
+                            <div class="monitor"></div>
+                            <div class="monitor-stand"></div>
+                            <div class="monitor-base"></div>
+                            <div class="keyboard"></div>
+                            <div class="mouse"></div>
+                            <div class="cable cable-left"></div>
+                            <div class="cable cable-right"></div>
+                            <div class="desk-surface"></div>
+                        </div>
+                        <div class="agent-container">
+                            <div class="agent-emoji typing">👨‍🚀</div>
+                            <span class="agent-status-ring"></span>
+                            <div class="agent-info">
+                                <div class="agent-name">Дмитрий (DevOps)</div>
+                                <div class="agent-role">Infrastructure</div>
+                                <div class="agent-task-tooltip">
+                                    <div class="tooltip-header">👨‍🚀 Дмитрий</div>
+                                    <div class="tooltip-task">📝 Настройка CI/CD пайплайнов</div>
+                                    <div class="tooltip-progress">
+                                        <div class="progress-bar"><div class="progress-fill" style="width: 45%"></div></div>
+                                        <span class="progress-text">45%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Desk 5 -->
+                    <div class="desk-station" data-agent-id="5" data-task="Анализ пользовательских метрик" data-progress="70">
+                        <div class="computer-setup">
+                            <div class="monitor"></div>
+                            <div class="monitor-stand"></div>
+                            <div class="monitor-base"></div>
+                            <div class="keyboard"></div>
+                            <div class="mouse"></div>
+                            <div class="cable cable-left"></div>
+                            <div class="cable cable-right"></div>
+                            <div class="desk-surface"></div>
+                        </div>
+                        <div class="agent-container">
+                            <div class="agent-emoji typing">👨‍💻</div>
+                            <span class="agent-status-ring"></span>
+                            <div class="agent-info">
+                                <div class="agent-name">Ольга (Аналитик)</div>
+                                <div class="agent-role">Data Scientist</div>
+                                <div class="agent-task-tooltip">
+                                    <div class="tooltip-header">👨‍💻 Ольга</div>
+                                    <div class="tooltip-task">📝 Анализ пользовательских метрик</div>
+                                    <div class="tooltip-progress">
+                                        <div class="progress-bar"><div class="progress-fill" style="width: 70%"></div></div>
+                                        <span class="progress-text">70%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Desk 6 -->
+                    <div class="desk-station" data-agent-id="6" data-task="Аудит безопасности системы" data-progress="30">
+                        <div class="computer-setup">
+                            <div class="monitor"></div>
+                            <div class="monitor-stand"></div>
+                            <div class="monitor-base"></div>
+                            <div class="keyboard"></div>
+                            <div class="mouse"></div>
+                            <div class="cable cable-left"></div>
+                            <div class="cable cable-right"></div>
+                            <div class="desk-surface"></div>
+                        </div>
+                        <div class="agent-container">
+                            <div class="agent-emoji typing">👩‍✈️</div>
+                            <span class="agent-status-ring"></span>
+                            <div class="agent-info">
+                                <div class="agent-name">Андрей (Безопасность)</div>
+                                <div class="agent-role">Cyber Security</div>
+                                <div class="agent-task-tooltip">
+                                    <div class="tooltip-header">👩‍✈️ Андрей</div>
+                                    <div class="tooltip-task">📝 Аудит безопасности системы</div>
+                                    <div class="tooltip-progress">
+                                        <div class="progress-bar"><div class="progress-fill" style="width: 30%"></div></div>
+                                        <span class="progress-text">30%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rest Room -->
+            <div class="rest-room">
+                <div class="door-frame"></div>
+                <span class="door-label">ВХОД</span>
+                
+                <div class="rest-room-content">
+                    <!-- Lounge Area -->
+                    <div class="lounge-area">
+                        <span class="lounge-label">Шезлонг</span>
+                        <div class="lounge-scene">
+                            <div class="lounge-furniture">🛋️</div>
+                            <div class="lounge-person">
+                                😴
+                                <span class="rest-status-ring"></span>
+                            </div>
+                            <div class="lounge-info">
+                                <div class="lounge-name">Сергей (Backend)</div>
+                                <div class="lounge-status">Отдыхает</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gaming Area -->
+                    <div class="gaming-area">
+                        <span class="gaming-label">PlayStation 5</span>
+                        <div class="gaming-scene">
+                            <div class="gaming-tv-setup">
+                                <div class="tv-screen"></div>
+                            </div>
+                            <div class="gaming-setup">
+                                <div class="gaming-furniture">🪑</div>
+                                <div class="gaming-person">
+                                    🧑‍🎮
+                                    <span class="rest-status-ring"></span>
+                                </div>
+                            </div>
+                            <div class="gaming-info">
+                                <div class="gaming-name">Елена (КЭП ТСО)</div>
+                                <div class="gaming-status">Играет</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Coffee Area -->
+                    <div class="coffee-area">
+                        <span class="coffee-label">Кофе-станция</span>
+                        <span class="coffee-machine">☕</span>
+                        <span class="coffee-steam">💨</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="legend">
+            <div class="legend-item">
+                <span class="legend-dot working"></span>
+                <span>Работает</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-dot resting"></span>
+                <span>Отдыхает</span>
+            </div>
+        </div>
+        <p class="copyright">AI Team Office © 2026</p>
+    </footer>
+
+    <!-- ==================== MODAL ==================== -->
+    <div class="modal-overlay" id="agentModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-agent-info">
+                    <div class="modal-agent-avatar" id="modalAvatar">👨‍🎨</div>
+                    <div class="modal-agent-details">
+                        <h2 id="modalName">Алексей</h2>
+                        <p id="modalRole">UI Designer</p>
+                    </div>
+                </div>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <!-- Stats Section -->
+                <div class="modal-section">
+                    <div class="modal-section-title">Статистика</div>
+                    <div class="modal-stats">
+                        <div class="modal-stat">
+                            <div class="modal-stat-value" id="modalTasksCompleted">12</div>
+                            <div class="modal-stat-label">Задач выполнено</div>
+                        </div>
+                        <div class="modal-stat">
+                            <div class="modal-stat-value" id="modalEfficiency">94%</div>
+                            <div class="modal-stat-label">Эффективность</div>
+                        </div>
+                        <div class="modal-stat">
+                            <div class="modal-stat-value" id="modalHoursToday">6.5ч</div>
+                            <div class="modal-stat-label">Работает сегодня</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Current Task Section -->
+                <div class="modal-section">
+                    <div class="modal-section-title">Текущая задача</div>
+                    <div class="modal-task-card" id="currentTaskCard" draggable="true">
+                        <div class="modal-task-header">
+                            <span class="modal-task-name" id="modalTaskName">Дизайн нового интерфейса</span>
+                            <span class="modal-task-status in-progress">В работе</span>
+                        </div>
+                        <div class="modal-task-progress">
+                            <div class="modal-task-progress-bar">
+                                <div class="modal-task-progress-fill" id="modalTaskProgress" style="width: 75%"></div>
+                            </div>
+                            <span class="modal-task-progress-text" id="modalTaskProgressText">75%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Task Queue Section (Drag & Drop) -->
+                <div class="modal-section">
+                    <div class="modal-section-title">Очередь задач (Drag & Drop)</div>
+                    <div class="task-list" id="taskList">
+                        <div class="modal-task-card" draggable="true" data-task-id="1">
+                            <div class="modal-task-header">
+                                <span class="modal-task-name">Обновить компоненты библиотеки</span>
+                                <span class="modal-task-status pending">В очереди</span>
+                            </div>
+                        </div>
+                        <div class="modal-task-card" draggable="true" data-task-id="2">
+                            <div class="modal-task-header">
+                                <span class="modal-task-name">Создать макеты для мобильной версии</span>
+                                <span class="modal-task-status pending">В очереди</span>
+                            </div>
+                        </div>
+                        <div class="modal-task-card" draggable="true" data-task-id="3">
+                            <div class="modal-task-header">
+                                <span class="modal-task-name">Документация по дизайн-системе</span>
+                                <span class="modal-task-status pending">В очереди</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Skills Section -->
+                <div class="modal-section">
+                    <div class="modal-section-title">Навыки</div>
+                    <div class="modal-skills" id="modalSkills">
+                        <span class="modal-skill">Figma</span>
+                        <span class="modal-skill">Adobe XD</span>
+                        <span class="modal-skill">UI/UX</span>
+                        <span class="modal-skill">Prototyping</span>
+                        <span class="modal-skill">Design Systems</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== CHAT WIDGET ==================== -->
+    <div class="chat-widget">
+        <div class="chat-container" id="chatContainer">
+            <div class="chat-header">
+                <div class="chat-title">
+                    <span class="chat-title-icon">💬</span>
+                    <div>
+                        <div class="chat-title-text">Команда</div>
+                        <div class="chat-title-status">
+                            <span class="chat-status-dot"></span>
+                            <span>8 онлайн</span>
+                        </div>
+                    </div>
+                </div>
+                <button class="chat-close" onclick="toggleChat()">×</button>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="chat-message">
+                    <div class="chat-message-avatar">👨‍🎨</div>
+                    <div class="chat-message-content">
+                        <div class="chat-message-name">Алексей</div>
+                        <div class="chat-message-bubble">Привет всем! Закончил с макетами главной страницы 🎨</div>
+                        <div class="chat-message-time">12:05</div>
+                    </div>
+                </div>
+                <div class="chat-message">
+                    <div class="chat-message-avatar">👨‍💼</div>
+                    <div class="chat-message-content">
+                        <div class="chat-message-name">Мария</div>
+                        <div class="chat-message-bubble">Отлично! Я как раз закончила API для авторизации</div>
+                        <div class="chat-message-time">12:08</div>
+                    </div>
+                </div>
+                <div class="chat-message">
+                    <div class="chat-message-avatar">👩‍🔬</div>
+                    <div class="chat-message-content">
+                        <div class="chat-message-name">Иван</div>
+                        <div class="chat-message-bubble">Начинаю тестирование новых эндпоинтов 💪</div>
+                        <div class="chat-message-time">12:10</div>
+                    </div>
+                </div>
+                <div class="chat-message own">
+                    <div class="chat-message-avatar">🧑‍💻</div>
+                    <div class="chat-message-content">
+                        <div class="chat-message-name">Вы</div>
+                        <div class="chat-message-bubble">Отличная работа, команда! 🚀</div>
+                        <div class="chat-message-time">12:12</div>
+                    </div>
+                </div>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" class="chat-input" id="chatInput" placeholder="Написать сообщение..." onkeypress="handleChatKeypress(event)">
+                <button class="chat-send" onclick="sendMessage()">➤</button>
+            </div>
+        </div>
+        <button class="chat-toggle" onclick="toggleChat()">💬</button>
+    </div>
+
+    <script src="animations.js"></script>
+    <script>
+        // ==================== AGENT DATA ====================
+        const agentsData = {
+            1: {
+                name: 'Алексей',
+                role: 'UI Designer',
+                avatar: '👨‍🎨',
+                fullRole: 'UI/UX Дизайнер',
+                task: 'Дизайн нового интерфейса',
+                progress: 75,
+                tasksCompleted: 12,
+                efficiency: '94%',
+                hoursToday: '6.5ч',
+                skills: ['Figma', 'Adobe XD', 'UI/UX', 'Prototyping', 'Design Systems'],
+                queue: [
+                    { name: 'Обновить компоненты библиотеки', status: 'pending' },
+                    { name: 'Создать макеты для мобильной версии', status: 'pending' },
+                    { name: 'Документация по дизайн-системе', status: 'pending' }
+                ]
+            },
+            2: {
+                name: 'Мария',
+                role: 'Fullstack разработчик',
+                avatar: '👨‍💼',
+                fullRole: 'Senior Fullstack Developer',
+                task: 'Разработка API endpoints',
+                progress: 60,
+                tasksCompleted: 18,
+                efficiency: '97%',
+                hoursToday: '7.2ч',
+                skills: ['Node.js', 'React', 'TypeScript', 'PostgreSQL', 'GraphQL'],
+                queue: [
+                    { name: 'Интеграция с платёжной системой', status: 'pending' },
+                    { name: 'Оптимизация запросов к БД', status: 'pending' },
+                    { name: 'Настройка WebSocket', status: 'pending' }
+                ]
+            },
+            3: {
+                name: 'Иван',
+                role: 'QA Engineer',
+                avatar: '👩‍🔬',
+                fullRole: 'Quality Assurance Engineer',
+                task: 'Тестирование нового релиза',
+                progress: 85,
+                tasksCompleted: 24,
+                efficiency: '99%',
+                hoursToday: '6.8ч',
+                skills: ['Selenium', 'Cypress', 'Jest', 'Test Planning', 'Automation'],
+                queue: [
+                    { name: 'Написать тесты для авторизации', status: 'pending' },
+                    { name: 'Регрессионное тестирование', status: 'pending' },
+                    { name: 'Документация тест-кейсов', status: 'pending' }
+                ]
+            },
+            4: {
+                name: 'Дмитрий',
+                role: 'DevOps',
+                avatar: '👨‍🚀',
+                fullRole: 'DevOps Engineer',
+                task: 'Настройка CI/CD пайплайнов',
+                progress: 45,
+                tasksCompleted: 9,
+                efficiency: '91%',
+                hoursToday: '5.5ч',
+                skills: ['Docker', 'Kubernetes', 'AWS', 'Terraform', 'GitHub Actions'],
+                queue: [
+                    { name: 'Настроить мониторинг', status: 'pending' },
+                    { name: 'Обновить кластер Kubernetes', status: 'pending' },
+                    { name: 'Автоматизация бэкапов', status: 'pending' }
+                ]
+            },
+            5: {
+                name: 'Ольга',
+                role: 'Data Scientist',
+                avatar: '👨‍💻',
+                fullRole: 'Senior Data Analyst',
+                task: 'Анализ пользовательских метрик',
+                progress: 70,
+                tasksCompleted: 15,
+                efficiency: '95%',
+                hoursToday: '6.2ч',
+                skills: ['Python', 'SQL', 'Tableau', 'Machine Learning', 'Statistics'],
+                queue: [
+                    { name: 'Построить прогноз retention', status: 'pending' },
+                    { name: 'A/B тестирование фичей', status: 'pending' },
+                    { name: 'Отчёт для стейкхолдеров', status: 'pending' }
+                ]
+            },
+            6: {
+                name: 'Андрей',
+                role: 'Cyber Security',
+                avatar: '👩‍✈️',
+                fullRole: 'Security Engineer',
+                task: 'Аудит безопасности системы',
+                progress: 30,
+                tasksCompleted: 7,
+                efficiency: '92%',
+                hoursToday: '4.8ч',
+                skills: ['Penetration Testing', 'SIEM', 'OWASP', 'Cryptography', 'Compliance'],
+                queue: [
+                    { name: 'Проверка уязвимостей API', status: 'pending' },
+                    { name: 'Обновление политик безопасности', status: 'pending' },
+                    { name: 'Тренинг по безопасности', status: 'pending' }
+                ]
+            }
+        };
+
+        // ==================== MODAL FUNCTIONS ====================
+        let currentAgentId = null;
+
+        function openModal(agentId) {
+            currentAgentId = agentId;
+            const agent = agentsData[agentId];
+            if (!agent) return;
+
+            document.getElementById('modalAvatar').textContent = agent.avatar;
+            document.getElementById('modalName').textContent = agent.name;
+            document.getElementById('modalRole').textContent = agent.fullRole;
+            document.getElementById('modalTasksCompleted').textContent = agent.tasksCompleted;
+            document.getElementById('modalEfficiency').textContent = agent.efficiency;
+            document.getElementById('modalHoursToday').textContent = agent.hoursToday;
+            document.getElementById('modalTaskName').textContent = agent.task;
+            document.getElementById('modalTaskProgress').style.width = agent.progress + '%';
+            document.getElementById('modalTaskProgressText').textContent = agent.progress + '%';
+
+            // Update skills
+            const skillsContainer = document.getElementById('modalSkills');
+            skillsContainer.innerHTML = agent.skills.map(skill => 
+                `<span class="modal-skill">${skill}</span>`
+            ).join('');
+
+            // Update task queue
+            const taskList = document.getElementById('taskList');
+            taskList.innerHTML = agent.queue.map((task, index) => `
+                <div class="modal-task-card" draggable="true" data-task-id="${index}">
+                    <div class="modal-task-header">
+                        <span class="modal-task-name">${task.name}</span>
+                        <span class="modal-task-status ${task.status}">${getStatusText(task.status)}</span>
+                    </div>
+                </div>
+            `).join('');
+
+            // Re-initialize drag and drop
+            initDragAndDrop();
+
+            document.getElementById('agentModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('agentModal').classList.remove('active');
+            currentAgentId = null;
+        }
+
+        function getStatusText(status) {
+            const statusMap = {
+                'pending': 'В очереди',
+                'in-progress': 'В работе',
+                'completed': 'Завершено'
+            };
+            return statusMap[status] || status;
+        }
+
+        // Close modal on overlay click
+        document.getElementById('agentModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // ==================== CHAT FUNCTIONS ====================
+        function toggleChat() {
+            document.getElementById('chatContainer').classList.toggle('active');
+        }
+
+        function handleChatKeypress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if (!message) return;
+
+            const messagesContainer = document.getElementById('chatMessages');
+            const time = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+
+            const messageHTML = `
+                <div class="chat-message own">
+                    <div class="chat-message-avatar">🧑‍💻</div>
+                    <div class="chat-message-content">
+                        <div class="chat-message-name">Вы</div>
+                        <div class="chat-message-bubble">${escapeHtml(message)}</div>
+                        <div class="chat-message-time">${time}</div>
+                    </div>
+                </div>
+            `;
+
+            messagesContainer.insertAdjacentHTML('beforeend', messageHTML);
+            input.value = '';
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            // Simulate reply after delay
+            setTimeout(() => {
+                simulateReply();
+            }, 2000 + Math.random() * 2000);
+        }
+
+        function simulateReply() {
+            const agents = Object.values(agentsData);
+            const randomAgent = agents[Math.floor(Math.random() * agents.length)];
+            const replies = [
+                'Согласен! 👍',
+                'Отличная идея!',
+                'Работаю над этим 💪',
+                'Проверю и отпишусь',
+                'Звучит здорово! 🚀',
+                'Давай обсудим на созвоне?',
+                'Уже почти готово!',
+                'Спасибо за информацию'
+            ];
+            const randomReply = replies[Math.floor(Math.random() * replies.length)];
+            const time = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageHTML = `
+                <div class="chat-message">
+                    <div class="chat-message-avatar">${randomAgent.avatar}</div>
+                    <div class="chat-message-content">
+                        <div class="chat-message-name">${randomAgent.name}</div>
+                        <div class="chat-message-bubble">${randomReply}</div>
+                        <div class="chat-message-time">${time}</div>
+                    </div>
+                </div>
+            `;
+
+            messagesContainer.insertAdjacentHTML('beforeend', messageHTML);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // ==================== DRAG AND DROP ====================
+        let draggedElement = null;
+
+        function initDragAndDrop() {
+            const taskCards = document.querySelectorAll('.modal-task-card[draggable="true"]');
+            const taskList = document.getElementById('taskList');
+
+            taskCards.forEach(card => {
+                card.addEventListener('dragstart', handleDragStart);
+                card.addEventListener('dragend', handleDragEnd);
+            });
+
+            if (taskList) {
+                taskList.addEventListener('dragover', handleDragOver);
+                taskList.addEventListener('drop', handleDrop);
+                taskList.addEventListener('dragenter', handleDragEnter);
+                taskList.addEventListener('dragleave', handleDragLeave);
+            }
+        }
+
+        function handleDragStart(e) {
+            draggedElement = this;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', this.innerHTML);
+        }
+
+        function handleDragEnd(e) {
+            this.classList.remove('dragging');
+            draggedElement = null;
+            
+            document.querySelectorAll('.modal-task-card').forEach(card => {
+                card.classList.remove('drag-over');
+            });
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        }
+
+        function handleDragEnter(e) {
+            e.preventDefault();
+            if (this !== draggedElement && this.classList.contains('modal-task-card')) {
+                this.classList.add('drag-over');
+            }
+        }
+
+        function handleDragLeave(e) {
+            if (this.classList.contains('modal-task-card')) {
+                this.classList.remove('drag-over');
+            }
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            
+            if (draggedElement && this !== draggedElement) {
+                const allCards = [...this.parentNode.querySelectorAll('.modal-task-card')];
+                const draggedIndex = allCards.indexOf(draggedElement);
+                const targetIndex = allCards.indexOf(this);
+
+                if (draggedIndex < targetIndex) {
+                    this.parentNode.insertBefore(draggedElement, this.nextSibling);
+                } else {
+                    this.parentNode.insertBefore(draggedElement, this);
+                }
+
+                // Animate the change
+                draggedElement.style.animation = 'fadeInScale 0.3s ease';
+            }
+
+            document.querySelectorAll('.modal-task-card').forEach(card => {
+                card.classList.remove('drag-over');
+            });
+        }
+
+        // ==================== INITIALIZATION ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            // Random typing animation for agents
+            const agents = document.querySelectorAll('.agent-emoji');
+            
+            function toggleTyping() {
+                const randomAgent = agents[Math.floor(Math.random() * agents.length)];
+                randomAgent.classList.add('typing');
+                
+                setTimeout(() => {
+                    randomAgent.classList.remove('typing');
+                }, 2000);
+            }
+
+            setInterval(toggleTyping, 3000);
+
+            // Click handlers for desk stations (open modal)
+            const desks = document.querySelectorAll('.desk-station');
+            desks.forEach(desk => {
+                desk.addEventListener('click', () => {
+                    const agentId = desk.dataset.agentId;
+                    if (agentId) {
+                        openModal(agentId);
+                    }
+                });
+
+                desk.addEventListener('mouseenter', () => {
+                    const agent = desk.querySelector('.agent-emoji');
+                    agent.style.transform = 'scale(1.2) rotate(5deg)';
+                });
+                
+                desk.addEventListener('mouseleave', () => {
+                    const agent = desk.querySelector('.agent-emoji');
+                    agent.style.transform = '';
+                });
+            });
+
+            // Initialize drag and drop
+            initDragAndDrop();
+
+            // Scroll chat to bottom
+            const chatMessages = document.getElementById('chatMessages');
+            if (chatMessages) {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+        });
+    </script>
+</body>
+</html>

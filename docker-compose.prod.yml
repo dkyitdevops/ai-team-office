@@ -1,0 +1,24 @@
+# AI Team Office - Production Overrides
+
+services:
+  app:
+    restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "5"
+        labels: "service_name,environment"
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+      - "traefik.enable=true"
+      - "traefik.http.routers.ai-office.rule=Host(`ai-office.example.com`)"
+      - "traefik.http.routers.ai-office.tls.certresolver=letsencrypt"

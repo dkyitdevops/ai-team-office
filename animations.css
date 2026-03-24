@@ -1,0 +1,850 @@
+/* AI Team Office - Animations */
+
+/* ============================================
+   1. АНИМАЦИЯ ХОДЬБЫ АГЕНТОВ
+   ============================================ */
+
+@keyframes walk {
+    0% {
+        transform: translateX(0) translateY(0) rotate(0deg);
+    }
+    12.5% {
+        transform: translateX(12.5px) translateY(-3px) rotate(2deg);
+    }
+    25% {
+        transform: translateX(25px) translateY(0) rotate(0deg);
+    }
+    37.5% {
+        transform: translateX(37.5px) translateY(-3px) rotate(-2deg);
+    }
+    50% {
+        transform: translateX(50px) translateY(0) rotate(0deg);
+    }
+    62.5% {
+        transform: translateX(62.5px) translateY(-3px) rotate(2deg);
+    }
+    75% {
+        transform: translateX(75px) translateY(0) rotate(0deg);
+    }
+    87.5% {
+        transform: translateX(87.5px) translateY(-3px) rotate(-2deg);
+    }
+    100% {
+        transform: translateX(100px) translateY(0) rotate(0deg);
+    }
+}
+
+@keyframes walkLeft {
+    0% {
+        transform: translateX(0) translateY(0) rotate(0deg) scaleX(-1);
+    }
+    12.5% {
+        transform: translateX(-12.5px) translateY(-3px) rotate(2deg) scaleX(-1);
+    }
+    25% {
+        transform: translateX(-25px) translateY(0) rotate(0deg) scaleX(-1);
+    }
+    37.5% {
+        transform: translateX(-37.5px) translateY(-3px) rotate(-2deg) scaleX(-1);
+    }
+    50% {
+        transform: translateX(-50px) translateY(0) rotate(0deg) scaleX(-1);
+    }
+    62.5% {
+        transform: translateX(-62.5px) translateY(-3px) rotate(2deg) scaleX(-1);
+    }
+    75% {
+        transform: translateX(-75px) translateY(0) rotate(0deg) scaleX(-1);
+    }
+    87.5% {
+        transform: translateX(-87.5px) translateY(-3px) rotate(-2deg) scaleX(-1);
+    }
+    100% {
+        transform: translateX(-100px) translateY(0) rotate(0deg) scaleX(-1);
+    }
+}
+
+@keyframes walkUp {
+    0%, 100% {
+        transform: translateY(0) scale(1);
+    }
+    25% {
+        transform: translateY(-15px) scale(0.95);
+    }
+    50% {
+        transform: translateY(-30px) scale(0.9);
+    }
+    75% {
+        transform: translateY(-15px) scale(0.95);
+    }
+}
+
+@keyframes walkDown {
+    0%, 100% {
+        transform: translateY(0) scale(1);
+    }
+    25% {
+        transform: translateY(15px) scale(1.05);
+    }
+    50% {
+        transform: translateY(30px) scale(1.1);
+    }
+    75% {
+        transform: translateY(15px) scale(1.05);
+    }
+}
+
+/* Классы для ходьбы */
+.agent-walking-right {
+    animation: walk 2s ease-in-out infinite !important;
+}
+
+.agent-walking-left {
+    animation: walkLeft 2s ease-in-out infinite !important;
+}
+
+.agent-walking-up {
+    animation: walkUp 2s ease-in-out infinite !important;
+}
+
+.agent-walking-down {
+    animation: walkDown 2s ease-in-out infinite !important;
+}
+
+/* Следы от шагов */
+.footstep {
+    position: absolute;
+    width: 8px;
+    height: 4px;
+    background: rgba(0, 212, 255, 0.3);
+    border-radius: 50%;
+    pointer-events: none;
+    animation: footstepFade 1.5s ease-out forwards;
+}
+
+@keyframes footstepFade {
+    0% {
+        opacity: 0.6;
+        transform: scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+}
+
+/* ============================================
+   2. АНИМАЦИЯ ПЕЧАТАНИЯ ЗА КОМПЬЮТЕРОМ
+   ============================================ */
+
+@keyframes typingBody {
+    0%, 100% {
+        transform: translateY(0) rotate(-1deg);
+    }
+    25% {
+        transform: translateY(-2px) rotate(1deg);
+    }
+    50% {
+        transform: translateY(-1px) rotate(-0.5deg);
+    }
+    75% {
+        transform: translateY(-3px) rotate(0.5deg);
+    }
+}
+
+@keyframes typingHead {
+    0%, 100% {
+        transform: rotate(0deg);
+    }
+    20% {
+        transform: rotate(-3deg);
+    }
+    40% {
+        transform: rotate(2deg);
+    }
+    60% {
+        transform: rotate(-1deg);
+    }
+    80% {
+        transform: rotate(3deg);
+    }
+}
+
+@keyframes typingHands {
+    0%, 100% {
+        opacity: 0.8;
+        transform: translateY(0);
+    }
+    50% {
+        opacity: 1;
+        transform: translateY(-2px);
+    }
+}
+
+@keyframes keyboardGlow {
+    0%, 100% {
+        box-shadow: 0 0 5px rgba(0, 212, 255, 0.3);
+    }
+    50% {
+        box-shadow: 0 0 15px rgba(0, 212, 255, 0.6), 0 0 25px rgba(0, 212, 255, 0.3);
+    }
+}
+
+@keyframes screenCodeScroll {
+    0% {
+        transform: translateY(0);
+    }
+    100% {
+        transform: translateY(-100px);
+    }
+}
+
+@keyframes cursorBlink {
+    0%, 50% {
+        opacity: 1;
+    }
+    51%, 100% {
+        opacity: 0;
+    }
+}
+
+/* Улучшенная анимация печати */
+.agent-typing-intense {
+    animation: typingBody 0.3s ease-in-out infinite !important;
+}
+
+.agent-typing-intense::before {
+    content: '✋';
+    position: absolute;
+    bottom: -5px;
+    left: -10px;
+    font-size: 20px;
+    animation: typingHands 0.15s ease-in-out infinite;
+    filter: drop-shadow(0 2px 3px rgba(0,0,0,0.3));
+}
+
+.agent-typing-intense::after {
+    content: '✋';
+    position: absolute;
+    bottom: -5px;
+    right: -10px;
+    font-size: 20px;
+    animation: typingHands 0.15s ease-in-out infinite reverse;
+    filter: drop-shadow(0 2px 3px rgba(0,0,0,0.3));
+    transform: scaleX(-1);
+}
+
+/* Подсветка клавиатуры при печати */
+.keyboard-typing {
+    animation: keyboardGlow 0.3s ease-in-out infinite;
+}
+
+/* Эффект кода на экране */
+.monitor-typing::before {
+    content: '';
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    right: 5px;
+    bottom: 5px;
+    background: linear-gradient(
+        180deg,
+        rgba(0, 212, 255, 0.3) 0%,
+        rgba(0, 212, 255, 0.1) 50%,
+        transparent 100%
+    );
+    animation: screenCodeScroll 2s linear infinite;
+    border-radius: 4px;
+}
+
+/* Частицы при быстрой печати */
+.typing-particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: var(--neon-blue);
+    border-radius: 50%;
+    pointer-events: none;
+    animation: typingParticle 0.8s ease-out forwards;
+}
+
+@keyframes typingParticle {
+    0% {
+        opacity: 1;
+        transform: translate(0, 0) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(var(--tx), var(--ty)) scale(0);
+    }
+}
+
+/* ============================================
+   3. АНИМАЦИЯ ПУЗЫРЕЙ РЕЧИ
+   ============================================ */
+
+@keyframes speechBubbleAppear {
+    0% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(10px) scale(0.8);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0) scale(1);
+    }
+}
+
+@keyframes speechBubblePulse {
+    0%, 100% {
+        transform: translateX(-50%) scale(1);
+    }
+    50% {
+        transform: translateX(-50%) scale(1.02);
+    }
+}
+
+@keyframes typingDots {
+    0%, 100% {
+        opacity: 0.3;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+@keyframes messageSend {
+    0% {
+        transform: translateX(-50%) scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: translateX(-50%) translateY(-20px) scale(1.1);
+        opacity: 0.8;
+    }
+    100% {
+        transform: translateX(-50%) translateY(-40px) scale(0.5);
+        opacity: 0;
+    }
+}
+
+/* Пузырь речи */
+.speech-bubble {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 12px 16px;
+    min-width: 120px;
+    max-width: 200px;
+    opacity: 0;
+    visibility: hidden;
+    z-index: 200;
+    box-shadow: 
+        0 10px 30px rgba(0,0,0,0.4),
+        0 0 20px rgba(0, 212, 255, 0.1);
+    animation: speechBubbleAppear 0.3s ease-out forwards;
+}
+
+.speech-bubble.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.speech-bubble.typing {
+    animation: speechBubbleAppear 0.3s ease-out forwards, speechBubblePulse 1.5s ease-in-out infinite;
+}
+
+.speech-bubble::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 8px solid transparent;
+    border-top-color: var(--bg-card);
+}
+
+.speech-bubble::before {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 9px solid transparent;
+    border-top-color: var(--border);
+    margin-top: 1px;
+}
+
+/* Текст в пузыре */
+.speech-text {
+    font-size: 13px;
+    color: var(--text-primary);
+    line-height: 1.4;
+    word-wrap: break-word;
+}
+
+/* Анимация набора текста (три точки) */
+.typing-indicator {
+    display: flex;
+    gap: 4px;
+    padding: 4px 0;
+}
+
+.typing-indicator span {
+    width: 8px;
+    height: 8px;
+    background: var(--neon-blue);
+    border-radius: 50%;
+    animation: typingDots 1.4s ease-in-out infinite;
+}
+
+.typing-indicator span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-indicator span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+/* Пузырь отправки сообщения */
+.speech-bubble.sending {
+    animation: messageSend 0.5s ease-out forwards;
+}
+
+/* Разные стили пузырей */
+.speech-bubble.thought {
+    border-style: dashed;
+    border-color: var(--neon-purple);
+}
+
+.speech-bubble.thought::before {
+    border-top-color: var(--neon-purple);
+}
+
+.speech-bubble.excited {
+    border-color: var(--neon-orange);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4), 0 0 30px rgba(245, 158, 11, 0.2);
+}
+
+.speech-bubble.excited::before {
+    border-top-color: var(--neon-orange);
+}
+
+/* ============================================
+   4. АНИМАЦИЯ ЭМОЦИЙ
+   ============================================ */
+
+/* Счастье/Радость */
+@keyframes happyBounce {
+    0%, 100% {
+        transform: translateY(0) scale(1) rotate(0deg);
+    }
+    25% {
+        transform: translateY(-15px) scale(1.1) rotate(-5deg);
+    }
+    50% {
+        transform: translateY(-5px) scale(1.05) rotate(0deg);
+    }
+    75% {
+        transform: translateY(-10px) scale(1.1) rotate(5deg);
+    }
+}
+
+@keyframes happyStars {
+    0%, 100% {
+        opacity: 0;
+        transform: scale(0) rotate(0deg);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1) rotate(180deg);
+    }
+}
+
+/* Грусть */
+@keyframes sadSway {
+    0%, 100% {
+        transform: translateY(0) rotate(0deg);
+    }
+    25% {
+        transform: translateY(3px) rotate(-3deg);
+    }
+    75% {
+        transform: translateY(3px) rotate(3deg);
+    }
+}
+
+@keyframes tearDrop {
+    0% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(30px) scale(0.5);
+    }
+}
+
+/* Удивление */
+@keyframes surpriseShake {
+    0%, 100% {
+        transform: scale(1) rotate(0deg);
+    }
+    10% {
+        transform: scale(1.2) rotate(-5deg);
+    }
+    20% {
+        transform: scale(1.2) rotate(5deg);
+    }
+    30% {
+        transform: scale(1.2) rotate(-3deg);
+    }
+    40% {
+        transform: scale(1.1) rotate(0deg);
+    }
+}
+
+@keyframes exclamationPop {
+    0% {
+        opacity: 0;
+        transform: translateY(10px) scale(0);
+    }
+    50% {
+        opacity: 1;
+        transform: translateY(-20px) scale(1.2);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-40px) scale(1);
+    }
+}
+
+/* Злость */
+@keyframes angryShake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    10%, 30%, 50%, 70%, 90% {
+        transform: translateX(-3px);
+    }
+    20%, 40%, 60%, 80% {
+        transform: translateX(3px);
+    }
+}
+
+@keyframes angrySteam {
+    0% {
+        opacity: 0.8;
+        transform: translateY(0) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-30px) scale(1.5);
+    }
+}
+
+/* Любопытство */
+@keyframes curiousTilt {
+    0%, 100% {
+        transform: rotate(0deg);
+    }
+    25% {
+        transform: rotate(-15deg);
+    }
+    75% {
+        transform: rotate(15deg);
+    }
+}
+
+@keyframes questionPop {
+    0% {
+        opacity: 0;
+        transform: scale(0) rotate(-20deg);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.2) rotate(10deg);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+/* Сонливость */
+@keyframes sleepyBob {
+    0%, 100% {
+        transform: translateY(0) rotate(0deg);
+    }
+    50% {
+        transform: translateY(5px) rotate(2deg);
+    }
+}
+
+@keyframes zzzFloat {
+    0% {
+        opacity: 0;
+        transform: translateY(0) translateX(0) scale(0.5);
+    }
+    20% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-40px) translateX(15px) scale(1.2);
+    }
+}
+
+/* Вдохновение */
+@keyframes inspiredGlow {
+    0%, 100% {
+        filter: drop-shadow(0 0 5px var(--neon-purple)) brightness(1);
+    }
+    50% {
+        filter: drop-shadow(0 0 20px var(--neon-purple)) brightness(1.2);
+    }
+}
+
+@keyframes lightbulbFlash {
+    0%, 100% {
+        opacity: 0;
+        transform: scale(0);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.3);
+    }
+}
+
+/* Классы эмоций */
+.emotion-happy {
+    animation: happyBounce 1s ease-in-out infinite !important;
+}
+
+.emotion-happy::before,
+.emotion-happy::after {
+    content: '✨';
+    position: absolute;
+    font-size: 16px;
+    animation: happyStars 1s ease-in-out infinite;
+}
+
+.emotion-happy::before {
+    top: -10px;
+    left: -5px;
+    animation-delay: 0s;
+}
+
+.emotion-happy::after {
+    top: -5px;
+    right: -5px;
+    animation-delay: 0.5s;
+}
+
+.emotion-sad {
+    animation: sadSway 2s ease-in-out infinite !important;
+    filter: grayscale(0.3) brightness(0.9);
+}
+
+.emotion-sad::after {
+    content: '💧';
+    position: absolute;
+    top: 10px;
+    right: 5px;
+    font-size: 12px;
+    animation: tearDrop 1.5s ease-out infinite;
+}
+
+.emotion-surprised {
+    animation: surpriseShake 0.6s ease-out !important;
+}
+
+.emotion-surprised::after {
+    content: '❗';
+    position: absolute;
+    top: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 20px;
+    animation: exclamationPop 1s ease-out forwards;
+}
+
+.emotion-angry {
+    animation: angryShake 0.5s ease-in-out infinite !important;
+    filter: hue-rotate(-20deg) saturate(1.5);
+}
+
+.emotion-angry::before {
+    content: '💢';
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 16px;
+    animation: angrySteam 1s ease-out infinite;
+}
+
+.emotion-curious {
+    animation: curiousTilt 2s ease-in-out infinite !important;
+}
+
+.emotion-curious::after {
+    content: '❓';
+    position: absolute;
+    top: -20px;
+    right: -10px;
+    font-size: 18px;
+    animation: questionPop 2s ease-out infinite;
+}
+
+.emotion-sleepy {
+    animation: sleepyBob 2s ease-in-out infinite !important;
+    filter: brightness(0.8);
+}
+
+.emotion-sleepy::before {
+    content: 'Z';
+    position: absolute;
+    top: -15px;
+    right: 0;
+    font-size: 14px;
+    color: var(--text-secondary);
+    font-weight: bold;
+    animation: zzzFloat 2s ease-out infinite;
+}
+
+.emotion-sleepy::after {
+    content: 'z';
+    position: absolute;
+    top: -25px;
+    right: 10px;
+    font-size: 10px;
+    color: var(--text-secondary);
+    font-weight: bold;
+    animation: zzzFloat 2s ease-out infinite 0.7s;
+}
+
+.emotion-inspired {
+    animation: inspiredGlow 2s ease-in-out infinite !important;
+}
+
+.emotion-inspired::after {
+    content: '💡';
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 20px;
+    animation: lightbulbFlash 2s ease-out infinite;
+}
+
+/* ============================================
+   5. ДОПОЛНИТЕЛЬНЫЕ ЭФФЕКТЫ
+   ============================================ */
+
+/* Появление агента */
+@keyframes agentSpawn {
+    0% {
+        opacity: 0;
+        transform: scale(0) rotate(-180deg);
+    }
+    50% {
+        transform: scale(1.2) rotate(10deg);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+.agent-spawn {
+    animation: agentSpawn 0.6s ease-out forwards;
+}
+
+/* Исчезновение агента */
+@keyframes agentDespawn {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0) rotate(180deg);
+    }
+}
+
+.agent-despawn {
+    animation: agentDespawn 0.4s ease-in forwards;
+}
+
+/* Уведомление */
+@keyframes notificationPulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(0, 212, 255, 0.7);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 10px rgba(0, 212, 255, 0);
+    }
+}
+
+.notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 20px;
+    height: 20px;
+    background: var(--neon-pink);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: bold;
+    color: white;
+    animation: notificationPulse 2s ease-in-out infinite;
+}
+
+/* Конфетти для празднования */
+@keyframes confettiFall {
+    0% {
+        opacity: 1;
+        transform: translateY(0) rotate(0deg);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(100px) rotate(720deg);
+    }
+}
+
+.confetti {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    pointer-events: none;
+    animation: confettiFall 2s ease-out forwards;
+}
+
+.confetti:nth-child(odd) {
+    background: var(--neon-blue);
+}
+
+.confetti:nth-child(even) {
+    background: var(--neon-purple);
+}
+
+.confetti:nth-child(3n) {
+    background: var(--neon-pink);
+}
+
+.confetti:nth-child(4n) {
+    background: var(--neon-green);
+}
+
+.confetti:nth-child(5n) {
+    background: var(--neon-orange);
+}

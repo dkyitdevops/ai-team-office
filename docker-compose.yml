@@ -1,0 +1,50 @@
+# AI Team Office - Docker Compose
+
+services:
+  # Основное приложение
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ai-team-office
+    restart: unless-stopped
+    ports:
+      - "${PORT:-3001}:3001"
+    environment:
+      - NODE_ENV=${NODE_ENV:-production}
+      - PORT=${PORT:-3001}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/api/agents"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - ai-office-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Мониторинг доступности (опционально)
+  watchtower:
+    image: containrrr/watchtower:latest
+    container_name: ai-office-watchtower
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_POLL_INTERVAL=3600
+      - WATCHTOWER_LABEL_ENABLE=true
+    labels:
+      - "com.centurylinklabs.watchtower.enable=false"
+    networks:
+      - ai-office-network
+    profiles:
+      - monitoring
+
+networks:
+  ai-office-network:
+    driver: bridge
