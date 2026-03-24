@@ -1658,6 +1658,53 @@
             gap: 8px;
         }
 
+        .agent-issues {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+        }
+
+        .agent-issues-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .agent-issues-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .agent-issues-list a {
+            display: block;
+            font-size: 12px;
+            color: var(--text-primary);
+            text-decoration: underline;
+            padding: 6px 8px;
+            background: var(--bg-dark);
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            line-height: 1.4;
+        }
+
+        .agent-issues-list a:hover {
+            background: var(--border);
+            color: var(--neon-blue);
+        }
+
+        .agent-issues-list a .issue-status-open {
+            color: var(--neon-green);
+            font-weight: 600;
+        }
+
+        .agent-issues-list a .issue-status-closed {
+            color: var(--text-secondary);
+        }
+
         .progress-bar {
             flex: 1;
             height: 6px;
@@ -3836,10 +3883,57 @@
                     progressText.textContent = agent.progress + '%';
                 }
                 
-                // Обновляем tooltip
-                if (tooltipTask && agent.task) {
-                    tooltipTask.textContent = '📝 ' + agent.task;
+                // Обновляем tooltip - заменяем одну задачу на список issues
+                const tooltip = desk.querySelector('.agent-task-tooltip');
+                if (tooltip) {
+                    // Удаляем старый блок задачи если есть
+                    const oldTaskEl = tooltip.querySelector('.tooltip-task');
+                    const oldProgressEl = tooltip.querySelector('.tooltip-progress');
+                    
+                    // Создаём или обновляем блок issues
+                    let issuesContainer = tooltip.querySelector('.agent-issues');
+                    if (!issuesContainer) {
+                        issuesContainer = document.createElement('div');
+                        issuesContainer.className = 'agent-issues';
+                        tooltip.appendChild(issuesContainer);
+                    }
+                    
+                    // Если есть массив issues - отображаем их
+                    if (agent.issues && Array.isArray(agent.issues) && agent.issues.length > 0) {
+                        let issuesHTML = '<div class="agent-issues-title">GitHub Issues</div>';
+                        issuesHTML += '<div class="agent-issues-list">';
+                        
+                        agent.issues.forEach(issue => {
+                            const repo = issue.repo || 'dkyitdevops/ai-team-office';
+                            const issueUrl = `https://github.com/${repo}/issues/${issue.number}`;
+                            const statusClass = issue.state === 'open' ? 'issue-status-open' : 'issue-status-closed';
+                            const statusText = issue.state === 'open' ? '[OPEN]' : '[CLOSED]';
+                            
+                            issuesHTML += `
+                                <a href="${issueUrl}" target="_blank" rel="noopener noreferrer">
+                                    #${issue.number}: ${issue.title} <span class="${statusClass}">${statusText}</span>
+                                </a>
+                            `;
+                        });
+                        
+                        issuesHTML += '</div>';
+                        issuesContainer.innerHTML = issuesHTML;
+                        
+                        // Скрываем старую задачу и прогресс если они есть
+                        if (oldTaskEl) oldTaskEl.style.display = 'none';
+                        if (oldProgressEl) oldProgressEl.style.display = 'none';
+                    } else if (agent.task) {
+                        // Fallback: если нет issues но есть task
+                        issuesContainer.innerHTML = '';
+                        if (oldTaskEl) {
+                            oldTaskEl.style.display = 'block';
+                            oldTaskEl.textContent = '📝 ' + agent.task;
+                        }
+                        if (oldProgressEl) oldProgressEl.style.display = 'flex';
+                    }
                 }
+                
+                // Обновляем прогресс в tooltip (если ещё нужен)
                 if (tooltipProgressFill && agent.progress !== undefined) {
                     tooltipProgressFill.style.width = agent.progress + '%';
                 }
