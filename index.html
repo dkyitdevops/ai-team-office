@@ -2380,7 +2380,7 @@
                 <div class="desk-station" role="button" tabindex="0" 
                      aria-label="${agent.name}, ${agent.role}. Задача: ${agent.task || 'Нет задачи'}" 
                      data-agent-id="${agent.id}" 
-                     onclick="openModal('${agent.id}')">
+                     onclick="openModal('${agent.name}')">
                     <div class="computer-setup">
                         <div class="monitor">
                             <div class="screen-content">
@@ -2491,11 +2491,16 @@
         // ==================== MODAL FUNCTIONS ====================
         let currentAgentId = null;
 
-        async function openModal(agentId) {
-            currentAgentId = agentId;
-            const agent = agentsData[agentId];
+        async function openModal(agentKey) {
+            currentAgentId = agentKey;
+            // Попробовать найти по id
+            let agent = agentsData[agentKey];
+            // Если не найден, попробовать по name (для кириллических id)
             if (!agent) {
-                console.warn('[Modal] Agent not found:', agentId);
+                agent = Object.values(agentsData).find(a => a.name === agentKey || a.id === agentKey);
+            }
+            if (!agent) {
+                console.warn('[Modal] Agent not found:', agentKey);
                 return;
             }
 
