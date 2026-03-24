@@ -1,0 +1,103 @@
+services:
+  web:
+    image: docker.io/library/nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./web:/usr/share/nginx/html
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - /opt/ai-team-office/nginx-default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - api
+      - ai-office
+    restart: unless-stopped
+    networks:
+      - meetify-network
+      - ai-office-network
+
+  api:
+    image: docker.io/library/node:20-alpine
+    working_dir: /app
+    volumes:
+      - ./api:/app
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/meetify
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+      - redis
+    command: sh -c "npm install && npm start"
+    restart: unless-stopped
+    networks:
+      - meetify-network
+
+  ai-office:
+    build:
+      context: /opt/ai-team-office/server
+      dockerfile: Dockerfile
+    container_name: ai-team-office-server
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+    volumes:
+      - /opt/ai-team-office/server/logs:/var/log/ai-team-office
+    networks:
+      - ai-office-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3001/api/agents/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  db:
+    image: docker.io/library/postgres:16-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=meetify
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - meetify-network
+
+  redis:
+    image: docker.io/library/redis:7-alpine
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    networks:
+      - meetify-network
+
+  turn:
+    image: docker.io/coturn/coturn:latest
+    ports:
+      - "3478:3478"
+      - "3478:3478/udp"
+      - "5349:5349"
+      - "5349:5349/udp"
+      - "10000-10100:10000-10100/udp"
+    volumes:
+      - ./turnserver.conf:/etc/coturn/turnserver.conf
+    restart: unless-stopped
+    networks:
+      - meetify-network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  meetify-network:
+    driver: bridge
+  ai-office-network:
+    driver: bridge

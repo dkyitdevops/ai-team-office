@@ -1,49 +1,28 @@
-# AI Team Office - Docker Compose
+version: '3.8'
 
 services:
-  # Основное приложение
-  app:
+  ai-team-office:
     build:
-      context: .
+      context: ./server
       dockerfile: Dockerfile
-    container_name: ai-team-office
+    container_name: ai-team-office-server
     restart: unless-stopped
     ports:
-      - "${PORT:-3001}:3001"
+      - "3001:3001"
     environment:
-      - NODE_ENV=${NODE_ENV:-production}
-      - PORT=${PORT:-3001}
+      - NODE_ENV=production
+      - PORT=3001
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+    volumes:
+      - ./server/logs:/var/log/ai-team-office
+    networks:
+      - ai-office-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3001/api/agents"]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3001/api/agents/health"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 10s
-    networks:
-      - ai-office-network
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
-
-  # Мониторинг доступности (опционально)
-  watchtower:
-    image: containrrr/watchtower:latest
-    container_name: ai-office-watchtower
-    restart: unless-stopped
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    environment:
-      - WATCHTOWER_CLEANUP=true
-      - WATCHTOWER_POLL_INTERVAL=3600
-      - WATCHTOWER_LABEL_ENABLE=true
-    labels:
-      - "com.centurylinklabs.watchtower.enable=false"
-    networks:
-      - ai-office-network
-    profiles:
-      - monitoring
+      start_period: 40s
 
 networks:
   ai-office-network:
