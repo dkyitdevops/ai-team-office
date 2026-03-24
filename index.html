@@ -2529,8 +2529,20 @@
 
         async function openModal(agentName) {
             currentAgentId = agentName;
-            // Ищем агента по name в agentsData
-            let agent = agentsData[agentName];
+            
+            // Нормализуем входное имя
+            const normalizedName = agentName.toString().normalize('NFC').trim();
+            
+            // Ищем агента
+            let agent = agentsData[normalizedName];
+            
+            // Если не нашли — пробуем без учёта регистра
+            if (!agent) {
+                const lowerName = normalizedName.toLowerCase();
+                agent = Object.values(agentsData).find(a => 
+                    a.name && a.name.toLowerCase() === lowerName
+                );
+            }
             
             if (!agent) {
                 console.warn('[Modal] Agent not found in agentsData:', agentName);
