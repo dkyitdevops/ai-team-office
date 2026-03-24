@@ -2,6 +2,7 @@ const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
 const path = require('path');
+const cors = require('cors');
 
 // Security middleware
 const csrf = require('csurf');
@@ -10,6 +11,12 @@ const helmet = require('helmet');
 
 const app = express();
 const server = http.createServer(app);
+
+// CORS middleware для HTTP API
+app.use(cors({
+  origin: ['https://46-149-68-9.nip.io', 'http://localhost:3000', 'http://localhost:3001'],
+  credentials: true
+}));
 
 // Apply security middleware
 app.use(helmet());
