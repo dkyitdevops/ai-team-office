@@ -3448,7 +3448,7 @@
         }, 10000);
 
         // ==================== AGENT STATUS API + WEBSOCKET ====================
-        const API_ENDPOINT = '/api/agents/status';
+        const API_ENDPOINT = '/ai-office/api/agents/status';
         const UPDATE_INTERVAL = 30000; // 30 секунд (fallback polling)
         let agentsStatusCache = {};
         let apiAvailable = true;
@@ -3474,6 +3474,7 @@
                 }
                 const data = await response.json();
                 apiAvailable = true;
+                // API возвращает объект с полем agents
                 return data.agents || data;
             } catch (error) {
                 console.warn('[AgentStatus] API недоступен, используем fallback:', error.message);
@@ -3804,9 +3805,13 @@
 
         // Обновление DOM агента на рабочем месте
         function updateAgentDOM(agent) {
-            const desk = document.querySelector(`.desk-station[data-agent-id="${agent.id}"]`);
+            // Ищем desk по deskId или id
+            const deskId = agent.deskId || agent.id;
+            const desk = document.querySelector(`.desk-station[data-agent-id="${deskId}"]`);
             
             if (desk) {
+                console.log(`[updateAgentDOM] Обновляем агента ${agent.name} на desk ${deskId}`);
+                
                 // Обновляем экран монитора
                 const projectEl = desk.querySelector('.screen-project');
                 const taskEl = desk.querySelector('.screen-task');
@@ -3814,6 +3819,9 @@
                 const progressText = desk.querySelector('.progress-text');
                 const statusRing = desk.querySelector('.agent-status-ring');
                 const agentEmoji = desk.querySelector('.agent-emoji');
+                const tooltipTask = desk.querySelector('.tooltip-task');
+                const tooltipProgressFill = desk.querySelector('.agent-task-tooltip .progress-fill');
+                const tooltipProgressText = desk.querySelector('.agent-task-tooltip .progress-text');
 
                 if (projectEl && agent.project) {
                     projectEl.textContent = agent.project;
@@ -3827,10 +3835,21 @@
                 if (progressText && agent.progress !== undefined) {
                     progressText.textContent = agent.progress + '%';
                 }
+                
+                // Обновляем tooltip
+                if (tooltipTask && agent.task) {
+                    tooltipTask.textContent = '📝 ' + agent.task;
+                }
+                if (tooltipProgressFill && agent.progress !== undefined) {
+                    tooltipProgressFill.style.width = agent.progress + '%';
+                }
+                if (tooltipProgressText && agent.progress !== undefined) {
+                    tooltipProgressText.textContent = agent.progress + '%';
+                }
 
                 // Обновляем цвет кольца статуса
                 if (statusRing) {
-                    if (agent.status === 'resting') {
+                    if (agent.status === 'resting' || agent.location === 'rest-room') {
                         statusRing.style.background = '#f59e0b';
                         statusRing.style.boxShadow = '0 0 10px #f59e0b';
                         statusRing.classList.add('resting');
@@ -3854,6 +3873,8 @@
                 desk.dataset.project = agent.project || '';
                 desk.dataset.task = agent.task || '';
                 desk.dataset.progress = agent.progress || 0;
+            } else {
+                console.warn(`[updateAgentDOM] Desk не найден для агента ${agent.name} (deskId: ${deskId})`);
             }
         }
 
@@ -3876,26 +3897,32 @@
             newAgents.forEach(agent => {
                 const oldAgent = agentsStatusCache[agent.id];
                 
+                // Определяем локацию из API
+                const isResting = agent.status === 'resting' || agent.location === 'rest-room';
+                const wasResting = oldAgent && (oldAgent.status === 'resting' || oldAgent.location === 'rest-room');
+                
                 if (oldAgent) {
                     // Проверяем смену статуса
-                    if (oldAgent.status !== agent.status) {
-                        console.log(`[AgentStatus] ${agent.name}: ${oldAgent.status} → ${agent.status}`);
+                    if (wasResting !== isResting) {
+                        console.log(`[AgentStatus] ${agent.name}: ${wasResting ? 'resting' : 'working'} → ${isResting ? 'resting' : 'working'}`);
                         
-                        if (agent.status === 'resting') {
+                        if (isResting) {
                             moveToRestRoom(agent);
-                        } else if (agent.status === 'working') {
+                        } else {
                             moveToWorkZone(agent);
                         }
                     }
                 } else {
                     // Новый агент - размещаем согласно статусу
-                    if (agent.status === 'resting') {
+                    if (isResting) {
                         addAgentToRestRoom(agent);
                     }
                 }
                 
-                // Обновляем DOM
-                updateAgentDOM(agent);
+                // Обновляем DOM (только если у агента есть deskId)
+                if (agent.deskId) {
+                    updateAgentDOM(agent);
+                }
                 
                 // Кэшируем статус
                 agentsStatusCache[agent.id] = { ...agent };
