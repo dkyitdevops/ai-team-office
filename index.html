@@ -3904,7 +3904,7 @@
                         issuesHTML += '<div class="agent-issues-list">';
                         
                         agent.issues.forEach(issue => {
-                            const repo = issue.repo || 'dkyitdevops/ai-team-office';
+                            const repo = issue.repo || issue.repository || 'dkyitdevops/ai-team-office';
                             const issueUrl = `https://github.com/${repo}/issues/${issue.number}`;
                             const statusClass = issue.state === 'open' ? 'issue-status-open' : 'issue-status-closed';
                             const statusText = issue.state === 'open' ? '[OPEN]' : '[CLOSED]';
