@@ -2604,8 +2604,8 @@
                 }
                 const agentData = await response.json();
                 
-                // Используем данные из API если они есть, иначе кэшированные
-                if (agentData.issues && agentData.issues.length > 0) {
+                // Всегда обновлять issues, даже если пустой массив
+                if (agentData.issues) {
                     openIssues = agentData.issues.filter(issue => issue.state === 'open');
                 }
             } catch (error) {
