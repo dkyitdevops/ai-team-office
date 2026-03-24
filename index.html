@@ -2373,11 +2373,13 @@
 
         // ==================== NORMALIZE AGENT DATA ====================
         // API возвращает поле 'agent' вместо 'name', нормализуем данные
+        // Используем agent.agent (или agent.name) как единый ключ для всего
         function normalizeAgentData(agent) {
+            const name = agent.name || agent.agent || 'Unknown';
             return {
                 ...agent,
-                id: agent.id || agent.agent || 'unknown',
-                name: agent.name || agent.agent || 'Unknown',
+                id: name,  // Используем name как id для консистентности
+                name: name,
                 role: agent.role || 'Developer',
                 status: agent.status || 'working',
                 emoji: agent.emoji || '🧑‍💻',
@@ -2403,8 +2405,8 @@
             workArea.innerHTML = workingAgents.map(agent => `
                 <div class="desk-station" role="button" tabindex="0"
                      aria-label="${agent.name}, ${agent.role}. Задача: ${agent.task || 'Нет задачи'}"
-                     data-agent-id="${agent.id}"
-                     onclick="openModal('${agent.id}')">
+                     data-agent-name="${agent.name}"
+                     onclick="openModal('${agent.name}')">
                     <div class="computer-setup">
                         <div class="monitor">
                             <div class="screen-content">
@@ -2497,7 +2499,8 @@
         // ==================== UPDATE AGENTS DATA CACHE ====================
         function updateAgentsData(agents) {
             agents.forEach(agent => {
-                agentsData[agent.id] = agent;
+                // Используем agent.name как ключ для консистентности
+                agentsData[agent.name] = agent;
             });
         }
 
@@ -2515,13 +2518,14 @@
         // ==================== MODAL FUNCTIONS ====================
         let currentAgentId = null;
 
-        async function openModal(agentId) {
-            currentAgentId = agentId;
-            // Ищем агента по id в agentsData
-            let agent = agentsData[agentId];
+        async function openModal(agentName) {
+            currentAgentId = agentName;
+            // Ищем агента по name в agentsData
+            let agent = agentsData[agentName];
             
             if (!agent) {
-                console.warn('[Modal] Agent not found in agentsData:', agentId);
+                console.warn('[Modal] Agent not found in agentsData:', agentName);
+                console.log('[Modal] Available keys:', Object.keys(agentsData));
                 return;
             }
 
