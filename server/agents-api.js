@@ -84,6 +84,50 @@ let lastCacheUpdate = 0;
 const CACHE_TTL_MS = 30000; // 30 секунд
 
 /**
+ * Получить issues для конкретного агента по label
+ * Используется для endpoint /api/agents/status/:name
+ */
+async function getGitHubIssuesForAgent(agentName) {
+  if (!GITHUB_TOKEN) {
+    console.warn('[Agents API] GITHUB_TOKEN не установлен');
+    return [];
+  }
+
+  const agentLabel = `agent:${agentName}`;
+  const allIssues = [];
+
+  for (const repo of REPOS) {
+    try {
+      // Кодируем label для URL (поддержка кириллицы)
+      const encodedLabel = encodeURIComponent(agentLabel);
+      const response = await axios.get(
+        `${GITHUB_API_BASE}/repos/${repo}/issues?state=all&labels=${encodedLabel}&per_page=100`,
+        {
+          headers: {
+            'Authorization': `token ${GITHUB_TOKEN}`,
+            'Accept': 'application/vnd.github.v3+json',
+            'User-Agent': 'AI-Team-Office-Agents-API'
+          },
+          timeout: 10000
+        }
+      );
+      
+      // Добавляем репозиторий к каждому issue
+      const issuesWithRepo = response.data.map(issue => ({
+        ...issue,
+        repository: repo
+      }));
+      
+      allIssues.push(...issuesWithRepo);
+    } catch (error) {
+      console.error(`[Agents API] Ошибка получения issues для агента ${agentName} из ${repo}:`, error.message);
+    }
+  }
+
+  return allIssues;
+}
+
+/**
  * Получить все issues из всех репозиториев
  */
 async function getGitHubIssues() {
@@ -146,7 +190,7 @@ function getProjectFromRepo(repo) {
 
 /**
  * Определить статус агента на основе assigned issues
- * - working: есть открытые issues assigned агенту
+ * - working: есть открытые issues с label agent:{имя_агента}
  * - resting: нет открытых issues
  */
 function determineAgentStatus(agentName, issues) {
@@ -155,16 +199,26 @@ function determineAgentStatus(agentName, issues) {
     return { status: 'resting', issues: [], project: null, task: null, progress: 0 };
   }
 
-  // Ищем issues, назначенные этому агенту
+  // Формируем label для поиска: agent:{имя_агента}
+  const agentLabel = `agent:${agentName}`;
+
+  // Ищем issues по label agent:{имя_агента}
   const assignedIssues = issues.filter(issue => {
+    // Проверяем labels у issue
+    const hasAgentLabel = issue.labels && issue.labels.some(label => 
+      label.name === agentLabel
+    );
+    
+    // Fallback: проверяем assignee для обратной совместимости
     const assigneeMatch = issue.assignee && 
       (issue.assignee.login === config.githubUsername ||
        (issue.assignee.login && issue.assignee.login.toLowerCase().includes(agentName.toLowerCase())));
     
+    // Fallback: проверяем title и body
     const titleMatch = issue.title && issue.title.toLowerCase().includes(agentName.toLowerCase());
     const bodyMatch = issue.body && issue.body && issue.body.toLowerCase().includes(agentName.toLowerCase());
     
-    return assigneeMatch || titleMatch || bodyMatch;
+    return hasAgentLabel || assigneeMatch || titleMatch || bodyMatch;
   });
 
   // Открытые и закрытые issues
@@ -267,13 +321,15 @@ async function getAllAgentsStatus() {
 
 /**
  * Получить статус конкретного агента
+ * Использует прямой запрос по label agent:{имя_агента}
  */
 async function getAgentStatus(agentName) {
   if (!AGENTS_CONFIG[agentName]) {
     return null;
   }
   
-  const issues = await getGitHubIssues();
+  // Получаем issues по label agent:{имя_агента} напрямую из API
+  const issues = await getGitHubIssuesForAgent(agentName);
   const filteredIssues = issues.filter(issue => !issue.pull_request);
   
   const baseAgent = buildAgentObject(agentName);
