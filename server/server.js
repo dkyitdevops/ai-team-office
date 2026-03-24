@@ -3,8 +3,24 @@ const http = require('http');
 const { Server } = require('socket.io');
 const path = require('path');
 
+// Security middleware
+const csrf = require('csurf');
+const cookieParser = require('cookie-parser');
+const helmet = require('helmet');
+
 const app = express();
 const server = http.createServer(app);
+
+// Apply security middleware
+app.use(helmet());
+app.use(cookieParser());
+app.use(csrf({ cookie: true }));
+
+// Middleware для передачи CSRF токена в ответы
+app.use((req, res, next) => {
+  res.locals.csrfToken = req.csrfToken();
+  next();
+});
 
 // Подключаем Agents API (GitHub Issue #14)
 const { router: agentsApiRouter, getAllAgentsStatus } = require('./agents-api');
@@ -70,6 +86,16 @@ const io = new Server(server, {
     origin: ["https://46-149-68-9.nip.io", "http://localhost:3000", "http://localhost:3001"],
     methods: ["GET", "POST"]
   }
+});
+
+// WebSocket origin validation middleware
+io.use((socket, next) => {
+  const origin = socket.handshake.headers.origin;
+  const allowedOrigins = ['https://46-149-68-9.nip.io', 'http://localhost:3000', 'http://localhost:3001'];
+  if (allowedOrigins.includes(origin)) {
+    return next();
+  }
+  return next(new Error('Origin not allowed'));
 });
 
 // Serve static files

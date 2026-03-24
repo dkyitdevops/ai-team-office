@@ -3110,8 +3110,8 @@
                             <span class="issue-badge ${statusClass}">${statusText}</span>
                     `;
                     
-                    // Добавляем ссылку на GitHub если есть
-                    if (issue.url) {
+                    // Добавляем ссылку на GitHub если есть и URL валиден
+                    if (issue.url && isValidGitHubUrl(issue.url)) {
                         issueHTML += `<a href="${escapeHtml(issue.url)}" target="_blank" rel="noopener noreferrer" class="issue-link">#${issue.number || ''} →</a>`;
                     }
                     
@@ -3132,6 +3132,16 @@
                         </li>
                     `;
                 }
+            }
+        }
+        
+        // Валидация GitHub URL
+        function isValidGitHubUrl(url) {
+            try {
+                const parsed = new URL(url);
+                return parsed.hostname === 'github.com';
+            } catch {
+                return false;
             }
         }
         
