@@ -6,8 +6,13 @@ const path = require('path');
 const app = express();
 const server = http.createServer(app);
 
+// Подключаем Agents API (GitHub Issue #14)
+const { router: agentsApiRouter, getAllAgentsStatus } = require('./agents-api');
+app.use('/api/agents', agentsApiRouter);
+
 // XSS защита - санитизация HTML
 const escapeHtml = (unsafe) => {
+  if (typeof unsafe !== 'string') return '';
   return unsafe
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
@@ -16,10 +21,53 @@ const escapeHtml = (unsafe) => {
     .replace(/'/g, "&#039;");
 };
 
+// ========== PROJECT NAME VALIDATION (GitHub Issue #7) ==========
+const validateProjectName = (projectName) => {
+  const maxLength = 50;
+  
+  if (typeof projectName !== 'string') {
+    return { valid: false, sanitized: 'Unknown', error: 'Must be string' };
+  }
+  
+  let sanitized = projectName.substring(0, maxLength).trim();
+  sanitized = sanitized.replace(/<[^>]*>/g, '');
+  sanitized = sanitized.replace(/[^a-zA-Zа-яА-ЯёЁ0-9\s\-_\.]/g, '');
+  
+  if (sanitized.length === 0) {
+    sanitized = 'Unknown';
+  }
+  
+  const valid = projectName.length <= maxLength && 
+                /^[a-zA-Zа-яА-ЯёЁ0-9\s\-_\.]+$/.test(projectName);
+  
+  return { valid, sanitized, error: valid ? null : 'Invalid characters or too long' };
+};
+
+const validateTaskName = (taskName) => {
+  const maxLength = 100;
+  
+  if (typeof taskName !== 'string') {
+    return { valid: false, sanitized: 'No task', error: 'Must be string' };
+  }
+  
+  let sanitized = taskName.substring(0, maxLength).trim();
+  sanitized = sanitized.replace(/<[^>]*>/g, '');
+  
+  if (sanitized.length === 0) {
+    sanitized = 'No task';
+  }
+  
+  return {
+    valid: taskName.length <= maxLength,
+    sanitized,
+    error: taskName.length > maxLength ? 'Too long (max 100)' : null
+  };
+};
+
 // CORS - ограниченные origin'ы
 const io = new Server(server, {
   cors: {
-    origin: ["https://46-149-68-9.nip.io", "http://localhost:3000"],
+    origin: ["https://46-149-68-9.nip.io", "http://localhost:3000", "http://localhost:3001"],
     methods: ["GET", "POST"]
   }
 });
@@ -86,6 +134,72 @@ setInterval(() => {
   }
 }, 60000);
 
+// ========== AGENT STATUS BROADCAST (GitHub Issue #14) ==========
+let lastAgentStatuses = {};
+
+// Функция для проверки изменений статусов и отправки обновлений
+async function broadcastAgentStatusUpdate() {
+  try {
+    const agents = await getAllAgentsStatus();
+    let hasChanges = false;
+    const changes = [];
+    
+    for (const agent of agents) {
+      const lastStatus = lastAgentStatuses[agent.name];
+      
+      // Проверяем изменения статуса, локации, задачи или прогресса
+      if (!lastStatus || 
+          lastStatus.status !== agent.status ||
+          lastStatus.location !== agent.location ||
+          lastStatus.task !== agent.task ||
+          lastStatus.progress !== agent.progress) {
+        hasChanges = true;
+        changes.push({
+          name: agent.name,
+          from: lastStatus || null,
+          to: {
+            status: agent.status,
+            location: agent.location,
+            task: agent.task,
+            progress: agent.progress,
+            project: agent.project
+          }
+        });
+        
+        // Обновляем кэш
+        lastAgentStatuses[agent.name] = {
+          status: agent.status,
+          location: agent.location,
+          task: agent.task,
+          progress: agent.progress,
+          project: agent.project,
+          issues: agent.issues
+        };
+      }
+    }
+    
+    // Отправляем обновления только если есть изменения
+    if (hasChanges) {
+      console.log('[WebSocket] Отправка обновлений статусов:', changes.map(c => c.name).join(', '));
+      
+      io.emit('agents-status-update', {
+        agents: agents,
+        changes: changes,
+        timestamp: new Date().toISOString()
+      });
+    }
+    
+    return agents;
+  } catch (error) {
+    console.error('[WebSocket] Ошибка при получении статусов:', error);
+    return null;
+  }
+}
+
+// Запускаем периодическую проверку статусов (каждые 30 секунд)
+const STATUS_CHECK_INTERVAL = 30000;
+setInterval(broadcastAgentStatusUpdate, STATUS_CHECK_INTERVAL);
+
 // Socket.io
 io.on('connection', (socket) => {
   console.log('Client connected:', socket.id);
@@ -95,16 +209,26 @@ io.on('connection', (socket) => {
   socket.emit('tasks', tasks);
   socket.emit('messages', messages);
   
+  // Отправляем текущие статусы агентов при подключении
+  getAllAgentsStatus().then(agents => {
+    socket.emit('agents-status-update', {
+      agents: agents,
+      changes: [],
+      timestamp: new Date().toISOString(),
+      initial: true
+    });
+  }).catch(err => {
+    console.error('[WebSocket] Ошибка отправки начальных статусов:', err);
+  });
+  
   // Handle chat
   socket.on('message', (data) => {
-    // Rate limiting check
     const rateCheck = checkRateLimit(socket.id);
     if (!rateCheck.allowed) {
       socket.emit('error', { message: `Rate limit exceeded. Try again in ${rateCheck.retryAfter} seconds.` });
       return;
     }
     
-    // XSS защита - санитизация входящих данных
     const msg = {
       id: Date.now(),
       agent: data.agent ? escapeHtml(String(data.agent)) : '',
@@ -114,7 +238,6 @@ io.on('connection', (socket) => {
     
     messages.push(msg);
     
-    // Ограничение памяти - хранить только последние 500 сообщений
     if (messages.length > 500) {
       messages = messages.slice(-500);
     }
@@ -128,6 +251,47 @@ io.on('connection', (socket) => {
     if (task) {
       task.status = data.status;
       io.emit('task-updated', task);
+    }
+  });
+  
+  // Handle project display update (GitHub Issue #7)
+  socket.on('project-update', (data) => {
+    const projectValidation = validateProjectName(data.project);
+    const taskValidation = validateTaskName(data.task);
+    
+    if (!projectValidation.valid || !taskValidation.valid) {
+      socket.emit('error', { 
+        message: 'Validation failed', 
+        details: [
+          ...(projectValidation.error ? [`Project: ${projectValidation.error}`] : []),
+          ...(taskValidation.error ? [`Task: ${taskValidation.error}`] : [])
+        ]
+      });
+      return;
+    }
+    
+    const updateData = {
+      agentId: data.agentId,
+      project: projectValidation.sanitized,
+      task: taskValidation.sanitized,
+      timestamp: Date.now()
+    };
+    
+    io.emit('project-updated', updateData);
+  });
+  
+  // Handle request for agent status update
+  socket.on('request-agents-status', async () => {
+    try {
+      const agents = await getAllAgentsStatus();
+      socket.emit('agents-status-update', {
+        agents: agents,
+        changes: [],
+        timestamp: new Date().toISOString(),
+        requested: true
+      });
+    } catch (error) {
+      socket.emit('error', { message: 'Failed to fetch agent statuses' });
     }
   });
   
@@ -145,4 +309,5 @@ app.get('/api/messages', (req, res) => res.json(messages));
 const PORT = process.env.PORT || 3001;
 server.listen(PORT, () => {
   console.log(`AI Team Office server running on port ${PORT}`);
+  console.log(`WebSocket enabled for real-time agent status updates`);
 });

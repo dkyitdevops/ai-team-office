@@ -2,11 +2,11 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
     <title>AI Team Office - Визуализация команды</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="animations.css">
     <style>
         * {
@@ -35,7 +35,11 @@
             background: var(--bg-dark);
             color: var(--text-primary);
             min-height: 100vh;
+            min-height: 100dvh; /* Dynamic viewport height for mobile */
             overflow-x: hidden;
+            -webkit-text-size-adjust: 100%; /* Prevent font scaling on orientation change */
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         /* Animated background grid */
@@ -272,6 +276,111 @@
             box-shadow: 0 10px 0 rgba(0, 212, 255, 0.3),
                         0 20px 0 rgba(0, 212, 255, 0.2);
             animation: codeTyping 2s infinite;
+        }
+
+        /* Screen Content - Project Display */
+        .screen-content {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            right: 5px;
+            bottom: 5px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 6px;
+            z-index: 2;
+            overflow: hidden;
+        }
+
+        .screen-project {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 700;
+            color: #00ff88;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.9), 0 0 20px rgba(0, 255, 136, 0.5);
+            animation: projectGlow 2s ease-in-out infinite;
+            line-height: 1.2;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+        }
+
+        .screen-task {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            color: #88ffcc;
+            text-align: center;
+            margin-top: 3px;
+            line-height: 1.2;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+            text-shadow: 0 0 5px rgba(136, 255, 204, 0.5);
+        }
+
+        .screen-code-line {
+            position: absolute;
+            bottom: 4px;
+            left: 6px;
+            right: 6px;
+            height: 1px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(0, 212, 255, 0.4) 30%, 
+                rgba(0, 212, 255, 0.8) 50%, 
+                rgba(0, 212, 255, 0.4) 70%, 
+                transparent 100%);
+            animation: codeScan 2s linear infinite;
+        }
+
+        @keyframes projectGlow {
+            0%, 100% { 
+                text-shadow: 0 0 10px rgba(0, 255, 136, 0.9), 0 0 20px rgba(0, 255, 136, 0.5);
+                opacity: 0.95;
+            }
+            50% { 
+                text-shadow: 0 0 15px rgba(0, 255, 136, 1), 0 0 30px rgba(0, 255, 136, 0.7);
+                opacity: 1;
+            }
+        }
+
+        @keyframes codeScan {
+            0% { transform: translateX(-100%); opacity: 0; }
+            20% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { transform: translateX(100%); opacity: 0; }
+        }
+
+        /* Project Display on Monitor */
+        .monitor-project {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 8px;
+            font-weight: 600;
+            color: var(--neon-blue);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 85%;
+            text-shadow: 0 0 5px rgba(0, 212, 255, 0.5);
+            animation: projectGlow 3s ease-in-out infinite;
+            z-index: 10;
+        }
+
+        @keyframes projectGlow {
+            0%, 100% { opacity: 0.8; text-shadow: 0 0 5px rgba(0, 212, 255, 0.5); }
+            50% { opacity: 1; text-shadow: 0 0 10px rgba(0, 212, 255, 0.8); }
         }
 
         /* Monitor Stand */
@@ -845,7 +954,116 @@
             }
         }
 
-        /* Responsive */
+        /* Agent Movement Animations (GitHub Issue #14) */
+        @keyframes agentExit {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+            50% {
+                opacity: 0.5;
+                transform: translateY(-20px) scale(0.9);
+            }
+            100% {
+                opacity: 0.3;
+                transform: translateY(-40px) scale(0.8);
+            }
+        }
+
+        @keyframes agentEnter {
+            0% {
+                opacity: 0.3;
+                transform: translateY(-40px) scale(0.8);
+            }
+            50% {
+                opacity: 0.8;
+                transform: translateY(-10px) scale(0.95);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes restAgentEnter {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes restAgentExit {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+        }
+
+        /* Agent leaving/entering states */
+        .desk-station.agent-leaving {
+            filter: grayscale(0.3);
+        }
+
+        .desk-station.agent-entering {
+            animation: deskHighlight 0.8s ease;
+        }
+
+        @keyframes deskHighlight {
+            0%, 100% {
+                box-shadow: none;
+            }
+            50% {
+                box-shadow: 0 0 30px rgba(34, 197, 94, 0.5);
+            }
+        }
+
+        /* Rest room agent card styles */
+        .rest-agent {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(234, 179, 8, 0.05));
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+
+        .rest-agent-avatar {
+            position: relative;
+            font-size: 32px;
+        }
+
+        .rest-agent-emoji {
+            filter: drop-shadow(0 3px 6px rgba(0,0,0,0.3));
+        }
+
+        .rest-agent-info {
+            flex: 1;
+        }
+
+        .rest-agent-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--neon-orange);
+        }
+
+        .rest-agent-status {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* ==================== RESPONSIVE ==================== */
+
+        /* Large tablets and small desktops */
         @media (max-width: 1024px) {
             .floor-plan {
                 grid-template-columns: 1fr;
@@ -858,17 +1076,57 @@
             .rest-room {
                 order: -1;
             }
+
+            .chat-container {
+                width: 340px;
+                height: 450px;
+            }
         }
 
+        /* Tablets */
         @media (max-width: 768px) {
+            .header {
+                padding: 16px 20px;
+            }
+
             .header-content {
                 flex-direction: column;
-                gap: 20px;
+                gap: 16px;
+            }
+
+            .logo-text {
+                font-size: 20px;
             }
 
             .status-bar {
                 flex-wrap: wrap;
                 justify-content: center;
+                gap: 12px;
+            }
+
+            .status-item {
+                padding: 10px 16px;
+                min-width: 80px;
+            }
+
+            .status-value {
+                font-size: 18px;
+            }
+
+            .office-container {
+                padding: 20px;
+            }
+
+            .office-title h1 {
+                font-size: 24px;
+            }
+
+            .office-title p {
+                font-size: 14px;
+            }
+
+            .work-area {
+                padding: 20px;
             }
 
             .desks-layout {
@@ -878,6 +1136,463 @@
 
             .computer-setup {
                 transform: scale(0.9);
+            }
+
+            /* Chat adjustments for tablet */
+            .chat-widget {
+                bottom: 20px;
+                right: 20px;
+            }
+
+            .chat-container {
+                position: fixed;
+                bottom: 90px;
+                right: 20px;
+                width: calc(100vw - 40px);
+                max-width: 380px;
+                height: 60vh;
+                max-height: 450px;
+            }
+
+            .chat-toggle {
+                width: 56px;
+                height: 56px;
+                min-width: 44px;
+                min-height: 44px;
+            }
+
+            .chat-send {
+                width: 48px;
+                height: 48px;
+                min-width: 44px;
+                min-height: 44px;
+            }
+
+            /* Modal adjustments */
+            .modal {
+                width: 95%;
+                max-width: 500px;
+                max-height: 85vh;
+                margin: 20px;
+            }
+
+            .modal-body {
+                max-height: calc(85vh - 100px);
+            }
+
+            .modal-stats {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 12px;
+            }
+
+            .modal-stat {
+                padding: 12px;
+            }
+
+            .modal-stat-value {
+                font-size: 20px;
+            }
+
+            .modal-close {
+                width: 44px;
+                height: 44px;
+                min-width: 44px;
+                min-height: 44px;
+            }
+
+            .chat-close {
+                width: 44px;
+                height: 44px;
+                min-width: 44px;
+                min-height: 44px;
+            }
+        }
+
+        /* Mobile phones */
+        @media (max-width: 480px) {
+            .header {
+                padding: 12px 16px;
+            }
+
+            .logo-icon {
+                font-size: 28px;
+            }
+
+            .logo-text {
+                font-size: 18px;
+            }
+
+            .status-bar {
+                gap: 8px;
+            }
+
+            .status-item {
+                padding: 8px 12px;
+                min-width: 70px;
+            }
+
+            .status-value {
+                font-size: 16px;
+            }
+
+            .status-label {
+                font-size: 10px;
+            }
+
+            .office-container {
+                padding: 16px;
+            }
+
+            .office-title {
+                margin-bottom: 24px;
+            }
+
+            .office-title h1 {
+                font-size: 20px;
+            }
+
+            .office-title p {
+                font-size: 13px;
+            }
+
+            .work-area {
+                padding: 16px;
+                border-radius: 16px;
+            }
+
+            .work-area::before {
+                font-size: 10px;
+                left: 20px;
+            }
+
+            .desks-layout {
+                gap: 24px;
+                padding: 10px 0;
+            }
+
+            .computer-setup {
+                transform: scale(0.85);
+            }
+
+            .agent-name {
+                font-size: 13px;
+            }
+
+            .agent-role {
+                font-size: 10px;
+            }
+
+            .agent-emoji {
+                font-size: 40px;
+            }
+
+            /* Rest room mobile */
+            .rest-room {
+                padding: 20px;
+            }
+
+            .rest-room::before {
+                font-size: 10px;
+                left: 20px;
+            }
+
+            .lounge-area,
+            .gaming-area {
+                min-height: 120px;
+                padding: 16px;
+            }
+
+            .lounge-furniture {
+                font-size: 56px;
+            }
+
+            .lounge-person {
+                font-size: 32px;
+            }
+
+            .lounge-info,
+            .gaming-info {
+                min-width: 140px;
+                padding: 8px 12px;
+            }
+
+            .lounge-name,
+            .gaming-name {
+                font-size: 12px;
+            }
+
+            .lounge-status,
+            .gaming-status {
+                font-size: 11px;
+            }
+
+            .tv-screen {
+                width: 64px;
+                height: 40px;
+            }
+
+            .gaming-furniture {
+                font-size: 40px;
+            }
+
+            .gaming-person {
+                font-size: 30px;
+            }
+
+            .coffee-machine {
+                font-size: 32px;
+            }
+
+            /* Chat mobile - full screen on small phones */
+            .chat-widget {
+                bottom: 16px;
+                right: 16px;
+            }
+
+            .chat-container {
+                position: fixed;
+                bottom: 80px;
+                right: 16px;
+                left: 16px;
+                width: auto;
+                max-width: none;
+                height: 65vh;
+                max-height: 400px;
+                border-radius: 16px;
+            }
+
+            .chat-toggle {
+                width: 52px;
+                height: 52px;
+                min-width: 44px;
+                min-height: 44px;
+                font-size: 20px;
+            }
+
+            .chat-header {
+                padding: 12px 16px;
+            }
+
+            .chat-messages {
+                padding: 16px;
+            }
+
+            .chat-message-bubble {
+                padding: 10px 14px;
+                font-size: 14px;
+                line-height: 1.4;
+            }
+
+            .chat-message-avatar {
+                width: 36px;
+                height: 36px;
+                min-width: 36px;
+                min-height: 36px;
+                font-size: 16px;
+            }
+
+            .chat-input-area {
+                padding: 12px 16px;
+            }
+
+            .chat-input {
+                padding: 12px 16px;
+                font-size: 16px; /* Prevent zoom on iOS */
+                min-height: 44px;
+            }
+
+            .chat-send {
+                width: 44px;
+                height: 44px;
+                min-width: 44px;
+                min-height: 44px;
+            }
+
+            /* Modal mobile */
+            .modal-overlay {
+                align-items: flex-end;
+                padding: 0;
+            }
+
+            .modal {
+                width: 100%;
+                max-width: none;
+                max-height: 90vh;
+                margin: 0;
+                border-radius: 20px 20px 0 0;
+                transform: translateY(100%);
+            }
+
+            .modal-overlay.active .modal {
+                transform: translateY(0);
+            }
+
+            .modal-header {
+                padding: 16px 20px;
+            }
+
+            .modal-agent-avatar {
+                font-size: 40px;
+            }
+
+            .modal-agent-details h2 {
+                font-size: 18px;
+            }
+
+            .modal-agent-details p {
+                font-size: 13px;
+            }
+
+            .modal-body {
+                padding: 20px;
+                max-height: calc(90vh - 80px);
+            }
+
+            .modal-section {
+                margin-bottom: 20px;
+            }
+
+            .modal-stats {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+            }
+
+            .modal-stat {
+                padding: 12px 8px;
+            }
+
+            .modal-stat-value {
+                font-size: 18px;
+            }
+
+            .modal-stat-label {
+                font-size: 10px;
+            }
+
+            .modal-task-card {
+                padding: 14px;
+            }
+
+            .modal-task-name {
+                font-size: 14px;
+            }
+
+            .modal-close {
+                width: 44px;
+                height: 44px;
+                min-width: 44px;
+                min-height: 44px;
+            }
+
+            /* Footer */
+            .footer {
+                padding: 20px;
+                margin-top: 24px;
+            }
+
+            .legend {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .copyright {
+                font-size: 12px;
+            }
+
+            /* Touch targets - ensure minimum 44px */
+            .desk-station {
+                min-height: 44px;
+            }
+
+            .modal-skill {
+                padding: 8px 14px;
+                min-height: 32px;
+                display: inline-flex;
+                align-items: center;
+            }
+
+            /* Improve text readability */
+            .chat-message-bubble {
+                line-height: 1.5;
+            }
+
+            .tooltip-task {
+                font-size: 13px;
+                line-height: 1.5;
+            }
+        }
+
+        /* iPhone SE and very small screens */
+        @media (max-width: 375px) {
+            .chat-container {
+                height: 60vh;
+                max-height: 350px;
+            }
+
+            .modal-stats {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .modal-stat {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                text-align: left;
+                padding: 12px 16px;
+            }
+
+            .modal-stat-value {
+                font-size: 16px;
+            }
+
+            .modal-stat-label {
+                font-size: 12px;
+            }
+
+            .status-bar {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .status-item {
+                flex-direction: row;
+                justify-content: space-between;
+                width: 100%;
+            }
+        }
+
+        /* Landscape mode on mobile */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .chat-container {
+                height: 80vh;
+                max-height: 300px;
+            }
+
+            .modal {
+                max-height: 95vh;
+            }
+
+            .modal-body {
+                max-height: calc(95vh - 80px);
+            }
+        }
+
+        /* Improve readability on high-DPI monitors */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            body {
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+            }
+
+            .agent-name,
+            .lounge-name,
+            .gaming-name {
+                font-weight: 500;
+            }
+
+            .chat-message-bubble {
+                line-height: 1.6;
             }
         }
 
@@ -1211,6 +1926,74 @@
             color: var(--text-secondary);
         }
 
+        /* Loader styles */
+        .modal-loader {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            gap: 10px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .modal-loader-spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border);
+            border-top-color: var(--neon-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Issue badge styles */
+        .issue-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-left: 8px;
+        }
+
+        .issue-badge.open {
+            background: rgba(34, 197, 94, 0.2);
+            color: var(--neon-green);
+        }
+
+        .issue-badge.closed {
+            background: rgba(139, 139, 158, 0.2);
+            color: var(--text-secondary);
+        }
+
+        .issue-link {
+            color: var(--neon-blue);
+            text-decoration: none;
+            font-size: 12px;
+            margin-left: 8px;
+        }
+
+        .issue-link:hover {
+            text-decoration: underline;
+        }
+
+        .issue-item {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        .issue-title {
+            flex: 1;
+            min-width: 200px;
+        }
+
         /* ==================== CHAT STYLES ==================== */
         .chat-widget {
             position: fixed;
@@ -1324,6 +2107,62 @@
         .chat-close:hover {
             background: rgba(255, 255, 255, 0.1);
             color: var(--text-primary);
+        }
+
+        /* ==================== ACCESSIBILITY ==================== */
+        /* Focus-visible styles for keyboard navigation */
+        *:focus-visible {
+            outline: 3px solid var(--neon-blue);
+            outline-offset: 2px;
+        }
+
+        .desk-station:focus-visible {
+            outline: 3px solid var(--neon-blue);
+            outline-offset: 4px;
+            border-radius: 8px;
+        }
+
+        .chat-toggle:focus-visible,
+        .chat-send:focus-visible,
+        .modal-close:focus-visible,
+        .chat-close:focus-visible {
+            outline: 3px solid var(--neon-blue);
+            outline-offset: 3px;
+        }
+
+        .chat-input:focus-visible {
+            outline: 2px solid var(--neon-blue);
+            outline-offset: 0;
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+        }
+
+        .modal-task-card:focus-visible {
+            outline: 2px solid var(--neon-green);
+            outline-offset: 2px;
+        }
+
+        /* High contrast focus for rest room elements */
+        .lounge-area:focus-visible,
+        .gaming-area:focus-visible {
+            outline: 3px solid var(--neon-orange);
+            outline-offset: 4px;
+        }
+
+        /* Skip link for keyboard users */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--neon-blue);
+            color: var(--bg-dark);
+            padding: 8px 16px;
+            font-weight: 600;
+            z-index: 10000;
+            transition: top 0.3s;
+        }
+
+        .skip-link:focus {
+            top: 0;
         }
 
         .chat-messages {
@@ -1472,7 +2311,35 @@
             gap: 12px;
         }
 
-        /* Scrollbar Styling */
+        /* Ensure sufficient color contrast */
+        .agent-role,
+        .lounge-status,
+        .gaming-status,
+        .chat-message-name,
+        .chat-message-time {
+            color: #a0a0b5;
+        }
+
+        .status-label,
+        .legend-item,
+        .copyright,
+        .tooltip-task,
+        .modal-section-title {
+            color: #9a9aaf;
+        }
+
+        /* Screen reader only text */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
         ::-webkit-scrollbar {
             width: 8px;
         }
@@ -1492,29 +2359,32 @@
     </style>
 </head>
 <body>
-    <header class="header">
+    <!-- Skip link for accessibility -->
+    <a href="#main-content" class="skip-link">Перейти к основному содержимому</a>
+    
+    <header class="header" role="banner">
         <div class="header-content">
             <div class="logo">
                 <span class="logo-icon">🏢</span>
                 <span class="logo-text">AI Team Office</span>
             </div>
-            <div class="status-bar">
+            <div class="status-bar" role="region" aria-label="Статистика команды">
                 <div class="status-item">
-                    <span class="status-dot"></span>
+                    <span class="status-dot" aria-hidden="true"></span>
                     <div>
                         <div class="status-value">8</div>
                         <div class="status-label">Всего</div>
                     </div>
                 </div>
                 <div class="status-item">
-                    <span class="status-dot"></span>
+                    <span class="status-dot" aria-hidden="true"></span>
                     <div>
                         <div class="status-value">6</div>
                         <div class="status-label">Работают</div>
                     </div>
                 </div>
                 <div class="status-item">
-                    <span class="status-dot resting"></span>
+                    <span class="status-dot resting" aria-hidden="true"></span>
                     <div>
                         <div class="status-value">2</div>
                         <div class="status-label">Отдыхают</div>
@@ -1524,7 +2394,7 @@
         </div>
     </header>
 
-    <main class="office-container">
+    <main class="office-container" id="main-content" role="main">
         <div class="office-title">
             <h1>👥 Наша команда</h1>
             <p>Визуализация AI-агентов в реальном времени</p>
@@ -1534,10 +2404,16 @@
             <!-- Work Area -->
             <div class="work-area">
                 <div class="desks-layout">
-                    <!-- Desk 1 -->
-                    <div class="desk-station" data-agent-id="1" data-task="Дизайн нового интерфейса" data-progress="75">
+                    <!-- Desk 1 - Алексей -->
+                    <div class="desk-station" role="button" tabindex="0" aria-label="Алексей, UI Дизайнер. Проект: Meetify, задача: Виртуальный фон, прогресс: 75%" data-agent-id="1" data-project="Meetify" data-task="Виртуальный фон" data-progress="75">
                         <div class="computer-setup">
-                            <div class="monitor"></div>
+                            <div class="monitor">
+                                <div class="screen-content">
+                                    <div class="screen-project">Meetify</div>
+                                    <div class="screen-task">Виртуальный фон</div>
+                                    <div class="screen-code-line"></div>
+                                </div>
+                            </div>
                             <div class="monitor-stand"></div>
                             <div class="monitor-base"></div>
                             <div class="keyboard"></div>
@@ -1547,8 +2423,8 @@
                             <div class="desk-surface"></div>
                         </div>
                         <div class="agent-container">
-                            <div class="agent-emoji typing">👨‍🎨</div>
-                            <span class="agent-status-ring"></span>
+                            <div class="agent-emoji typing" role="img" aria-label="Алексей работает">👨‍🎨</div>
+                            <span class="agent-status-ring" aria-label="Статус: работает"></span>
                             <div class="agent-info">
                                 <div class="agent-name">Алексей (UI Дизайнер)</div>
                                 <div class="agent-role">UI Designer</div>
@@ -1564,10 +2440,16 @@
                         </div>
                     </div>
 
-                    <!-- Desk 2 -->
-                    <div class="desk-station" data-agent-id="2" data-task="Разработка API endpoints" data-progress="60">
+                    <!-- Desk 2 - Мария -->
+                    <div class="desk-station" role="button" tabindex="0" aria-label="Мария, Fullstack разработчик. Проект: Meetify, задача: Запись встреч, прогресс: 60%" data-agent-id="2" data-project="Meetify" data-task="Запись встреч" data-progress="60">
                         <div class="computer-setup">
-                            <div class="monitor"></div>
+                            <div class="monitor">
+                                <div class="screen-content">
+                                    <div class="screen-project">Meetify</div>
+                                    <div class="screen-task">Запись встреч</div>
+                                    <div class="screen-code-line"></div>
+                                </div>
+                            </div>
                             <div class="monitor-stand"></div>
                             <div class="monitor-base"></div>
                             <div class="keyboard"></div>
@@ -1577,8 +2459,8 @@
                             <div class="desk-surface"></div>
                         </div>
                         <div class="agent-container">
-                            <div class="agent-emoji typing">👨‍💼</div>
-                            <span class="agent-status-ring"></span>
+                            <div class="agent-emoji typing" role="img" aria-label="Мария работает">👨‍💼</div>
+                            <span class="agent-status-ring" aria-label="Статус: работает"></span>
                             <div class="agent-info">
                                 <div class="agent-name">Мария (Fullstack разработчик)</div>
                                 <div class="agent-role">Fullstack разработчик</div>
@@ -1594,10 +2476,16 @@
                         </div>
                     </div>
 
-                    <!-- Desk 3 -->
-                    <div class="desk-station" data-agent-id="3" data-task="Тестирование нового релиза" data-progress="85">
+                    <!-- Desk 3 - Иван -->
+                    <div class="desk-station" role="button" tabindex="0" aria-label="Иван, QA инженер. Проект: AI Team Office, задача: Тестирование, прогресс: 85%" data-agent-id="3" data-project="AI Team Office" data-task="Тестирование" data-progress="85">
                         <div class="computer-setup">
-                            <div class="monitor"></div>
+                            <div class="monitor">
+                                <div class="screen-content">
+                                    <div class="screen-project">AI Team Office</div>
+                                    <div class="screen-task">Тестирование</div>
+                                    <div class="screen-code-line"></div>
+                                </div>
+                            </div>
                             <div class="monitor-stand"></div>
                             <div class="monitor-base"></div>
                             <div class="keyboard"></div>
@@ -1607,8 +2495,8 @@
                             <div class="desk-surface"></div>
                         </div>
                         <div class="agent-container">
-                            <div class="agent-emoji typing">👩‍🔬</div>
-                            <span class="agent-status-ring"></span>
+                            <div class="agent-emoji typing" role="img" aria-label="Иван работает">👩‍🔬</div>
+                            <span class="agent-status-ring" aria-label="Статус: работает"></span>
                             <div class="agent-info">
                                 <div class="agent-name">Иван (QA)</div>
                                 <div class="agent-role">QA Engineer</div>
@@ -1624,10 +2512,16 @@
                         </div>
                     </div>
 
-                    <!-- Desk 4 -->
-                    <div class="desk-station" data-agent-id="4" data-task="Настройка CI/CD пайплайнов" data-progress="45">
+                    <!-- Desk 4 - Дмитрий -->
+                    <div class="desk-station" role="button" tabindex="0" aria-label="Дмитрий, DevOps инженер. Проект: AI Team Office, задача: Настройка CI/CD, прогресс: 45%" data-agent-id="4" data-project="AI Team Office" data-task="Настройка CI/CD" data-progress="45">
                         <div class="computer-setup">
-                            <div class="monitor"></div>
+                            <div class="monitor">
+                                <div class="screen-content">
+                                    <div class="screen-project">AI Team Office</div>
+                                    <div class="screen-task">CI/CD Pipeline</div>
+                                    <div class="screen-code-line"></div>
+                                </div>
+                            </div>
                             <div class="monitor-stand"></div>
                             <div class="monitor-base"></div>
                             <div class="keyboard"></div>
@@ -1637,8 +2531,8 @@
                             <div class="desk-surface"></div>
                         </div>
                         <div class="agent-container">
-                            <div class="agent-emoji typing">👨‍🚀</div>
-                            <span class="agent-status-ring"></span>
+                            <div class="agent-emoji typing" role="img" aria-label="Дмитрий работает">👨‍🚀</div>
+                            <span class="agent-status-ring" aria-label="Статус: работает"></span>
                             <div class="agent-info">
                                 <div class="agent-name">Дмитрий (DevOps)</div>
                                 <div class="agent-role">Infrastructure</div>
@@ -1654,10 +2548,16 @@
                         </div>
                     </div>
 
-                    <!-- Desk 5 -->
-                    <div class="desk-station" data-agent-id="5" data-task="Анализ пользовательских метрик" data-progress="70">
+                    <!-- Desk 5 - Ольга -->
+                    <div class="desk-station" role="button" tabindex="0" aria-label="Ольга, Data Scientist. Проект: DataVision, задача: Анализ метрик, прогресс: 70%" data-agent-id="5" data-project="DataVision" data-task="Анализ метрик" data-progress="70">
                         <div class="computer-setup">
-                            <div class="monitor"></div>
+                            <div class="monitor">
+                                <div class="screen-content">
+                                    <div class="screen-project">DataVision</div>
+                                    <div class="screen-task">Анализ метрик</div>
+                                    <div class="screen-code-line"></div>
+                                </div>
+                            </div>
                             <div class="monitor-stand"></div>
                             <div class="monitor-base"></div>
                             <div class="keyboard"></div>
@@ -1667,8 +2567,8 @@
                             <div class="desk-surface"></div>
                         </div>
                         <div class="agent-container">
-                            <div class="agent-emoji typing">👨‍💻</div>
-                            <span class="agent-status-ring"></span>
+                            <div class="agent-emoji typing" role="img" aria-label="Ольга работает">👨‍💻</div>
+                            <span class="agent-status-ring" aria-label="Статус: работает"></span>
                             <div class="agent-info">
                                 <div class="agent-name">Ольга (Аналитик)</div>
                                 <div class="agent-role">Data Scientist</div>
@@ -1684,10 +2584,16 @@
                         </div>
                     </div>
 
-                    <!-- Desk 6 -->
-                    <div class="desk-station" data-agent-id="6" data-task="Аудит безопасности системы" data-progress="30">
+                    <!-- Desk 6 - Андрей -->
+                    <div class="desk-station" role="button" tabindex="0" aria-label="Андрей, Security инженер. Проект: SecureFlow, задача: Аудит безопасности, прогресс: 30%" data-agent-id="6" data-project="SecureFlow" data-task="Аудит безопасности" data-progress="30">
                         <div class="computer-setup">
-                            <div class="monitor"></div>
+                            <div class="monitor">
+                                <div class="screen-content">
+                                    <div class="screen-project">SecureFlow</div>
+                                    <div class="screen-task">Security Audit</div>
+                                    <div class="screen-code-line"></div>
+                                </div>
+                            </div>
                             <div class="monitor-stand"></div>
                             <div class="monitor-base"></div>
                             <div class="keyboard"></div>
@@ -1697,8 +2603,8 @@
                             <div class="desk-surface"></div>
                         </div>
                         <div class="agent-container">
-                            <div class="agent-emoji typing">👩‍✈️</div>
-                            <span class="agent-status-ring"></span>
+                            <div class="agent-emoji typing" role="img" aria-label="Андрей работает">👩‍✈️</div>
+                            <span class="agent-status-ring" aria-label="Статус: работает"></span>
                             <div class="agent-info">
                                 <div class="agent-name">Андрей (Безопасность)</div>
                                 <div class="agent-role">Cyber Security</div>
@@ -1723,13 +2629,13 @@
                 
                 <div class="rest-room-content">
                     <!-- Lounge Area -->
-                    <div class="lounge-area">
+                    <div class="lounge-area" role="img" aria-label="Зона отдыха с шезлонгом. Сергей отдыхает" data-rest-agent="Сергей">
                         <span class="lounge-label">Шезлонг</span>
                         <div class="lounge-scene">
-                            <div class="lounge-furniture">🛋️</div>
+                            <div class="lounge-furniture" role="img" aria-label="Шезлонг">🛋️</div>
                             <div class="lounge-person">
                                 😴
-                                <span class="rest-status-ring"></span>
+                                <span class="rest-status-ring" aria-label="Статус: отдыхает"></span>
                             </div>
                             <div class="lounge-info">
                                 <div class="lounge-name">Сергей (Backend)</div>
@@ -1739,17 +2645,17 @@
                     </div>
 
                     <!-- Gaming Area -->
-                    <div class="gaming-area">
+                    <div class="gaming-area" role="img" aria-label="Игровая зона с PlayStation 5. Елена играет" data-rest-agent="Елена">
                         <span class="gaming-label">PlayStation 5</span>
                         <div class="gaming-scene">
                             <div class="gaming-tv-setup">
-                                <div class="tv-screen"></div>
+                                <div class="tv-screen" role="img" aria-label="Телевизор"></div>
                             </div>
                             <div class="gaming-setup">
-                                <div class="gaming-furniture">🪑</div>
+                                <div class="gaming-furniture" role="img" aria-label="Игровое кресло">🪑</div>
                                 <div class="gaming-person">
                                     🧑‍🎮
-                                    <span class="rest-status-ring"></span>
+                                    <span class="rest-status-ring" aria-label="Статус: играет"></span>
                                 </div>
                             </div>
                             <div class="gaming-info">
@@ -1760,32 +2666,35 @@
                     </div>
 
                     <!-- Coffee Area -->
-                    <div class="coffee-area">
+                    <div class="coffee-area" role="img" aria-label="Кофе-станция">
                         <span class="coffee-label">Кофе-станция</span>
-                        <span class="coffee-machine">☕</span>
-                        <span class="coffee-steam">💨</span>
+                        <span class="coffee-machine" role="img" aria-label="Кофе-машина">☕</span>
+                        <span class="coffee-steam" role="img" aria-label="Пар от кофе">💨</span>
                     </div>
                 </div>
             </div>
         </div>
     </main>
 
-    <footer class="footer">
-        <div class="legend">
+    <footer class="footer" role="contentinfo">
+        <div class="legend" role="region" aria-label="Легенда статусов">
             <div class="legend-item">
-                <span class="legend-dot working"></span>
+                <span class="legend-dot working" aria-hidden="true"></span>
                 <span>Работает</span>
             </div>
             <div class="legend-item">
-                <span class="legend-dot resting"></span>
+                <span class="legend-dot resting" aria-hidden="true"></span>
                 <span>Отдыхает</span>
             </div>
         </div>
         <p class="copyright">AI Team Office © 2026</p>
     </footer>
 
+    <!-- Live region for dynamic updates -->
+    <div id="live-region" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
     <!-- ==================== MODAL ==================== -->
-    <div class="modal-overlay" id="agentModal">
+    <div class="modal-overlay" id="agentModal" role="dialog" aria-modal="true" aria-labelledby="modalName">
         <div class="modal">
             <div class="modal-header">
                 <div class="modal-agent-info">
@@ -1793,11 +2702,32 @@
                     <div class="modal-agent-details">
                         <h2 id="modalName">Алексей</h2>
                         <p id="modalRole">UI Designer</p>
+                        <p id="modalAgentProject" style="color: var(--neon-blue); font-size: 12px; margin-top: 4px;"></p>
                     </div>
                 </div>
-                <button class="modal-close" onclick="closeModal()">×</button>
+                <button class="modal-close" onclick="closeModal()" aria-label="Закрыть модальное окно">×</button>
             </div>
             <div class="modal-body">
+                <!-- Project & Task Info from API -->
+                <div class="modal-section" id="modalAgentTaskSection" style="display: none;">
+                    <div class="modal-section-title">Текущая задача (GitHub)</div>
+                    <div class="modal-task-card">
+                        <div class="modal-task-header">
+                            <span class="modal-task-name" id="modalAgentTask"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Assigned Issues from GitHub -->
+                <div class="modal-section" id="modalAgentIssuesSection" style="display: none;">
+                    <div class="modal-section-title">Текущие задачи (GitHub)</div>
+                    <div id="modalAgentIssuesLoader" class="modal-loader" style="display: none;">
+                        <div class="modal-loader-spinner"></div>
+                        <span>Загрузка задач...</span>
+                    </div>
+                    <ul id="modalAgentIssues" style="list-style: none; padding: 0;"></ul>
+                </div>
+
                 <!-- Stats Section -->
                 <div class="modal-section">
                     <div class="modal-section-title">Статистика</div>
@@ -1875,7 +2805,7 @@
     </div>
 
     <!-- ==================== CHAT WIDGET ==================== -->
-    <div class="chat-widget">
+    <div class="chat-widget" role="complementary" aria-label="Чат команды">
         <div class="chat-container" id="chatContainer">
             <div class="chat-header">
                 <div class="chat-title">
@@ -1888,7 +2818,7 @@
                         </div>
                     </div>
                 </div>
-                <button class="chat-close" onclick="toggleChat()">×</button>
+                <button class="chat-close" onclick="toggleChat()" aria-label="Закрыть чат">×</button>
             </div>
             <div class="chat-messages" id="chatMessages">
                 <div class="chat-message">
@@ -1925,14 +2855,17 @@
                 </div>
             </div>
             <div class="chat-input-area">
-                <input type="text" class="chat-input" id="chatInput" placeholder="Написать сообщение..." onkeypress="handleChatKeypress(event)">
-                <button class="chat-send" onclick="sendMessage()">➤</button>
+                <input type="text" class="chat-input" id="chatInput" placeholder="Написать сообщение..." onkeypress="handleChatKeypress(event)" aria-label="Поле ввода сообщения">
+                <button class="chat-send" onclick="sendMessage()" aria-label="Отправить сообщение">➤</button>
             </div>
         </div>
-        <button class="chat-toggle" onclick="toggleChat()">💬</button>
+        <button class="chat-toggle" onclick="toggleChat()" aria-label="Открыть чат с командой">💬</button>
     </div>
 
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <script src="animations.js"></script>
+    <script src="security.js"></script>
+    <script src="security-tests.js"></script>
     <script>
         // ==================== AGENT DATA ====================
         const agentsData = {
@@ -1941,6 +2874,7 @@
                 role: 'UI Designer',
                 avatar: '👨‍🎨',
                 fullRole: 'UI/UX Дизайнер',
+                project: 'Meetify',
                 task: 'Дизайн нового интерфейса',
                 progress: 75,
                 tasksCompleted: 12,
@@ -1958,6 +2892,7 @@
                 role: 'Fullstack разработчик',
                 avatar: '👨‍💼',
                 fullRole: 'Senior Fullstack Developer',
+                project: 'Meetify',
                 task: 'Разработка API endpoints',
                 progress: 60,
                 tasksCompleted: 18,
@@ -1975,6 +2910,7 @@
                 role: 'QA Engineer',
                 avatar: '👩‍🔬',
                 fullRole: 'Quality Assurance Engineer',
+                project: 'AI Team Office',
                 task: 'Тестирование нового релиза',
                 progress: 85,
                 tasksCompleted: 24,
@@ -1992,6 +2928,7 @@
                 role: 'DevOps',
                 avatar: '👨‍🚀',
                 fullRole: 'DevOps Engineer',
+                project: 'AI Team Office',
                 task: 'Настройка CI/CD пайплайнов',
                 progress: 45,
                 tasksCompleted: 9,
@@ -2009,6 +2946,7 @@
                 role: 'Data Scientist',
                 avatar: '👨‍💻',
                 fullRole: 'Senior Data Analyst',
+                project: 'DataVision',
                 task: 'Анализ пользовательских метрик',
                 progress: 70,
                 tasksCompleted: 15,
@@ -2026,6 +2964,7 @@
                 role: 'Cyber Security',
                 avatar: '👩‍✈️',
                 fullRole: 'Security Engineer',
+                project: 'SecureFlow',
                 task: 'Аудит безопасности системы',
                 progress: 30,
                 tasksCompleted: 7,
@@ -2042,12 +2981,17 @@
 
         // ==================== MODAL FUNCTIONS ====================
         let currentAgentId = null;
+        let lastFocusedElement = null;
 
-        function openModal(agentId) {
+        async function openModal(agentId) {
             currentAgentId = agentId;
             const agent = agentsData[agentId];
             if (!agent) return;
 
+            // Store last focused element for restoration
+            lastFocusedElement = document.activeElement;
+
+            // Показываем модалку с базовыми данными сразу
             document.getElementById('modalAvatar').textContent = agent.avatar;
             document.getElementById('modalName').textContent = agent.name;
             document.getElementById('modalRole').textContent = agent.fullRole;
@@ -2067,7 +3011,7 @@
             // Update task queue
             const taskList = document.getElementById('taskList');
             taskList.innerHTML = agent.queue.map((task, index) => `
-                <div class="modal-task-card" draggable="true" data-task-id="${index}">
+                <div class="modal-task-card" draggable="true" data-task-id="${index}" tabindex="0" role="button" aria-label="Задача: ${task.name}, статус: ${getStatusText(task.status)}">
                     <div class="modal-task-header">
                         <span class="modal-task-name">${task.name}</span>
                         <span class="modal-task-status ${task.status}">${getStatusText(task.status)}</span>
@@ -2078,12 +3022,160 @@
             // Re-initialize drag and drop
             initDragAndDrop();
 
+            // Скрываем секции API данных до загрузки
+            document.getElementById('modalAgentIssuesSection').style.display = 'none';
+
             document.getElementById('agentModal').classList.add('active');
+            
+            // Focus on close button for accessibility
+            const closeBtn = document.querySelector('.modal-close');
+            if (closeBtn) closeBtn.focus();
+            
+            // Announce to screen readers
+            announceToScreenReader(`Открыто окно информации о ${agent.name}, ${agent.fullRole}`);
+
+            // Загружаем актуальные данные из API
+            await loadAgentDetailsFromAPI(agent.name);
+        }
+
+        // Загрузка деталей агента из API
+        async function loadAgentDetailsFromAPI(agentName) {
+            const loader = document.getElementById('modalAgentIssuesLoader');
+            const issuesSection = document.getElementById('modalAgentIssuesSection');
+            
+            // Показываем loader
+            if (loader) loader.style.display = 'flex';
+            if (issuesSection) issuesSection.style.display = 'block';
+            
+            try {
+                const response = await fetch(`/api/agents/status/${encodeURIComponent(agentName)}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const agentData = await response.json();
+                
+                // Обновляем модалку актуальными данными
+                updateModalWithAPIData(agentData);
+            } catch (error) {
+                console.warn('[AgentModal] API недоступен, используем локальные данные:', error.message);
+                // Fallback: скрываем секцию задач если API недоступен
+                if (issuesSection) issuesSection.style.display = 'none';
+            } finally {
+                // Скрываем loader
+                if (loader) loader.style.display = 'none';
+            }
+        }
+
+        // Обновление модалки данными из API
+        function updateModalWithAPIData(agent) {
+            // Обновляем основные поля если они есть в ответе
+            if (agent.name) document.getElementById('modalName').textContent = agent.name;
+            if (agent.role) document.getElementById('modalRole').textContent = agent.role;
+            
+            // Обновляем проект
+            const projectEl = document.getElementById('modalAgentProject');
+            if (projectEl && agent.project) {
+                projectEl.textContent = `📁 ${agent.project}`;
+            }
+            
+            // Обновляем текущую задачу из GitHub
+            const taskSection = document.getElementById('modalAgentTaskSection');
+            const taskEl = document.getElementById('modalAgentTask');
+            if (agent.task) {
+                if (taskSection) taskSection.style.display = 'block';
+                if (taskEl) taskEl.textContent = agent.task;
+            } else {
+                if (taskSection) taskSection.style.display = 'none';
+            }
+            
+            // Обновляем список issues из GitHub
+            const issuesSection = document.getElementById('modalAgentIssuesSection');
+            const issuesList = document.getElementById('modalAgentIssues');
+            
+            if (issuesList && agent.issues && Array.isArray(agent.issues) && agent.issues.length > 0) {
+                if (issuesSection) issuesSection.style.display = 'block';
+                issuesList.innerHTML = '';
+                
+                agent.issues.forEach(issue => {
+                    const li = document.createElement('li');
+                    li.style.cssText = 'padding: 12px 16px; margin-bottom: 8px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; font-size: 13px;';
+                    
+                    // Формируем HTML для issue
+                    const statusClass = issue.status === 'open' ? 'open' : 'closed';
+                    const statusText = issue.status === 'open' ? 'Open' : 'Closed';
+                    
+                    let issueHTML = `
+                        <div class="issue-item">
+                            <span class="issue-title">${escapeHtml(issue.title)}</span>
+                            <span class="issue-badge ${statusClass}">${statusText}</span>
+                    `;
+                    
+                    // Добавляем ссылку на GitHub если есть
+                    if (issue.url) {
+                        issueHTML += `<a href="${escapeHtml(issue.url)}" target="_blank" rel="noopener noreferrer" class="issue-link">#${issue.number || ''} →</a>`;
+                    }
+                    
+                    issueHTML += '</div>';
+                    li.innerHTML = issueHTML;
+                    issuesList.appendChild(li);
+                });
+                
+                // Обновляем прогресс бар на основе реальных данных
+                updateProgressFromIssues(agent.issues);
+            } else {
+                // Нет issues - показываем сообщение
+                if (issuesSection) issuesSection.style.display = 'block';
+                if (issuesList) {
+                    issuesList.innerHTML = `
+                        <li style="padding: 16px; text-align: center; color: var(--text-secondary); font-size: 13px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;">
+                            Нет назначенных задач
+                        </li>
+                    `;
+                }
+            }
+        }
+        
+        // Обновление прогресса на основе issues
+        function updateProgressFromIssues(issues) {
+            if (!issues || issues.length === 0) return;
+            
+            const closedCount = issues.filter(i => i.status === 'closed').length;
+            const totalCount = issues.length;
+            const progress = Math.round((closedCount / totalCount) * 100);
+            
+            // Обновляем прогресс бар в текущей задаче
+            const progressFill = document.getElementById('modalTaskProgress');
+            const progressText = document.getElementById('modalTaskProgressText');
+            
+            if (progressFill) {
+                progressFill.style.width = progress + '%';
+            }
+            if (progressText) {
+                progressText.textContent = progress + '%';
+            }
         }
 
         function closeModal() {
             document.getElementById('agentModal').classList.remove('active');
+            
+            // Restore focus to the element that opened the modal
+            if (lastFocusedElement) {
+                lastFocusedElement.focus();
+            }
+            
             currentAgentId = null;
+        }
+
+        // Announce messages to screen readers
+        function announceToScreenReader(message) {
+            const liveRegion = document.getElementById('live-region');
+            if (liveRegion) {
+                liveRegion.textContent = message;
+                // Clear after announcement
+                setTimeout(() => {
+                    liveRegion.textContent = '';
+                }, 1000);
+            }
         }
 
         function getStatusText(status) {
@@ -2101,6 +3193,43 @@
                 closeModal();
             }
         });
+
+        // Close modal and chat on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const modal = document.getElementById('agentModal');
+                const chat = document.getElementById('chatContainer');
+                
+                if (modal.classList.contains('active')) {
+                    closeModal();
+                } else if (chat.classList.contains('active')) {
+                    toggleChat();
+                }
+            }
+        });
+
+        // ==================== PROJECT DISPLAY UPDATE (SECURE) ====================
+        // Update project display on agent's monitor when task changes
+        function updateAgentScreen(agentId, project, task) {
+            const desk = document.querySelector(`.desk-station[data-agent-id="${agentId}"]`);
+            if (!desk) return;
+            
+            const monitor = desk.querySelector('.monitor');
+            if (!monitor) return;
+            
+            // SECURITY: Валидация входных данных через SecurityModule
+            const validation = SecurityModule.sanitizeProjectData({ project, task });
+            if (!validation.valid) {
+                console.warn('[Security] Project data validation failed:', validation.errors);
+            }
+            
+            // Update data attributes (sanitized)
+            desk.dataset.project = validation.sanitized.project || 'Unknown';
+            desk.dataset.task = validation.sanitized.task || 'No task';
+            
+            // Animate screen update with security
+            animateProjectChangeSecure(monitor, validation.sanitized.project, validation.sanitized.task);
+        }
 
         // ==================== CHAT FUNCTIONS ====================
         function toggleChat() {
@@ -2257,6 +3386,523 @@
             });
         }
 
+        // ==================== PROJECT DISPLAY ANIMATION (SECURE) ====================
+        // Animate project change on screens with XSS protection
+        function animateProjectChangeSecure(monitor, newProject, newTask) {
+            const projectEl = monitor.querySelector('.screen-project');
+            const taskEl = monitor.querySelector('.screen-task');
+            
+            if (!projectEl || !taskEl) return;
+            
+            // SECURITY: Используем textContent вместо innerHTML
+            // Это предотвращает XSS-атаки
+            
+            // Fade out
+            projectEl.style.transition = 'opacity 0.3s ease';
+            taskEl.style.transition = 'opacity 0.3s ease';
+            projectEl.style.opacity = '0';
+            taskEl.style.opacity = '0';
+            
+            setTimeout(() => {
+                // SECURITY: textContent автоматически экранирует HTML
+                projectEl.textContent = newProject || 'Unknown';
+                taskEl.textContent = newTask || 'No task';
+                
+                // Fade in
+                projectEl.style.opacity = '1';
+                taskEl.style.opacity = '1';
+            }, 300);
+        }
+        
+        // Legacy function - deprecated, use animateProjectChangeSecure
+        function animateProjectChange(monitor, newProject, newTask) {
+            // Redirect to secure version
+            animateProjectChangeSecure(monitor, newProject, newTask);
+        }
+
+        // Example: Update project every 10 seconds for demo
+        // In real app, this would be triggered by WebSocket or API
+        setInterval(() => {
+            const monitors = document.querySelectorAll('.monitor');
+            const randomMonitor = monitors[Math.floor(Math.random() * monitors.length)];
+            const projects = [
+                { project: 'Meetify', task: 'Виртуальный фон' },
+                { project: 'Meetify', task: 'Запись встреч' },
+                { project: 'AI Team Office', task: 'Тестирование' },
+                { project: 'AI Team Office', task: 'DevOps' },
+                { project: 'AI Team Office', task: 'Документация' },
+                { project: 'AI Team Office', task: 'Security' }
+            ];
+            const randomProject = projects[Math.floor(Math.random() * projects.length)];
+            animateProjectChange(randomMonitor, randomProject.project, randomProject.task);
+        }, 10000);
+
+        // ==================== AGENT STATUS API + WEBSOCKET ====================
+        const API_ENDPOINT = '/api/agents/status';
+        const UPDATE_INTERVAL = 30000; // 30 секунд (fallback polling)
+        let agentsStatusCache = {};
+        let apiAvailable = true;
+        let socket = null;
+        let isWebSocketConnected = false;
+
+        // Fallback данные (статичные, если API недоступен)
+        const fallbackAgents = [
+            { id: '1', name: 'Алексей', status: 'working', location: 'work-zone', statusRing: 'green', statusRingColor: '#22c55e', project: 'Meetify', task: 'Виртуальный фон', progress: 75, emoji: '👨‍🎨', role: 'UI Designer', deskId: '1' },
+            { id: '2', name: 'Мария', status: 'working', location: 'work-zone', statusRing: 'green', statusRingColor: '#22c55e', project: 'Meetify', task: 'Запись встреч', progress: 60, emoji: '👨‍💼', role: 'Fullstack разработчик', deskId: '2' },
+            { id: '3', name: 'Иван', status: 'working', location: 'work-zone', statusRing: 'green', statusRingColor: '#22c55e', project: 'AI Team Office', task: 'Тестирование', progress: 85, emoji: '👩‍🔬', role: 'QA инженер', deskId: '3' },
+            { id: '4', name: 'Дмитрий', status: 'working', location: 'work-zone', statusRing: 'green', statusRingColor: '#22c55e', project: 'AI Team Office', task: 'CI/CD Pipeline', progress: 45, emoji: '👨‍🚀', role: 'DevOps инженер', deskId: '4' },
+            { id: '5', name: 'Ольга', status: 'working', location: 'work-zone', statusRing: 'green', statusRingColor: '#22c55e', project: 'DataVision', task: 'Анализ метрик', progress: 70, emoji: '👨‍💻', role: 'Data Scientist', deskId: '5' },
+            { id: '6', name: 'Андрей', status: 'working', location: 'work-zone', statusRing: 'green', statusRingColor: '#22c55e', project: 'SecureFlow', task: 'Security Audit', progress: 30, emoji: '👩‍✈️', role: 'Security инженер', deskId: '6' }
+        ];
+
+        // Получение статусов агентов с API (REST fallback)
+        async function fetchAgentsStatus() {
+            try {
+                const response = await fetch(API_ENDPOINT);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                apiAvailable = true;
+                return data.agents || data;
+            } catch (error) {
+                console.warn('[AgentStatus] API недоступен, используем fallback:', error.message);
+                apiAvailable = false;
+                return fallbackAgents;
+            }
+        }
+
+        // ==================== WEBSOCKET CONNECTION ====================
+        function initWebSocket() {
+            const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsUrl = `${wsProtocol}//${window.location.host}`;
+            
+            console.log('[WebSocket] Подключение к', wsUrl);
+            
+            socket = io(wsUrl, {
+                transports: ['websocket', 'polling'],
+                reconnection: true,
+                reconnectionAttempts: 5,
+                reconnectionDelay: 1000
+            });
+            
+            socket.on('connect', () => {
+                console.log('[WebSocket] Подключено:', socket.id);
+                isWebSocketConnected = true;
+                
+                // Запрашиваем текущие статусы при подключении
+                socket.emit('request-agents-status');
+            });
+            
+            socket.on('disconnect', () => {
+                console.log('[WebSocket] Отключено');
+                isWebSocketConnected = false;
+            });
+            
+            socket.on('agents-status-update', (data) => {
+                console.log('[WebSocket] Получено обновление статусов:', data);
+                
+                if (data.agents && Array.isArray(data.agents)) {
+                    processAgentStatusChanges(data.agents);
+                    
+                    // Если есть изменения, анонсируем их
+                    if (data.changes && data.changes.length > 0) {
+                        const changeNames = data.changes.map(c => c.name).join(', ');
+                        announceToScreenReader(`Обновление статусов: ${changeNames}`);
+                    }
+                }
+            });
+            
+            socket.on('error', (error) => {
+                console.error('[WebSocket] Ошибка:', error);
+            });
+        }
+
+        // ==================== AGENT MOVEMENT ANIMATIONS ====================
+        
+        /**
+         * Переместить агента в комнату отдыха
+         * 🟡 Жёлтое кольцо, плавная анимация
+         */
+        function moveToRestRoom(agent) {
+            console.log(`[AgentMovement] ${agent.name} → rest-room`);
+
+            // 1. Проверить что в комнате отдыха его ещё нет (предотвращаем дублирование)
+            const existingRestAgent = document.querySelector(`.rest-agent[data-agent-name="${agent.name}"]`);
+            if (existingRestAgent) {
+                console.log(`[AgentMovement] ${agent.name} уже в комнате отдыха, пропускаем`);
+                return;
+            }
+
+            // 2. Удалить из рабочей зоны (если есть deskId)
+            if (agent.deskId) {
+                const desk = document.querySelector(`.desk-station[data-agent-id="${agent.deskId}"]`);
+                if (desk) {
+                    // Анимируем исчезновение с рабочего места
+                    animateDeskExit(desk, agent);
+                }
+            }
+
+            // 3. Создать в комнате отдыха
+            addAgentToRestRoom(agent);
+
+            // Объявляем для screen readers
+            announceToScreenReader(`${agent.name} перешёл в комнату отдыха`);
+        }
+
+        /**
+         * Переместить агента на рабочее место
+         * 🟢 Зелёное кольцо, плавная анимация
+         */
+        function moveToWorkZone(agent) {
+            console.log(`[AgentMovement] ${agent.name} → work-zone`);
+
+            // 1. Проверить что на рабочем месте его ещё нет (предотвращаем дублирование)
+            if (agent.deskId) {
+                const desk = document.querySelector(`.desk-station[data-agent-id="${agent.deskId}"]`);
+                if (desk) {
+                    const agentEmoji = desk.querySelector('.agent-emoji');
+                    const statusRing = desk.querySelector('.agent-status-ring');
+                    // Если агент уже виден и активен, просто обновляем статус
+                    if (agentEmoji && desk.style.opacity !== '0.6' && statusRing && !statusRing.classList.contains('resting')) {
+                        console.log(`[AgentMovement] ${agent.name} уже на рабочем месте, пропускаем`);
+                        return;
+                    }
+                }
+            }
+
+            // 2. Убрать из комнаты отдыха если там есть
+            const existingRestAgent = document.querySelector(`.rest-agent[data-agent-name="${agent.name}"]`);
+            if (existingRestAgent) {
+                removeAgentFromRestRoom(agent);
+            }
+
+            // 3. Добавить на рабочее место
+            if (agent.deskId) {
+                const desk = document.querySelector(`.desk-station[data-agent-id="${agent.deskId}"]`);
+                if (desk) {
+                    animateDeskEntry(desk, agent);
+                }
+            }
+
+            // Объявляем для screen readers
+            announceToScreenReader(`${agent.name} вернулся на рабочее место`);
+        }
+
+        /**
+         * Анимация ухода агента с рабочего места
+         */
+        function animateDeskExit(desk, agent) {
+            const agentContainer = desk.querySelector('.agent-container');
+            const agentEmoji = desk.querySelector('.agent-emoji');
+            const statusRing = desk.querySelector('.agent-status-ring');
+            
+            // Добавляем класс для анимации
+            desk.classList.add('agent-leaving');
+            
+            // Меняем цвет кольца на жёлтый
+            if (statusRing) {
+                statusRing.style.background = '#f59e0b';
+                statusRing.style.boxShadow = '0 0 10px #f59e0b';
+                statusRing.classList.add('resting');
+            }
+            
+            // Анимируем emoji
+            if (agentEmoji) {
+                agentEmoji.classList.remove('typing');
+                agentEmoji.style.animation = 'agentExit 0.8s ease forwards';
+            }
+            
+            // Затемняем рабочее место
+            desk.style.opacity = '0.6';
+            desk.style.transform = 'scale(0.95)';
+            desk.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+            
+            // Убираем класс после анимации
+            setTimeout(() => {
+                desk.classList.remove('agent-leaving');
+            }, 800);
+        }
+
+        /**
+         * Анимация появления агента на рабочем месте
+         */
+        function animateDeskEntry(desk, agent) {
+            // Проверяем, не отображается ли агент уже на этом месте активно
+            const agentEmoji = desk.querySelector('.agent-emoji');
+            const statusRing = desk.querySelector('.agent-status-ring');
+            
+            if (agentEmoji && desk.style.opacity === '1' && statusRing && !statusRing.classList.contains('resting')) {
+                console.log(`[AgentMovement] ${agent.name} уже активен на рабочем месте`);
+                return;
+            }
+            
+            // Добавляем класс для анимации
+            desk.classList.add('agent-entering');
+            
+            // Меняем цвет кольца на зелёный
+            if (statusRing) {
+                statusRing.style.background = '#22c55e';
+                statusRing.style.boxShadow = '0 0 10px #22c55e';
+                statusRing.classList.remove('resting');
+            }
+            
+            // Возвращаем opacity и scale
+            desk.style.opacity = '1';
+            desk.style.transform = 'scale(1)';
+            desk.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+            
+            // Анимируем emoji
+            if (agentEmoji) {
+                agentEmoji.classList.add('typing');
+                agentEmoji.style.animation = 'agentEnter 0.8s ease forwards';
+            }
+            
+            // Убираем класс после анимации
+            setTimeout(() => {
+                desk.classList.remove('agent-entering');
+                if (agentEmoji) agentEmoji.style.animation = '';
+            }, 800);
+        }
+
+        /**
+         * Добавить агента в комнату отдыха
+         */
+        function addAgentToRestRoom(agent) {
+            // Проверяем, есть ли уже этот агент в динамическом списке
+            const existingRestAgent = document.querySelector(`.rest-agent[data-agent-name="${agent.name}"]`);
+            if (existingRestAgent) {
+                console.log(`[AgentMovement] ${agent.name} уже в списке комнаты отдыха, пропускаем создание`);
+                return;
+            }
+
+            // Проверяем, есть ли агент в статичной разметке зон (шезлонг/PlayStation)
+            const staticZone = document.querySelector(`[data-rest-agent="${agent.name}"]`);
+            if (staticZone) {
+                console.log(`[AgentMovement] ${agent.name} уже в статичной зоне отдыха`);
+                // Просто обновляем видимость
+                updateRestRoomZones(agent, true);
+                return;
+            }
+
+            const restRoomContent = document.querySelector('.rest-room-content');
+            if (!restRoomContent) {
+                console.warn(`[AgentMovement] Не найдена комната отдыха`);
+                return;
+            }
+
+            console.log(`[AgentMovement] Создаём ${agent.name} в комнате отдыха`);
+
+            // Создаём элемент агента в комнате отдыха
+            const restAgentEl = document.createElement('div');
+            restAgentEl.className = 'rest-agent';
+            restAgentEl.setAttribute('data-agent-name', agent.name);
+            restAgentEl.innerHTML = `
+                <div class="rest-agent-avatar">
+                    <span class="rest-agent-emoji">${agent.emoji}</span>
+                    <span class="rest-status-ring" aria-label="Статус: отдыхает"></span>
+                </div>
+                <div class="rest-agent-info">
+                    <div class="rest-agent-name">${agent.name} (${agent.role})</div>
+                    <div class="rest-agent-status">Отдыхает</div>
+                </div>
+            `;
+
+            // Добавляем стили для анимации появления
+            restAgentEl.style.cssText = `
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 12px 16px;
+                background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(234, 179, 8, 0.05));
+                border: 1px solid rgba(245, 158, 11, 0.2);
+                border-radius: 12px;
+                margin-bottom: 10px;
+                animation: restAgentEnter 0.6s ease forwards;
+                opacity: 0;
+                transform: translateX(-20px);
+            `;
+
+            // Вставляем в начало комнаты отдыха (перед lounge-area)
+            const firstChild = restRoomContent.firstElementChild;
+            restRoomContent.insertBefore(restAgentEl, firstChild);
+
+            // Обновляем статус в существующих зонах если нужно
+            updateRestRoomZones(agent, true);
+        }
+
+        /**
+         * Убрать агента из комнаты отдыха
+         */
+        function removeAgentFromRestRoom(agent) {
+            // Удаляем из динамического списка
+            const restAgentEl = document.querySelector(`.rest-agent[data-agent-name="${agent.name}"]`);
+            if (restAgentEl) {
+                // Анимируем исчезновение
+                restAgentEl.style.animation = 'restAgentExit 0.5s ease forwards';
+                setTimeout(() => {
+                    restAgentEl.remove();
+                }, 500);
+            }
+            
+            // Обновляем статус в статичных зонах (шезлонг/PlayStation)
+            updateRestRoomZones(agent, false);
+        }
+
+        /**
+         * Обновить зоны комнаты отдыха (шезлонг, игровая зона)
+         */
+        function updateRestRoomZones(agent, isResting) {
+            // Сергей - шезлонг
+            if (agent.name === 'Сергей') {
+                const loungePerson = document.querySelector('.lounge-person');
+                const loungeName = document.querySelector('.lounge-name');
+                const loungeStatus = document.querySelector('.lounge-status');
+                
+                if (loungePerson) {
+                    const statusRing = loungePerson.querySelector('.rest-status-ring');
+                    if (isResting) {
+                        loungePerson.style.display = 'block';
+                        if (statusRing) statusRing.style.display = 'block';
+                    } else {
+                        loungePerson.style.display = 'none';
+                    }
+                }
+                if (loungeName) loungeName.textContent = isResting ? `${agent.name} (${agent.role})` : 'Свободно';
+                if (loungeStatus) loungeStatus.textContent = isResting ? 'Отдыхает' : 'Свободно';
+            }
+            
+            // Елена - игровая зона
+            if (agent.name === 'Елена') {
+                const gamingPerson = document.querySelector('.gaming-person');
+                const gamingName = document.querySelector('.gaming-name');
+                const gamingStatus = document.querySelector('.gaming-status');
+                
+                if (gamingPerson) {
+                    const statusRing = gamingPerson.querySelector('.rest-status-ring');
+                    if (isResting) {
+                        gamingPerson.style.display = 'block';
+                        if (statusRing) statusRing.style.display = 'block';
+                    } else {
+                        gamingPerson.style.display = 'none';
+                    }
+                }
+                if (gamingName) gamingName.textContent = isResting ? `${agent.name} (${agent.role})` : 'Свободно';
+                if (gamingStatus) gamingStatus.textContent = isResting ? 'Играет' : 'Свободно';
+            }
+        }
+
+        // Обновление DOM агента на рабочем месте
+        function updateAgentDOM(agent) {
+            const desk = document.querySelector(`.desk-station[data-agent-id="${agent.id}"]`);
+            
+            if (desk) {
+                // Обновляем экран монитора
+                const projectEl = desk.querySelector('.screen-project');
+                const taskEl = desk.querySelector('.screen-task');
+                const progressFill = desk.querySelector('.progress-fill');
+                const progressText = desk.querySelector('.progress-text');
+                const statusRing = desk.querySelector('.agent-status-ring');
+                const agentEmoji = desk.querySelector('.agent-emoji');
+
+                if (projectEl && agent.project) {
+                    projectEl.textContent = agent.project;
+                }
+                if (taskEl && agent.task) {
+                    taskEl.textContent = agent.task;
+                }
+                if (progressFill && agent.progress !== undefined) {
+                    progressFill.style.width = agent.progress + '%';
+                }
+                if (progressText && agent.progress !== undefined) {
+                    progressText.textContent = agent.progress + '%';
+                }
+
+                // Обновляем цвет кольца статуса
+                if (statusRing) {
+                    if (agent.status === 'resting') {
+                        statusRing.style.background = '#f59e0b';
+                        statusRing.style.boxShadow = '0 0 10px #f59e0b';
+                        statusRing.classList.add('resting');
+                    } else {
+                        statusRing.style.background = '#22c55e';
+                        statusRing.style.boxShadow = '0 0 10px #22c55e';
+                        statusRing.classList.remove('resting');
+                    }
+                }
+
+                // Обновляем анимацию emoji
+                if (agentEmoji) {
+                    if (agent.status === 'working') {
+                        agentEmoji.classList.add('typing');
+                    } else {
+                        agentEmoji.classList.remove('typing');
+                    }
+                }
+
+                // Обновляем data-атрибуты
+                desk.dataset.project = agent.project || '';
+                desk.dataset.task = agent.task || '';
+                desk.dataset.progress = agent.progress || 0;
+            }
+        }
+
+        // Обновление статус-бара
+        function updateStatusBar(agents) {
+            const workingCount = agents.filter(a => a.status === 'working').length;
+            const restingCount = agents.filter(a => a.status === 'resting').length;
+            const totalCount = agents.length;
+
+            const statusItems = document.querySelectorAll('.status-item');
+            if (statusItems.length >= 3) {
+                statusItems[0].querySelector('.status-value').textContent = totalCount;
+                statusItems[1].querySelector('.status-value').textContent = workingCount;
+                statusItems[2].querySelector('.status-value').textContent = restingCount;
+            }
+        }
+
+        // Обработка изменений статусов
+        function processAgentStatusChanges(newAgents) {
+            newAgents.forEach(agent => {
+                const oldAgent = agentsStatusCache[agent.id];
+                
+                if (oldAgent) {
+                    // Проверяем смену статуса
+                    if (oldAgent.status !== agent.status) {
+                        console.log(`[AgentStatus] ${agent.name}: ${oldAgent.status} → ${agent.status}`);
+                        
+                        if (agent.status === 'resting') {
+                            moveToRestRoom(agent);
+                        } else if (agent.status === 'working') {
+                            moveToWorkZone(agent);
+                        }
+                    }
+                } else {
+                    // Новый агент - размещаем согласно статусу
+                    if (agent.status === 'resting') {
+                        addAgentToRestRoom(agent);
+                    }
+                }
+                
+                // Обновляем DOM
+                updateAgentDOM(agent);
+                
+                // Кэшируем статус
+                agentsStatusCache[agent.id] = { ...agent };
+            });
+
+            // Обновляем статус-бар
+            updateStatusBar(newAgents);
+        }
+
+        // Основная функция обновления
+        async function updateAgentsStatus() {
+            const agents = await fetchAgentsStatus();
+            if (agents && agents.length > 0) {
+                processAgentStatusChanges(agents);
+            }
+        }
+
         // ==================== INITIALIZATION ====================
         document.addEventListener('DOMContentLoaded', function() {
             // Random typing animation for agents
@@ -2283,6 +3929,17 @@
                     }
                 });
 
+                // Keyboard accessibility for desk stations
+                desk.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        const agentId = desk.dataset.agentId;
+                        if (agentId) {
+                            openModal(agentId);
+                        }
+                    }
+                });
+
                 desk.addEventListener('mouseenter', () => {
                     const agent = desk.querySelector('.agent-emoji');
                     agent.style.transform = 'scale(1.2) rotate(5deg)';
@@ -2302,6 +3959,22 @@
             if (chatMessages) {
                 chatMessages.scrollTop = chatMessages.scrollHeight;
             }
+
+            // ==================== WEBSOCKET INITIALIZATION ====================
+            // Инициализируем WebSocket для real-time обновлений
+            initWebSocket();
+            
+            // ==================== API INITIALIZATION ====================
+            // Первоначальная загрузка статусов (REST fallback)
+            updateAgentsStatus();
+            
+            // Периодическое обновление каждые 30 секунд (fallback если WebSocket не работает)
+            setInterval(() => {
+                if (!isWebSocketConnected) {
+                    console.log('[AgentStatus] WebSocket не подключен, используем REST polling');
+                    updateAgentsStatus();
+                }
+            }, UPDATE_INTERVAL);
         });
     </script>
 </body>
