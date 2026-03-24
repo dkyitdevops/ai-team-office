@@ -2372,13 +2372,17 @@
         }
 
         // ==================== NORMALIZE AGENT DATA ====================
-        // API возвращает поле 'agent' вместо 'name', нормализуем данные
-        // Используем agent.agent (или agent.name) как единый ключ для всего
-        function normalizeAgentData(agent) {
-            const name = agent.name || agent.agent || 'Unknown';
+        // API возвращает разные поля (id, name, agent), нормализуем данные
+        // Используем нормализованное имя как единый ключ для всего
+        function normalizeAgent(agent) {
+            const name = (agent.name || agent.agent || agent.id || 'unknown')
+                .toString()
+                .normalize('NFC')
+                .trim();
+
             return {
                 ...agent,
-                id: name,  // Используем name как id для консистентности
+                id: name,  // используем name как единый ключ
                 name: name,
                 role: agent.role || 'Developer',
                 status: agent.status || 'working',
@@ -2390,8 +2394,13 @@
             };
         }
 
+        // Для обратной совместимости - псевдоним
+        function normalizeAgentData(agent) {
+            return normalizeAgent(agent);
+        }
+
         function normalizeAgentsData(agents) {
-            return agents.map(normalizeAgentData);
+            return agents.map(normalizeAgent);
         }
 
         // ==================== RENDER WORK AREA ====================
