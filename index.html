@@ -2564,7 +2564,16 @@
             issuesList.style.display = 'none';
             issuesList.innerHTML = '';
 
+            // Сначала проверяем кэшированные данные
+            const cachedAgent = agentsData[agentName];
+            let openIssues = [];
+            
+            if (cachedAgent && cachedAgent.issues) {
+                openIssues = cachedAgent.issues.filter(issue => issue.state === 'open');
+            }
+
             try {
+                // Делаем API запрос для получения свежих данных
                 const timestamp = Date.now();
                 const url = `${API_ENDPOINT}/${encodeURIComponent(agentName)}?t=${timestamp}`;
                 const response = await fetch(url);
@@ -2573,29 +2582,32 @@
                 }
                 const agentData = await response.json();
                 
-                // Фильтруем только открытые задачи
-                const openIssues = agentData.issues ? agentData.issues.filter(issue => issue.state === 'open') : [];
-                
-                if (openIssues.length > 0) {
-                    issuesList.innerHTML = openIssues.map(issue => `
-                        <div class="issue-item">
-                            <span class="issue-number">#${issue.number}</span>
-                            <a href="https://github.com/${issue.repo}/issues/${issue.number}" target="_blank" rel="noopener" class="issue-title-text" style="color: var(--neon-blue); text-decoration: none;">
-                                ${escapeHtml(issue.title)}
-                            </a>
-                            <span class="issue-state open">OPEN</span>
-                        </div>
-                    `).join('');
-                } else {
-                    issuesList.innerHTML = '<div style="color: var(--text-secondary); text-align: center; padding: 20px;">Нет открытых задач</div>';
+                // Используем данные из API если они есть, иначе кэшированные
+                if (agentData.issues && agentData.issues.length > 0) {
+                    openIssues = agentData.issues.filter(issue => issue.state === 'open');
                 }
             } catch (error) {
-                console.warn('[Modal] Error loading issues:', error.message);
-                issuesList.innerHTML = '<div style="color: var(--text-secondary); text-align: center; padding: 20px;">Не удалось загрузить задачи</div>';
-            } finally {
-                loader.style.display = 'none';
-                issuesList.style.display = 'flex';
+                console.warn('[Modal] Error loading issues from API, using cached:', error.message);
+                // Используем кэшированные данные если API недоступен
             }
+            
+            // Отображаем issues
+            if (openIssues.length > 0) {
+                issuesList.innerHTML = openIssues.map(issue => `
+                    <div class="issue-item">
+                        <span class="issue-number">#${issue.number}</span>
+                        <a href="https://github.com/${issue.repo}/issues/${issue.number}" target="_blank" rel="noopener" class="issue-title-text" style="color: var(--neon-blue); text-decoration: none;">
+                            ${escapeHtml(issue.title)}
+                        </a>
+                        <span class="issue-state open">OPEN</span>
+                    </div>
+                `).join('');
+            } else {
+                issuesList.innerHTML = '<div style="color: var(--text-secondary); text-align: center; padding: 20px;">Нет открытых задач</div>';
+            }
+            
+            loader.style.display = 'none';
+            issuesList.style.display = 'flex';
         }
 
         function closeModal() {
