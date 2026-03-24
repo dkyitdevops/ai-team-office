@@ -3,11 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>AI Team Office - Визуализация команды</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="animations.css">
+    <link rel="stylesheet" href="animations.css?v=2">
     <style>
         * {
             margin: 0;
@@ -35,14 +38,13 @@
             background: var(--bg-dark);
             color: var(--text-primary);
             min-height: 100vh;
-            min-height: 100dvh; /* Dynamic viewport height for mobile */
+            min-height: 100dvh;
             overflow-x: hidden;
-            -webkit-text-size-adjust: 100%; /* Prevent font scaling on orientation change */
+            -webkit-text-size-adjust: 100%;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
 
-        /* Animated background grid */
         body::before {
             content: '';
             position: fixed;
@@ -58,7 +60,6 @@
             z-index: 0;
         }
 
-        /* Header */
         .header {
             position: relative;
             z-index: 10;
@@ -134,7 +135,6 @@
             text-transform: uppercase;
         }
 
-        /* Main Office Container */
         .office-container {
             position: relative;
             z-index: 1;
@@ -160,14 +160,12 @@
             color: var(--text-secondary);
         }
 
-        /* Floor Plan */
         .floor-plan {
             display: grid;
             grid-template-columns: 1fr 350px;
             gap: 30px;
         }
 
-        /* Work Area */
         .work-area {
             background: var(--bg-panel);
             border: 1px solid var(--border);
@@ -198,7 +196,6 @@
             padding: 20px 0;
         }
 
-        /* Desk with Computer */
         .desk-station {
             position: relative;
             display: flex;
@@ -225,7 +222,6 @@
             transform: scale(1.1);
         }
 
-        /* Computer Setup */
         .computer-setup {
             position: relative;
             width: 140px;
@@ -233,7 +229,6 @@
             margin-bottom: 10px;
         }
 
-        /* Monitor */
         .monitor {
             position: absolute;
             top: 0;
@@ -278,7 +273,6 @@
             animation: codeTyping 2s infinite;
         }
 
-        /* Screen Content - Project Display */
         .screen-content {
             position: absolute;
             top: 5px;
@@ -358,32 +352,6 @@
             100% { transform: translateX(100%); opacity: 0; }
         }
 
-        /* Project Display on Monitor */
-        .monitor-project {
-            position: absolute;
-            bottom: 8px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 8px;
-            font-weight: 600;
-            color: var(--neon-blue);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 85%;
-            text-shadow: 0 0 5px rgba(0, 212, 255, 0.5);
-            animation: projectGlow 3s ease-in-out infinite;
-            z-index: 10;
-        }
-
-        @keyframes projectGlow {
-            0%, 100% { opacity: 0.8; text-shadow: 0 0 5px rgba(0, 212, 255, 0.5); }
-            50% { opacity: 1; text-shadow: 0 0 10px rgba(0, 212, 255, 0.8); }
-        }
-
-        /* Monitor Stand */
         .monitor-stand {
             position: absolute;
             bottom: 20px;
@@ -406,7 +374,6 @@
             border-radius: 4px;
         }
 
-        /* Desk Surface */
         .desk-surface {
             position: absolute;
             bottom: 0;
@@ -419,7 +386,6 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
 
-        /* Keyboard */
         .keyboard {
             position: absolute;
             bottom: 20px;
@@ -448,7 +414,6 @@
             );
         }
 
-        /* Mouse */
         .mouse {
             position: absolute;
             bottom: 20px;
@@ -460,7 +425,6 @@
             border-radius: 6px;
         }
 
-        /* Cables */
         .cable {
             position: absolute;
             bottom: 15px;
@@ -473,7 +437,6 @@
         .cable-left { left: 30px; }
         .cable-right { right: 30px; }
 
-        /* Agent Avatar */
         .agent-container {
             position: relative;
             display: flex;
@@ -493,7 +456,6 @@
             animation: agentTyping 0.5s ease-in-out infinite;
         }
 
-        /* Status Indicator */
         .agent-status-ring {
             position: absolute;
             top: -5px;
@@ -512,7 +474,6 @@
             box-shadow: 0 0 10px var(--neon-orange);
         }
 
-        /* Agent Info */
         .agent-info {
             text-align: center;
             margin-top: 10px;
@@ -530,7 +491,6 @@
             margin-top: 2px;
         }
 
-        /* Rest Room */
         .rest-room {
             background: var(--bg-panel);
             border: 1px solid var(--border);
@@ -561,7 +521,6 @@
             height: 100%;
         }
 
-        /* Lounge Area */
         .lounge-area {
             background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(234, 179, 8, 0.05));
             border: 1px solid rgba(245, 158, 11, 0.2);
@@ -601,7 +560,6 @@
             z-index: 2;
         }
 
-        /* Rest Status Ring (Yellow) */
         .rest-status-ring {
             position: absolute;
             top: -5px;
@@ -653,161 +611,6 @@
             letter-spacing: 1px;
         }
 
-        /* Gaming Area */
-        .gaming-area {
-            background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(236, 72, 153, 0.05));
-            border: 1px solid rgba(168, 85, 247, 0.2);
-            border-radius: 15px;
-            padding: 20px;
-            position: relative;
-            min-height: 140px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-end;
-            opacity: 0;
-            animation: fadeInScale 0.6s ease 0.6s forwards;
-        }
-
-        .gaming-scene {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-        }
-
-        .gaming-tv-setup {
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
-            margin-bottom: 10px;
-        }
-
-        .tv-screen {
-            width: 80px;
-            height: 50px;
-            background: linear-gradient(180deg, #1a1a2e, #0f0f1a);
-            border: 2px solid #2a2a3a;
-            border-radius: 4px;
-            position: relative;
-            box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
-        }
-
-        .tv-screen::before {
-            content: '';
-            position: absolute;
-            inset: 3px;
-            background: linear-gradient(135deg, 
-                rgba(168, 85, 247, 0.3), 
-                rgba(236, 72, 153, 0.2));
-            border-radius: 2px;
-            animation: gameGlow 3s infinite;
-        }
-
-        .gaming-setup {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: -5px;
-        }
-
-        .gaming-furniture {
-            font-size: 50px;
-            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3));
-            line-height: 1;
-        }
-
-        .gaming-person {
-            position: absolute;
-            bottom: 15px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 38px;
-            filter: drop-shadow(0 3px 5px rgba(0,0,0,0.3));
-            animation: gamingIntensity 1.5s ease-in-out infinite;
-            z-index: 2;
-        }
-
-        @keyframes gamingIntensity {
-            0%, 100% { transform: translateX(-50%) rotate(-5deg) scale(1); }
-            25% { transform: translateX(-50%) rotate(5deg) scale(1.1); }
-            50% { transform: translateX(-50%) rotate(-3deg) scale(1); }
-            75% { transform: translateX(-50%) rotate(3deg) scale(1.05); }
-        }
-
-        .gaming-info {
-            text-align: center;
-            margin-top: 8px;
-            padding: 10px 16px;
-            background: rgba(0,0,0,0.3);
-            border-radius: 8px;
-            min-width: 160px;
-        }
-
-        .gaming-name {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--neon-purple);
-            white-space: nowrap;
-        }
-
-        .gaming-status {
-            font-size: 12px;
-            color: var(--text-secondary);
-        }
-
-        .gaming-label {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            font-size: 11px;
-            color: var(--neon-purple);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* Coffee Area */
-        .coffee-area {
-            background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(34, 197, 94, 0.05));
-            border: 1px solid rgba(34, 197, 94, 0.2);
-            border-radius: 15px;
-            padding: 20px;
-            position: relative;
-            min-height: 80px;
-            opacity: 0;
-            animation: fadeInScale 0.6s ease 0.7s forwards;
-        }
-
-        .coffee-machine {
-            font-size: 40px;
-            position: absolute;
-            bottom: 15px;
-            left: 20px;
-            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3));
-        }
-
-        .coffee-steam {
-            position: absolute;
-            bottom: 50px;
-            left: 35px;
-            font-size: 20px;
-            opacity: 0.6;
-            animation: steamRise 2s ease-in-out infinite;
-        }
-
-        .coffee-label {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            font-size: 11px;
-            color: var(--neon-green);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* Door */
         .door-frame {
             position: absolute;
             top: 50%;
@@ -831,7 +634,6 @@
             white-space: nowrap;
         }
 
-        /* Footer */
         .footer {
             margin-top: 40px;
             padding: 30px;
@@ -878,7 +680,6 @@
             font-size: 13px;
         }
 
-        /* Animations */
         @keyframes float {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-10px); }
@@ -916,22 +717,6 @@
             50% { box-shadow: 0 0 15px currentColor, 0 0 25px currentColor; }
         }
 
-        @keyframes restBreathing {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        @keyframes gameGlow {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 1; }
-        }
-
-        @keyframes steamRise {
-            0% { transform: translateY(0); opacity: 0.6; }
-            100% { transform: translateY(-15px); opacity: 0; }
-        }
-
-        /* New Entry Animations */
         @keyframes fadeInUp {
             from {
                 opacity: 0;
@@ -954,7 +739,6 @@
             }
         }
 
-        /* Agent Movement Animations (GitHub Issue #14) */
         @keyframes agentExit {
             0% {
                 opacity: 1;
@@ -1007,7 +791,6 @@
             }
         }
 
-        /* Agent leaving/entering states */
         .desk-station.agent-leaving {
             filter: grayscale(0.3);
         }
@@ -1025,7 +808,6 @@
             }
         }
 
-        /* Rest room agent card styles */
         .rest-agent {
             display: flex;
             align-items: center;
@@ -1061,9 +843,6 @@
             color: var(--text-secondary);
         }
 
-        /* ==================== RESPONSIVE ==================== */
-
-        /* Large tablets and small desktops */
         @media (max-width: 1024px) {
             .floor-plan {
                 grid-template-columns: 1fr;
@@ -1083,7 +862,6 @@
             }
         }
 
-        /* Tablets */
         @media (max-width: 768px) {
             .header {
                 padding: 16px 20px;
@@ -1138,7 +916,6 @@
                 transform: scale(0.9);
             }
 
-            /* Chat adjustments for tablet */
             .chat-widget {
                 bottom: 20px;
                 right: 20px;
@@ -1168,7 +945,6 @@
                 min-height: 44px;
             }
 
-            /* Modal adjustments */
             .modal {
                 width: 95%;
                 max-width: 500px;
@@ -1208,7 +984,6 @@
             }
         }
 
-        /* Mobile phones */
         @media (max-width: 480px) {
             .header {
                 padding: 12px 16px;
@@ -1286,7 +1061,6 @@
                 font-size: 40px;
             }
 
-            /* Rest room mobile */
             .rest-room {
                 padding: 20px;
             }
@@ -1296,8 +1070,7 @@
                 left: 20px;
             }
 
-            .lounge-area,
-            .gaming-area {
+            .lounge-area {
                 min-height: 120px;
                 padding: 16px;
             }
@@ -1310,40 +1083,19 @@
                 font-size: 32px;
             }
 
-            .lounge-info,
-            .gaming-info {
+            .lounge-info {
                 min-width: 140px;
                 padding: 8px 12px;
             }
 
-            .lounge-name,
-            .gaming-name {
+            .lounge-name {
                 font-size: 12px;
             }
 
-            .lounge-status,
-            .gaming-status {
+            .lounge-status {
                 font-size: 11px;
             }
 
-            .tv-screen {
-                width: 64px;
-                height: 40px;
-            }
-
-            .gaming-furniture {
-                font-size: 40px;
-            }
-
-            .gaming-person {
-                font-size: 30px;
-            }
-
-            .coffee-machine {
-                font-size: 32px;
-            }
-
-            /* Chat mobile - full screen on small phones */
             .chat-widget {
                 bottom: 16px;
                 right: 16px;
@@ -1397,7 +1149,7 @@
 
             .chat-input {
                 padding: 12px 16px;
-                font-size: 16px; /* Prevent zoom on iOS */
+                font-size: 16px;
                 min-height: 44px;
             }
 
@@ -1408,7 +1160,6 @@
                 min-height: 44px;
             }
 
-            /* Modal mobile */
             .modal-overlay {
                 align-items: flex-end;
                 padding: 0;
@@ -1484,7 +1235,6 @@
                 min-height: 44px;
             }
 
-            /* Footer */
             .footer {
                 padding: 20px;
                 margin-top: 24px;
@@ -1499,7 +1249,6 @@
                 font-size: 12px;
             }
 
-            /* Touch targets - ensure minimum 44px */
             .desk-station {
                 min-height: 44px;
             }
@@ -1511,7 +1260,6 @@
                 align-items: center;
             }
 
-            /* Improve text readability */
             .chat-message-bubble {
                 line-height: 1.5;
             }
@@ -1522,7 +1270,6 @@
             }
         }
 
-        /* iPhone SE and very small screens */
         @media (max-width: 375px) {
             .chat-container {
                 height: 60vh;
@@ -1562,7 +1309,6 @@
             }
         }
 
-        /* Landscape mode on mobile */
         @media (max-height: 500px) and (orientation: landscape) {
             .chat-container {
                 height: 80vh;
@@ -1578,7 +1324,6 @@
             }
         }
 
-        /* Improve readability on high-DPI monitors */
         @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
             body {
                 -webkit-font-smoothing: antialiased;
@@ -1586,8 +1331,7 @@
             }
 
             .agent-name,
-            .lounge-name,
-            .gaming-name {
+            .lounge-name {
                 font-weight: 500;
             }
 
@@ -1596,7 +1340,6 @@
             }
         }
 
-        /* Tooltip */
         .desk-station::after {
             display: none;
         }
@@ -1662,6 +1405,7 @@
             margin-top: 12px;
             padding-top: 12px;
             border-top: 1px solid var(--border);
+            pointer-events: auto;
         }
 
         .agent-issues-title {
@@ -1701,10 +1445,6 @@
             font-weight: 600;
         }
 
-        .agent-issues-list a .issue-status-closed {
-            color: var(--text-secondary);
-        }
-
         .progress-bar {
             flex: 1;
             height: 6px;
@@ -1728,7 +1468,6 @@
             text-align: right;
         }
 
-        /* ==================== MODAL STYLES ==================== */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -1973,7 +1712,6 @@
             color: var(--text-secondary);
         }
 
-        /* Loader styles */
         .modal-loader {
             display: flex;
             align-items: center;
@@ -1997,7 +1735,6 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Issue badge styles */
         .issue-badge {
             display: inline-block;
             padding: 2px 8px;
@@ -2041,7 +1778,6 @@
             min-width: 200px;
         }
 
-        /* ==================== CHAT STYLES ==================== */
         .chat-widget {
             position: fixed;
             bottom: 30px;
@@ -2156,8 +1892,6 @@
             color: var(--text-primary);
         }
 
-        /* ==================== ACCESSIBILITY ==================== */
-        /* Focus-visible styles for keyboard navigation */
         *:focus-visible {
             outline: 3px solid var(--neon-blue);
             outline-offset: 2px;
@@ -2188,14 +1922,11 @@
             outline-offset: 2px;
         }
 
-        /* High contrast focus for rest room elements */
-        .lounge-area:focus-visible,
-        .gaming-area:focus-visible {
+        .lounge-area:focus-visible {
             outline: 3px solid var(--neon-orange);
             outline-offset: 4px;
         }
 
-        /* Skip link for keyboard users */
         .skip-link {
             position: absolute;
             top: -40px;
@@ -2336,7 +2067,6 @@
             box-shadow: 0 5px 20px rgba(0, 212, 255, 0.4);
         }
 
-        /* Drag and Drop Zone */
         .drop-zone {
             border: 2px dashed var(--border);
             border-radius: 12px;
@@ -2351,17 +2081,14 @@
             background: rgba(34, 197, 94, 0.1);
         }
 
-        /* Task List for Drag and Drop */
         .task-list {
             display: flex;
             flex-direction: column;
             gap: 12px;
         }
 
-        /* Ensure sufficient color contrast */
         .agent-role,
         .lounge-status,
-        .gaming-status,
         .chat-message-name,
         .chat-message-time {
             color: #a0a0b5;
@@ -2375,7 +2102,6 @@
             color: #9a9aaf;
         }
 
-        /* Screen reader only text */
         .sr-only {
             position: absolute;
             width: 1px;
@@ -2387,6 +2113,7 @@
             white-space: nowrap;
             border: 0;
         }
+
         ::-webkit-scrollbar {
             width: 8px;
         }
@@ -2403,10 +2130,63 @@
         ::-webkit-scrollbar-thumb:hover {
             background: var(--text-secondary);
         }
+
+        /* Issues list styles */
+        .issues-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .issue-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .issue-item:hover {
+            border-color: var(--neon-blue);
+            background: rgba(0, 212, 255, 0.05);
+        }
+
+        .issue-number {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--neon-blue);
+            font-weight: 600;
+        }
+
+        .issue-title-text {
+            flex: 1;
+            font-size: 13px;
+            color: var(--text-primary);
+        }
+
+        .issue-state {
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .issue-state.open {
+            background: rgba(34, 197, 94, 0.2);
+            color: var(--neon-green);
+        }
+
+        .issue-state.closed {
+            background: rgba(139, 139, 158, 0.2);
+            color: var(--text-secondary);
+        }
     </style>
 </head>
 <body>
-    <!-- Skip link for accessibility -->
     <a href="#main-content" class="skip-link">Перейти к основному содержимому</a>
     
     <header class="header" role="banner">
@@ -2419,21 +2199,21 @@
                 <div class="status-item">
                     <span class="status-dot" aria-hidden="true"></span>
                     <div>
-                        <div class="status-value">8</div>
+                        <div class="status-value" id="totalCount">0</div>
                         <div class="status-label">Всего</div>
                     </div>
                 </div>
                 <div class="status-item">
                     <span class="status-dot" aria-hidden="true"></span>
                     <div>
-                        <div class="status-value">6</div>
+                        <div class="status-value" id="workingCount">0</div>
                         <div class="status-label">Работают</div>
                     </div>
                 </div>
                 <div class="status-item">
                     <span class="status-dot resting" aria-hidden="true"></span>
                     <div>
-                        <div class="status-value">2</div>
+                        <div class="status-value" id="restingCount">0</div>
                         <div class="status-label">Отдыхают</div>
                     </div>
                 </div>
@@ -2450,222 +2230,8 @@
         <div class="floor-plan">
             <!-- Work Area -->
             <div class="work-area">
-                <div class="desks-layout">
-                    <!-- Desk 1 - Алексей -->
-                    <div class="desk-station" role="button" tabindex="0" aria-label="Алексей, UI Дизайнер. Проект: Meetify, задача: Виртуальный фон, прогресс: 75%" data-agent-id="1" data-project="Meetify" data-task="Виртуальный фон" data-progress="75">
-                        <div class="computer-setup">
-                            <div class="monitor">
-                                <div class="screen-content">
-                                    <div class="screen-project">Meetify</div>
-                                    <div class="screen-task">Виртуальный фон</div>
-                                    <div class="screen-code-line"></div>
-                                </div>
-                            </div>
-                            <div class="monitor-stand"></div>
-                            <div class="monitor-base"></div>
-                            <div class="keyboard"></div>
-                            <div class="mouse"></div>
-                            <div class="cable cable-left"></div>
-                            <div class="cable cable-right"></div>
-                            <div class="desk-surface"></div>
-                        </div>
-                        <div class="agent-container">
-                            <div class="agent-emoji typing" role="img" aria-label="Алексей работает">👨‍🎨</div>
-                            <span class="agent-status-ring" aria-label="Статус: работает"></span>
-                            <div class="agent-info">
-                                <div class="agent-name">Алексей (UI Дизайнер)</div>
-                                <div class="agent-role">UI Designer</div>
-                                <div class="agent-task-tooltip">
-                                    <div class="tooltip-header">👨‍🎨 Алексей</div>
-                                    <div class="tooltip-task">📝 Дизайн нового интерфейса</div>
-                                    <div class="tooltip-progress">
-                                        <div class="progress-bar"><div class="progress-fill" style="width: 75%"></div></div>
-                                        <span class="progress-text">75%</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Desk 2 - Мария -->
-                    <div class="desk-station" role="button" tabindex="0" aria-label="Мария, Fullstack разработчик. Проект: Meetify, задача: Запись встреч, прогресс: 60%" data-agent-id="2" data-project="Meetify" data-task="Запись встреч" data-progress="60">
-                        <div class="computer-setup">
-                            <div class="monitor">
-                                <div class="screen-content">
-                                    <div class="screen-project">Meetify</div>
-                                    <div class="screen-task">Запись встреч</div>
-                                    <div class="screen-code-line"></div>
-                                </div>
-                            </div>
-                            <div class="monitor-stand"></div>
-                            <div class="monitor-base"></div>
-                            <div class="keyboard"></div>
-                            <div class="mouse"></div>
-                            <div class="cable cable-left"></div>
-                            <div class="cable cable-right"></div>
-                            <div class="desk-surface"></div>
-                        </div>
-                        <div class="agent-container">
-                            <div class="agent-emoji typing" role="img" aria-label="Мария работает">👨‍💼</div>
-                            <span class="agent-status-ring" aria-label="Статус: работает"></span>
-                            <div class="agent-info">
-                                <div class="agent-name">Мария (Fullstack разработчик)</div>
-                                <div class="agent-role">Fullstack разработчик</div>
-                                <div class="agent-task-tooltip">
-                                    <div class="tooltip-header">👨‍💼 Мария</div>
-                                    <div class="tooltip-task">📝 Разработка API endpoints</div>
-                                    <div class="tooltip-progress">
-                                        <div class="progress-bar"><div class="progress-fill" style="width: 60%"></div></div>
-                                        <span class="progress-text">60%</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Desk 3 - Иван -->
-                    <div class="desk-station" role="button" tabindex="0" aria-label="Иван, QA инженер. Проект: AI Team Office, задача: Тестирование, прогресс: 85%" data-agent-id="3" data-project="AI Team Office" data-task="Тестирование" data-progress="85">
-                        <div class="computer-setup">
-                            <div class="monitor">
-                                <div class="screen-content">
-                                    <div class="screen-project">AI Team Office</div>
-                                    <div class="screen-task">Тестирование</div>
-                                    <div class="screen-code-line"></div>
-                                </div>
-                            </div>
-                            <div class="monitor-stand"></div>
-                            <div class="monitor-base"></div>
-                            <div class="keyboard"></div>
-                            <div class="mouse"></div>
-                            <div class="cable cable-left"></div>
-                            <div class="cable cable-right"></div>
-                            <div class="desk-surface"></div>
-                        </div>
-                        <div class="agent-container">
-                            <div class="agent-emoji typing" role="img" aria-label="Иван работает">👩‍🔬</div>
-                            <span class="agent-status-ring" aria-label="Статус: работает"></span>
-                            <div class="agent-info">
-                                <div class="agent-name">Иван (QA)</div>
-                                <div class="agent-role">QA Engineer</div>
-                                <div class="agent-task-tooltip">
-                                    <div class="tooltip-header">👩‍🔬 Иван</div>
-                                    <div class="tooltip-task">📝 Тестирование нового релиза</div>
-                                    <div class="tooltip-progress">
-                                        <div class="progress-bar"><div class="progress-fill" style="width: 85%"></div></div>
-                                        <span class="progress-text">85%</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Desk 4 - Дмитрий -->
-                    <div class="desk-station" role="button" tabindex="0" aria-label="Дмитрий, DevOps инженер. Проект: AI Team Office, задача: Настройка CI/CD, прогресс: 45%" data-agent-id="4" data-project="AI Team Office" data-task="Настройка CI/CD" data-progress="45">
-                        <div class="computer-setup">
-                            <div class="monitor">
-                                <div class="screen-content">
-                                    <div class="screen-project">AI Team Office</div>
-                                    <div class="screen-task">CI/CD Pipeline</div>
-                                    <div class="screen-code-line"></div>
-                                </div>
-                            </div>
-                            <div class="monitor-stand"></div>
-                            <div class="monitor-base"></div>
-                            <div class="keyboard"></div>
-                            <div class="mouse"></div>
-                            <div class="cable cable-left"></div>
-                            <div class="cable cable-right"></div>
-                            <div class="desk-surface"></div>
-                        </div>
-                        <div class="agent-container">
-                            <div class="agent-emoji typing" role="img" aria-label="Дмитрий работает">👨‍🚀</div>
-                            <span class="agent-status-ring" aria-label="Статус: работает"></span>
-                            <div class="agent-info">
-                                <div class="agent-name">Дмитрий (DevOps)</div>
-                                <div class="agent-role">Infrastructure</div>
-                                <div class="agent-task-tooltip">
-                                    <div class="tooltip-header">👨‍🚀 Дмитрий</div>
-                                    <div class="tooltip-task">📝 Настройка CI/CD пайплайнов</div>
-                                    <div class="tooltip-progress">
-                                        <div class="progress-bar"><div class="progress-fill" style="width: 45%"></div></div>
-                                        <span class="progress-text">45%</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Desk 5 - Ольга -->
-                    <div class="desk-station" role="button" tabindex="0" aria-label="Ольга, Data Scientist. Проект: DataVision, задача: Анализ метрик, прогресс: 70%" data-agent-id="5" data-project="DataVision" data-task="Анализ метрик" data-progress="70">
-                        <div class="computer-setup">
-                            <div class="monitor">
-                                <div class="screen-content">
-                                    <div class="screen-project">DataVision</div>
-                                    <div class="screen-task">Анализ метрик</div>
-                                    <div class="screen-code-line"></div>
-                                </div>
-                            </div>
-                            <div class="monitor-stand"></div>
-                            <div class="monitor-base"></div>
-                            <div class="keyboard"></div>
-                            <div class="mouse"></div>
-                            <div class="cable cable-left"></div>
-                            <div class="cable cable-right"></div>
-                            <div class="desk-surface"></div>
-                        </div>
-                        <div class="agent-container">
-                            <div class="agent-emoji typing" role="img" aria-label="Ольга работает">👨‍💻</div>
-                            <span class="agent-status-ring" aria-label="Статус: работает"></span>
-                            <div class="agent-info">
-                                <div class="agent-name">Ольга (Аналитик)</div>
-                                <div class="agent-role">Data Scientist</div>
-                                <div class="agent-task-tooltip">
-                                    <div class="tooltip-header">👨‍💻 Ольга</div>
-                                    <div class="tooltip-task">📝 Анализ пользовательских метрик</div>
-                                    <div class="tooltip-progress">
-                                        <div class="progress-bar"><div class="progress-fill" style="width: 70%"></div></div>
-                                        <span class="progress-text">70%</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Desk 6 - Андрей -->
-                    <div class="desk-station" role="button" tabindex="0" aria-label="Андрей, Security инженер. Проект: SecureFlow, задача: Аудит безопасности, прогресс: 30%" data-agent-id="6" data-project="SecureFlow" data-task="Аудит безопасности" data-progress="30">
-                        <div class="computer-setup">
-                            <div class="monitor">
-                                <div class="screen-content">
-                                    <div class="screen-project">SecureFlow</div>
-                                    <div class="screen-task">Security Audit</div>
-                                    <div class="screen-code-line"></div>
-                                </div>
-                            </div>
-                            <div class="monitor-stand"></div>
-                            <div class="monitor-base"></div>
-                            <div class="keyboard"></div>
-                            <div class="mouse"></div>
-                            <div class="cable cable-left"></div>
-                            <div class="cable cable-right"></div>
-                            <div class="desk-surface"></div>
-                        </div>
-                        <div class="agent-container">
-                            <div class="agent-emoji typing" role="img" aria-label="Андрей работает">👩‍✈️</div>
-                            <span class="agent-status-ring" aria-label="Статус: работает"></span>
-                            <div class="agent-info">
-                                <div class="agent-name">Андрей (Безопасность)</div>
-                                <div class="agent-role">Cyber Security</div>
-                                <div class="agent-task-tooltip">
-                                    <div class="tooltip-header">👩‍✈️ Андрей</div>
-                                    <div class="tooltip-task">📝 Аудит безопасности системы</div>
-                                    <div class="tooltip-progress">
-                                        <div class="progress-bar"><div class="progress-fill" style="width: 30%"></div></div>
-                                        <span class="progress-text">30%</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="desks-layout" id="workArea">
+                    <!-- Desks will be populated by JavaScript -->
                 </div>
             </div>
 
@@ -2674,50 +2240,8 @@
                 <div class="door-frame"></div>
                 <span class="door-label">ВХОД</span>
                 
-                <div class="rest-room-content">
-                    <!-- Lounge Area -->
-                    <div class="lounge-area" role="img" aria-label="Зона отдыха с шезлонгом. Сергей отдыхает" data-rest-agent="Сергей">
-                        <span class="lounge-label">Шезлонг</span>
-                        <div class="lounge-scene">
-                            <div class="lounge-furniture" role="img" aria-label="Шезлонг">🛋️</div>
-                            <div class="lounge-person">
-                                😴
-                                <span class="rest-status-ring" aria-label="Статус: отдыхает"></span>
-                            </div>
-                            <div class="lounge-info">
-                                <div class="lounge-name">Сергей (Backend)</div>
-                                <div class="lounge-status">Отдыхает</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Gaming Area -->
-                    <div class="gaming-area" role="img" aria-label="Игровая зона с PlayStation 5. Елена играет" data-rest-agent="Елена">
-                        <span class="gaming-label">PlayStation 5</span>
-                        <div class="gaming-scene">
-                            <div class="gaming-tv-setup">
-                                <div class="tv-screen" role="img" aria-label="Телевизор"></div>
-                            </div>
-                            <div class="gaming-setup">
-                                <div class="gaming-furniture" role="img" aria-label="Игровое кресло">🪑</div>
-                                <div class="gaming-person">
-                                    🧑‍🎮
-                                    <span class="rest-status-ring" aria-label="Статус: играет"></span>
-                                </div>
-                            </div>
-                            <div class="gaming-info">
-                                <div class="gaming-name">Елена (КЭП ТСО)</div>
-                                <div class="gaming-status">Играет</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Coffee Area -->
-                    <div class="coffee-area" role="img" aria-label="Кофе-станция">
-                        <span class="coffee-label">Кофе-станция</span>
-                        <span class="coffee-machine" role="img" aria-label="Кофе-машина">☕</span>
-                        <span class="coffee-steam" role="img" aria-label="Пар от кофе">💨</span>
-                    </div>
+                <div class="rest-room-content" id="restRoom">
+                    <!-- Resting agents will be populated here -->
                 </div>
             </div>
         </div>
@@ -2737,10 +2261,9 @@
         <p class="copyright">AI Team Office © 2026</p>
     </footer>
 
-    <!-- Live region for dynamic updates -->
     <div id="live-region" class="sr-only" aria-live="polite" aria-atomic="true"></div>
 
-    <!-- ==================== MODAL ==================== -->
+    <!-- Modal -->
     <div class="modal-overlay" id="agentModal" role="dialog" aria-modal="true" aria-labelledby="modalName">
         <div class="modal">
             <div class="modal-header">
@@ -2749,109 +2272,42 @@
                     <div class="modal-agent-details">
                         <h2 id="modalName">Алексей</h2>
                         <p id="modalRole">UI Designer</p>
-                        <p id="modalAgentProject" style="color: var(--neon-blue); font-size: 12px; margin-top: 4px;"></p>
                     </div>
                 </div>
                 <button class="modal-close" onclick="closeModal()" aria-label="Закрыть модальное окно">×</button>
             </div>
             <div class="modal-body">
-                <!-- Project & Task Info from API -->
-                <div class="modal-section" id="modalAgentTaskSection" style="display: none;">
-                    <div class="modal-section-title">Текущая задача (GitHub)</div>
+                <!-- Current Task with Progress -->
+                <div class="modal-section" id="modalCurrentTaskSection">
+                    <div class="modal-section-title">Текущая задача</div>
                     <div class="modal-task-card">
                         <div class="modal-task-header">
-                            <span class="modal-task-name" id="modalAgentTask"></span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Assigned Issues from GitHub -->
-                <div class="modal-section" id="modalAgentIssuesSection" style="display: none;">
-                    <div class="modal-section-title">Текущие задачи (GitHub)</div>
-                    <div id="modalAgentIssuesLoader" class="modal-loader" style="display: none;">
-                        <div class="modal-loader-spinner"></div>
-                        <span>Загрузка задач...</span>
-                    </div>
-                    <ul id="modalAgentIssues" style="list-style: none; padding: 0;"></ul>
-                </div>
-
-                <!-- Stats Section -->
-                <div class="modal-section">
-                    <div class="modal-section-title">Статистика</div>
-                    <div class="modal-stats">
-                        <div class="modal-stat">
-                            <div class="modal-stat-value" id="modalTasksCompleted">12</div>
-                            <div class="modal-stat-label">Задач выполнено</div>
-                        </div>
-                        <div class="modal-stat">
-                            <div class="modal-stat-value" id="modalEfficiency">94%</div>
-                            <div class="modal-stat-label">Эффективность</div>
-                        </div>
-                        <div class="modal-stat">
-                            <div class="modal-stat-value" id="modalHoursToday">6.5ч</div>
-                            <div class="modal-stat-label">Работает сегодня</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Current Task Section -->
-                <div class="modal-section">
-                    <div class="modal-section-title">Текущая задача</div>
-                    <div class="modal-task-card" id="currentTaskCard" draggable="true">
-                        <div class="modal-task-header">
-                            <span class="modal-task-name" id="modalTaskName">Дизайн нового интерфейса</span>
-                            <span class="modal-task-status in-progress">В работе</span>
+                            <span class="modal-task-name" id="modalCurrentTaskName">-</span>
+                            <span class="modal-task-status in-progress" id="modalCurrentTaskStatus">В работе</span>
                         </div>
                         <div class="modal-task-progress">
                             <div class="modal-task-progress-bar">
-                                <div class="modal-task-progress-fill" id="modalTaskProgress" style="width: 75%"></div>
+                                <div class="modal-task-progress-fill" id="modalCurrentTaskProgress" style="width: 0%"></div>
                             </div>
-                            <span class="modal-task-progress-text" id="modalTaskProgressText">75%</span>
+                            <span class="modal-task-progress-text" id="modalCurrentTaskProgressText">0%</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Task Queue Section (Drag & Drop) -->
-                <div class="modal-section">
-                    <div class="modal-section-title">Очередь задач (Drag & Drop)</div>
-                    <div class="task-list" id="taskList">
-                        <div class="modal-task-card" draggable="true" data-task-id="1">
-                            <div class="modal-task-header">
-                                <span class="modal-task-name">Обновить компоненты библиотеки</span>
-                                <span class="modal-task-status pending">В очереди</span>
-                            </div>
-                        </div>
-                        <div class="modal-task-card" draggable="true" data-task-id="2">
-                            <div class="modal-task-header">
-                                <span class="modal-task-name">Создать макеты для мобильной версии</span>
-                                <span class="modal-task-status pending">В очереди</span>
-                            </div>
-                        </div>
-                        <div class="modal-task-card" draggable="true" data-task-id="3">
-                            <div class="modal-task-header">
-                                <span class="modal-task-name">Документация по дизайн-системе</span>
-                                <span class="modal-task-status pending">В очереди</span>
-                            </div>
-                        </div>
+                <!-- Issues Queue -->
+                <div class="modal-section" id="modalIssuesSection">
+                    <div class="modal-section-title">Задачи в очереди (Issues)</div>
+                    <div id="modalIssuesLoader" class="modal-loader">
+                        <div class="modal-loader-spinner"></div>
+                        <span>Загрузка...</span>
                     </div>
-                </div>
-
-                <!-- Skills Section -->
-                <div class="modal-section">
-                    <div class="modal-section-title">Навыки</div>
-                    <div class="modal-skills" id="modalSkills">
-                        <span class="modal-skill">Figma</span>
-                        <span class="modal-skill">Adobe XD</span>
-                        <span class="modal-skill">UI/UX</span>
-                        <span class="modal-skill">Prototyping</span>
-                        <span class="modal-skill">Design Systems</span>
-                    </div>
+                    <div id="modalIssuesList" class="issues-list" style="display: none;"></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- ==================== CHAT WIDGET ==================== -->
+    <!-- Chat Widget -->
     <div class="chat-widget" role="complementary" aria-label="Чат команды">
         <div class="chat-container" id="chatContainer">
             <div class="chat-header">
@@ -2861,46 +2317,13 @@
                         <div class="chat-title-text">Команда</div>
                         <div class="chat-title-status">
                             <span class="chat-status-dot"></span>
-                            <span>8 онлайн</span>
+                            <span id="chatOnlineCount">0 онлайн</span>
                         </div>
                     </div>
                 </div>
                 <button class="chat-close" onclick="toggleChat()" aria-label="Закрыть чат">×</button>
             </div>
-            <div class="chat-messages" id="chatMessages">
-                <div class="chat-message">
-                    <div class="chat-message-avatar">👨‍🎨</div>
-                    <div class="chat-message-content">
-                        <div class="chat-message-name">Алексей</div>
-                        <div class="chat-message-bubble">Привет всем! Закончил с макетами главной страницы 🎨</div>
-                        <div class="chat-message-time">12:05</div>
-                    </div>
-                </div>
-                <div class="chat-message">
-                    <div class="chat-message-avatar">👨‍💼</div>
-                    <div class="chat-message-content">
-                        <div class="chat-message-name">Мария</div>
-                        <div class="chat-message-bubble">Отлично! Я как раз закончила API для авторизации</div>
-                        <div class="chat-message-time">12:08</div>
-                    </div>
-                </div>
-                <div class="chat-message">
-                    <div class="chat-message-avatar">👩‍🔬</div>
-                    <div class="chat-message-content">
-                        <div class="chat-message-name">Иван</div>
-                        <div class="chat-message-bubble">Начинаю тестирование новых эндпоинтов 💪</div>
-                        <div class="chat-message-time">12:10</div>
-                    </div>
-                </div>
-                <div class="chat-message own">
-                    <div class="chat-message-avatar">🧑‍💻</div>
-                    <div class="chat-message-content">
-                        <div class="chat-message-name">Вы</div>
-                        <div class="chat-message-bubble">Отличная работа, команда! 🚀</div>
-                        <div class="chat-message-time">12:12</div>
-                    </div>
-                </div>
-            </div>
+            <div class="chat-messages" id="chatMessages"></div>
             <div class="chat-input-area">
                 <input type="text" class="chat-input" id="chatInput" placeholder="Написать сообщение..." onkeypress="handleChatKeypress(event)" aria-label="Поле ввода сообщения">
                 <button class="chat-send" onclick="sendMessage()" aria-label="Отправить сообщение">➤</button>
@@ -2910,338 +2333,244 @@
     </div>
 
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-    <script src="animations.js"></script>
-    <script src="security.js"></script>
-    <script src="security-tests.js"></script>
+    <script src="animations.js?v=2"></script>
+    <script src="security.js?v=2"></script>
     <script>
+        // ==================== CONFIGURATION ====================
+        const API_ENDPOINT = '/ai-office/api/agents/status';
+        const UPDATE_INTERVAL = 30000;
+        let agentsStatusCache = {};
+        let apiAvailable = true;
+        let socket = null;
+        let isWebSocketConnected = false;
+
         // ==================== AGENT DATA ====================
-        const agentsData = {
-            1: {
-                name: 'Алексей',
-                role: 'UI Designer',
-                avatar: '👨‍🎨',
-                fullRole: 'UI/UX Дизайнер',
-                project: 'Meetify',
-                task: 'Дизайн нового интерфейса',
-                progress: 75,
-                tasksCompleted: 12,
-                efficiency: '94%',
-                hoursToday: '6.5ч',
-                skills: ['Figma', 'Adobe XD', 'UI/UX', 'Prototyping', 'Design Systems'],
-                queue: [
-                    { name: 'Обновить компоненты библиотеки', status: 'pending' },
-                    { name: 'Создать макеты для мобильной версии', status: 'pending' },
-                    { name: 'Документация по дизайн-системе', status: 'pending' }
-                ]
-            },
-            2: {
-                name: 'Мария',
-                role: 'Fullstack разработчик',
-                avatar: '👨‍💼',
-                fullRole: 'Senior Fullstack Developer',
-                project: 'Meetify',
-                task: 'Разработка API endpoints',
-                progress: 60,
-                tasksCompleted: 18,
-                efficiency: '97%',
-                hoursToday: '7.2ч',
-                skills: ['Node.js', 'React', 'TypeScript', 'PostgreSQL', 'GraphQL'],
-                queue: [
-                    { name: 'Интеграция с платёжной системой', status: 'pending' },
-                    { name: 'Оптимизация запросов к БД', status: 'pending' },
-                    { name: 'Настройка WebSocket', status: 'pending' }
-                ]
-            },
-            3: {
-                name: 'Иван',
-                role: 'QA Engineer',
-                avatar: '👩‍🔬',
-                fullRole: 'Quality Assurance Engineer',
-                project: 'AI Team Office',
-                task: 'Тестирование нового релиза',
-                progress: 85,
-                tasksCompleted: 24,
-                efficiency: '99%',
-                hoursToday: '6.8ч',
-                skills: ['Selenium', 'Cypress', 'Jest', 'Test Planning', 'Automation'],
-                queue: [
-                    { name: 'Написать тесты для авторизации', status: 'pending' },
-                    { name: 'Регрессионное тестирование', status: 'pending' },
-                    { name: 'Документация тест-кейсов', status: 'pending' }
-                ]
-            },
-            4: {
-                name: 'Дмитрий',
-                role: 'DevOps',
-                avatar: '👨‍🚀',
-                fullRole: 'DevOps Engineer',
-                project: 'AI Team Office',
-                task: 'Настройка CI/CD пайплайнов',
-                progress: 45,
-                tasksCompleted: 9,
-                efficiency: '91%',
-                hoursToday: '5.5ч',
-                skills: ['Docker', 'Kubernetes', 'AWS', 'Terraform', 'GitHub Actions'],
-                queue: [
-                    { name: 'Настроить мониторинг', status: 'pending' },
-                    { name: 'Обновить кластер Kubernetes', status: 'pending' },
-                    { name: 'Автоматизация бэкапов', status: 'pending' }
-                ]
-            },
-            5: {
-                name: 'Ольга',
-                role: 'Data Scientist',
-                avatar: '👨‍💻',
-                fullRole: 'Senior Data Analyst',
-                project: 'DataVision',
-                task: 'Анализ пользовательских метрик',
-                progress: 70,
-                tasksCompleted: 15,
-                efficiency: '95%',
-                hoursToday: '6.2ч',
-                skills: ['Python', 'SQL', 'Tableau', 'Machine Learning', 'Statistics'],
-                queue: [
-                    { name: 'Построить прогноз retention', status: 'pending' },
-                    { name: 'A/B тестирование фичей', status: 'pending' },
-                    { name: 'Отчёт для стейкхолдеров', status: 'pending' }
-                ]
-            },
-            6: {
-                name: 'Андрей',
-                role: 'Cyber Security',
-                avatar: '👩‍✈️',
-                fullRole: 'Security Engineer',
-                project: 'SecureFlow',
-                task: 'Аудит безопасности системы',
-                progress: 30,
-                tasksCompleted: 7,
-                efficiency: '92%',
-                hoursToday: '4.8ч',
-                skills: ['Penetration Testing', 'SIEM', 'OWASP', 'Cryptography', 'Compliance'],
-                queue: [
-                    { name: 'Проверка уязвимостей API', status: 'pending' },
-                    { name: 'Обновление политик безопасности', status: 'pending' },
-                    { name: 'Тренинг по безопасности', status: 'pending' }
-                ]
+        let agentsData = {};
+
+        // ==================== FETCH AGENTS STATUS ====================
+        async function fetchAgentsStatus() {
+            try {
+                const timestamp = Date.now();
+                const url = `${API_ENDPOINT}?t=${timestamp}`;
+                console.log('[API] Fetching agents from:', url);
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                apiAvailable = true;
+                console.log('[API] Data received:', data);
+                return data.agents || data;
+            } catch (error) {
+                console.warn('[API] Error fetching agents:', error.message);
+                apiAvailable = false;
+                return [];
             }
-        };
+        }
+
+        // ==================== RENDER WORK AREA ====================
+        function renderWorkArea(agents) {
+            const workArea = document.getElementById('workArea');
+            if (!workArea) return;
+
+            // Filter only working agents
+            const workingAgents = agents.filter(a => a.status === 'working');
+            
+            workArea.innerHTML = workingAgents.map(agent => `
+                <div class="desk-station" role="button" tabindex="0" 
+                     aria-label="${agent.name}, ${agent.role}. Задача: ${agent.task || 'Нет задачи'}" 
+                     data-agent-id="${agent.id}" 
+                     onclick="openModal('${agent.id}')">
+                    <div class="computer-setup">
+                        <div class="monitor">
+                            <div class="screen-content">
+                                <div class="screen-project">${agent.project || 'No Project'}</div>
+                                <div class="screen-task">${agent.task || 'No Task'}</div>
+                                <div class="screen-code-line"></div>
+                            </div>
+                        </div>
+                        <div class="monitor-stand"></div>
+                        <div class="monitor-base"></div>
+                        <div class="keyboard"></div>
+                        <div class="mouse"></div>
+                        <div class="cable cable-left"></div>
+                        <div class="cable cable-right"></div>
+                        <div class="desk-surface"></div>
+                    </div>
+                    <div class="agent-container">
+                        <div class="agent-emoji typing" role="img" aria-label="${agent.name} работает">${agent.emoji || '🧑‍💻'}</div>
+                        <span class="agent-status-ring" aria-label="Статус: работает"></span>
+                        <div class="agent-info">
+                            <div class="agent-name">${agent.name} (${agent.role})</div>
+                            <div class="agent-role">${agent.role}</div>
+                            <div class="agent-task-tooltip">
+                                <div class="tooltip-header">${agent.emoji || '🧑‍💻'} ${agent.name}</div>
+                                ${agent.issues && agent.issues.filter(i => i.state === 'open').length > 0 ? `
+                                    <div class="agent-issues">
+                                        <div class="agent-issues-title">Открытые задачи (${agent.issues.filter(i => i.state === 'open').length})</div>
+                                        <div class="agent-issues-list">
+                                            ${agent.issues.filter(i => i.state === 'open').slice(0, 3).map(issue => `
+                                                <a href="https://github.com/${issue.repo}/issues/${issue.number}" target="_blank" rel="noopener">
+                                                    #${issue.number}: ${escapeHtml(issue.title)}
+                                                    <span class="issue-status-open">[OPEN]</span>
+                                                </a>
+                                            `).join('')}
+                                            ${agent.issues.filter(i => i.state === 'open').length > 3 ? `<div style="font-size: 11px; color: var(--text-secondary); padding: 4px 8px;">...и ещё ${agent.issues.filter(i => i.state === 'open').length - 3}</div>` : ''}
+                                        </div>
+                                    </div>
+                                ` : '<div class="tooltip-task">Нет открытых задач</div>'}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ==================== RENDER REST ROOM ====================
+        function renderRestRoom(agents) {
+            const restRoom = document.getElementById('restRoom');
+            
+            // Filter only resting agents
+            const restingAgents = agents.filter(a => a.status === 'resting');
+            
+            // Clear and render resting agents list
+            restRoom.innerHTML = '';
+            
+            if (restingAgents.length === 0) {
+                restRoom.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--text-secondary);">Никто не отдыхает</div>';
+                return;
+            }
+            
+            restingAgents.forEach(agent => {
+                const restAgentEl = document.createElement('div');
+                restAgentEl.className = 'rest-agent';
+                restAgentEl.innerHTML = `
+                    <div class="rest-agent-avatar">
+                        <span class="rest-agent-emoji">${agent.emoji || '😴'}</span>
+                        <span class="rest-status-ring" aria-label="Статус: отдыхает"></span>
+                    </div>
+                    <div class="rest-agent-info">
+                        <div class="rest-agent-name">${agent.name} (${agent.role})</div>
+                        <div class="rest-agent-status">Отдыхает</div>
+                    </div>
+                `;
+                restRoom.appendChild(restAgentEl);
+            });
+        }
+
+        // ==================== UPDATE STATUS BAR ====================
+        function updateStatusBar(agents) {
+            const totalCount = agents.length;
+            const workingCount = agents.filter(a => a.status === 'working').length;
+            const restingCount = agents.filter(a => a.status === 'resting').length;
+
+            document.getElementById('totalCount').textContent = totalCount;
+            document.getElementById('workingCount').textContent = workingCount;
+            document.getElementById('restingCount').textContent = restingCount;
+            document.getElementById('chatOnlineCount').textContent = `${totalCount} онлайн`;
+        }
+
+        // ==================== UPDATE AGENTS DATA CACHE ====================
+        function updateAgentsData(agents) {
+            agents.forEach(agent => {
+                agentsData[agent.id] = agent;
+            });
+        }
+
+        // ==================== MAIN UPDATE FUNCTION ====================
+        async function updateAgentsStatus() {
+            const agents = await fetchAgentsStatus();
+            if (agents && agents.length > 0) {
+                updateAgentsData(agents);
+                renderWorkArea(agents);
+                renderRestRoom(agents);
+                updateStatusBar(agents);
+            }
+        }
 
         // ==================== MODAL FUNCTIONS ====================
         let currentAgentId = null;
-        let lastFocusedElement = null;
 
         async function openModal(agentId) {
             currentAgentId = agentId;
             const agent = agentsData[agentId];
-            if (!agent) return;
+            if (!agent) {
+                console.warn('[Modal] Agent not found:', agentId);
+                return;
+            }
 
-            // Store last focused element for restoration
-            lastFocusedElement = document.activeElement;
-
-            // Показываем модалку с базовыми данными сразу
-            document.getElementById('modalAvatar').textContent = agent.avatar;
+            // Update modal with agent data
+            document.getElementById('modalAvatar').textContent = agent.emoji || '🧑‍💻';
             document.getElementById('modalName').textContent = agent.name;
-            document.getElementById('modalRole').textContent = agent.fullRole;
-            document.getElementById('modalTasksCompleted').textContent = agent.tasksCompleted;
-            document.getElementById('modalEfficiency').textContent = agent.efficiency;
-            document.getElementById('modalHoursToday').textContent = agent.hoursToday;
-            document.getElementById('modalTaskName').textContent = agent.task;
-            document.getElementById('modalTaskProgress').style.width = agent.progress + '%';
-            document.getElementById('modalTaskProgressText').textContent = agent.progress + '%';
+            document.getElementById('modalRole').textContent = agent.role;
+            
+            // Current task with progress
+            document.getElementById('modalCurrentTaskName').textContent = agent.task || 'Нет активной задачи';
+            document.getElementById('modalCurrentTaskProgress').style.width = (agent.progress || 0) + '%';
+            document.getElementById('modalCurrentTaskProgressText').textContent = (agent.progress || 0) + '%';
+            
+            // Update status
+            const taskStatusEl = document.getElementById('modalCurrentTaskStatus');
+            if (agent.status === 'resting') {
+                taskStatusEl.textContent = 'На паузе';
+                taskStatusEl.className = 'modal-task-status pending';
+            } else {
+                taskStatusEl.textContent = 'В работе';
+                taskStatusEl.className = 'modal-task-status in-progress';
+            }
 
-            // Update skills
-            const skillsContainer = document.getElementById('modalSkills');
-            skillsContainer.innerHTML = agent.skills.map(skill => 
-                `<span class="modal-skill">${skill}</span>`
-            ).join('');
-
-            // Update task queue
-            const taskList = document.getElementById('taskList');
-            taskList.innerHTML = agent.queue.map((task, index) => `
-                <div class="modal-task-card" draggable="true" data-task-id="${index}" tabindex="0" role="button" aria-label="Задача: ${task.name}, статус: ${getStatusText(task.status)}">
-                    <div class="modal-task-header">
-                        <span class="modal-task-name">${task.name}</span>
-                        <span class="modal-task-status ${task.status}">${getStatusText(task.status)}</span>
-                    </div>
-                </div>
-            `).join('');
-
-            // Re-initialize drag and drop
-            initDragAndDrop();
-
-            // Скрываем секции API данных до загрузки
-            document.getElementById('modalAgentIssuesSection').style.display = 'none';
-
+            // Show modal
             document.getElementById('agentModal').classList.add('active');
-            
-            // Focus on close button for accessibility
-            const closeBtn = document.querySelector('.modal-close');
-            if (closeBtn) closeBtn.focus();
-            
-            // Announce to screen readers
-            announceToScreenReader(`Открыто окно информации о ${agent.name}, ${agent.fullRole}`);
 
-            // Загружаем актуальные данные из API
-            await loadAgentDetailsFromAPI(agent.name);
+            // Load issues from API
+            await loadAgentIssues(agent.name);
         }
 
-        // Загрузка деталей агента из API
-        async function loadAgentDetailsFromAPI(agentName) {
-            const loader = document.getElementById('modalAgentIssuesLoader');
-            const issuesSection = document.getElementById('modalAgentIssuesSection');
+        async function loadAgentIssues(agentName) {
+            const loader = document.getElementById('modalIssuesLoader');
+            const issuesList = document.getElementById('modalIssuesList');
             
-            // Показываем loader
-            if (loader) loader.style.display = 'flex';
-            if (issuesSection) issuesSection.style.display = 'block';
-            
+            loader.style.display = 'flex';
+            issuesList.style.display = 'none';
+            issuesList.innerHTML = '';
+
             try {
-                const response = await fetch(`/api/agents/status/${encodeURIComponent(agentName)}`);
+                const timestamp = Date.now();
+                const url = `${API_ENDPOINT}/${encodeURIComponent(agentName)}?t=${timestamp}`;
+                const response = await fetch(url);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const agentData = await response.json();
                 
-                // Обновляем модалку актуальными данными
-                updateModalWithAPIData(agentData);
-            } catch (error) {
-                console.warn('[AgentModal] API недоступен, используем локальные данные:', error.message);
-                // Fallback: скрываем секцию задач если API недоступен
-                if (issuesSection) issuesSection.style.display = 'none';
-            } finally {
-                // Скрываем loader
-                if (loader) loader.style.display = 'none';
-            }
-        }
-
-        // Обновление модалки данными из API
-        function updateModalWithAPIData(agent) {
-            // Обновляем основные поля если они есть в ответе
-            if (agent.name) document.getElementById('modalName').textContent = agent.name;
-            if (agent.role) document.getElementById('modalRole').textContent = agent.role;
-            
-            // Обновляем проект
-            const projectEl = document.getElementById('modalAgentProject');
-            if (projectEl && agent.project) {
-                projectEl.textContent = `📁 ${agent.project}`;
-            }
-            
-            // Обновляем текущую задачу из GitHub
-            const taskSection = document.getElementById('modalAgentTaskSection');
-            const taskEl = document.getElementById('modalAgentTask');
-            if (agent.task) {
-                if (taskSection) taskSection.style.display = 'block';
-                if (taskEl) taskEl.textContent = agent.task;
-            } else {
-                if (taskSection) taskSection.style.display = 'none';
-            }
-            
-            // Обновляем список issues из GitHub
-            const issuesSection = document.getElementById('modalAgentIssuesSection');
-            const issuesList = document.getElementById('modalAgentIssues');
-            
-            if (issuesList && agent.issues && Array.isArray(agent.issues) && agent.issues.length > 0) {
-                if (issuesSection) issuesSection.style.display = 'block';
-                issuesList.innerHTML = '';
+                // Фильтруем только открытые задачи
+                const openIssues = agentData.issues ? agentData.issues.filter(issue => issue.state === 'open') : [];
                 
-                agent.issues.forEach(issue => {
-                    const li = document.createElement('li');
-                    li.style.cssText = 'padding: 12px 16px; margin-bottom: 8px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; font-size: 13px;';
-                    
-                    // Формируем HTML для issue
-                    const statusClass = issue.status === 'open' ? 'open' : 'closed';
-                    const statusText = issue.status === 'open' ? 'Open' : 'Closed';
-                    
-                    let issueHTML = `
+                if (openIssues.length > 0) {
+                    issuesList.innerHTML = openIssues.map(issue => `
                         <div class="issue-item">
-                            <span class="issue-title">${escapeHtml(issue.title)}</span>
-                            <span class="issue-badge ${statusClass}">${statusText}</span>
-                    `;
-                    
-                    // Добавляем ссылку на GitHub если есть и URL валиден
-                    if (issue.url && isValidGitHubUrl(issue.url)) {
-                        issueHTML += `<a href="${escapeHtml(issue.url)}" target="_blank" rel="noopener noreferrer" class="issue-link">#${issue.number || ''} →</a>`;
-                    }
-                    
-                    issueHTML += '</div>';
-                    li.innerHTML = issueHTML;
-                    issuesList.appendChild(li);
-                });
-                
-                // Обновляем прогресс бар на основе реальных данных
-                updateProgressFromIssues(agent.issues);
-            } else {
-                // Нет issues - показываем сообщение
-                if (issuesSection) issuesSection.style.display = 'block';
-                if (issuesList) {
-                    issuesList.innerHTML = `
-                        <li style="padding: 16px; text-align: center; color: var(--text-secondary); font-size: 13px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;">
-                            Нет назначенных задач
-                        </li>
-                    `;
+                            <span class="issue-number">#${issue.number}</span>
+                            <a href="https://github.com/${issue.repo}/issues/${issue.number}" target="_blank" rel="noopener" class="issue-title-text" style="color: var(--neon-blue); text-decoration: none;">
+                                ${escapeHtml(issue.title)}
+                            </a>
+                            <span class="issue-state open">OPEN</span>
+                        </div>
+                    `).join('');
+                } else {
+                    issuesList.innerHTML = '<div style="color: var(--text-secondary); text-align: center; padding: 20px;">Нет открытых задач</div>';
                 }
-            }
-        }
-        
-        // Валидация GitHub URL
-        function isValidGitHubUrl(url) {
-            try {
-                const parsed = new URL(url);
-                return parsed.hostname === 'github.com';
-            } catch {
-                return false;
-            }
-        }
-        
-        // Обновление прогресса на основе issues
-        function updateProgressFromIssues(issues) {
-            if (!issues || issues.length === 0) return;
-            
-            const closedCount = issues.filter(i => i.status === 'closed').length;
-            const totalCount = issues.length;
-            const progress = Math.round((closedCount / totalCount) * 100);
-            
-            // Обновляем прогресс бар в текущей задаче
-            const progressFill = document.getElementById('modalTaskProgress');
-            const progressText = document.getElementById('modalTaskProgressText');
-            
-            if (progressFill) {
-                progressFill.style.width = progress + '%';
-            }
-            if (progressText) {
-                progressText.textContent = progress + '%';
+            } catch (error) {
+                console.warn('[Modal] Error loading issues:', error.message);
+                issuesList.innerHTML = '<div style="color: var(--text-secondary); text-align: center; padding: 20px;">Не удалось загрузить задачи</div>';
+            } finally {
+                loader.style.display = 'none';
+                issuesList.style.display = 'flex';
             }
         }
 
         function closeModal() {
             document.getElementById('agentModal').classList.remove('active');
-            
-            // Restore focus to the element that opened the modal
-            if (lastFocusedElement) {
-                lastFocusedElement.focus();
-            }
-            
             currentAgentId = null;
-        }
-
-        // Announce messages to screen readers
-        function announceToScreenReader(message) {
-            const liveRegion = document.getElementById('live-region');
-            if (liveRegion) {
-                liveRegion.textContent = message;
-                // Clear after announcement
-                setTimeout(() => {
-                    liveRegion.textContent = '';
-                }, 1000);
-            }
-        }
-
-        function getStatusText(status) {
-            const statusMap = {
-                'pending': 'В очереди',
-                'in-progress': 'В работе',
-                'completed': 'Завершено'
-            };
-            return statusMap[status] || status;
         }
 
         // Close modal on overlay click
@@ -3251,7 +2580,7 @@
             }
         });
 
-        // Close modal and chat on Escape key
+        // Close modal on Escape key
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 const modal = document.getElementById('agentModal');
@@ -3264,29 +2593,6 @@
                 }
             }
         });
-
-        // ==================== PROJECT DISPLAY UPDATE (SECURE) ====================
-        // Update project display on agent's monitor when task changes
-        function updateAgentScreen(agentId, project, task) {
-            const desk = document.querySelector(`.desk-station[data-agent-id="${agentId}"]`);
-            if (!desk) return;
-            
-            const monitor = desk.querySelector('.monitor');
-            if (!monitor) return;
-            
-            // SECURITY: Валидация входных данных через SecurityModule
-            const validation = SecurityModule.sanitizeProjectData({ project, task });
-            if (!validation.valid) {
-                console.warn('[Security] Project data validation failed:', validation.errors);
-            }
-            
-            // Update data attributes (sanitized)
-            desk.dataset.project = validation.sanitized.project || 'Unknown';
-            desk.dataset.task = validation.sanitized.task || 'No task';
-            
-            // Animate screen update with security
-            animateProjectChangeSecure(monitor, validation.sanitized.project, validation.sanitized.task);
-        }
 
         // ==================== CHAT FUNCTIONS ====================
         function toggleChat() {
@@ -3321,788 +2627,73 @@
             messagesContainer.insertAdjacentHTML('beforeend', messageHTML);
             input.value = '';
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
-
-            // Simulate reply after delay
-            setTimeout(() => {
-                simulateReply();
-            }, 2000 + Math.random() * 2000);
-        }
-
-        function simulateReply() {
-            const agents = Object.values(agentsData);
-            const randomAgent = agents[Math.floor(Math.random() * agents.length)];
-            const replies = [
-                'Согласен! 👍',
-                'Отличная идея!',
-                'Работаю над этим 💪',
-                'Проверю и отпишусь',
-                'Звучит здорово! 🚀',
-                'Давай обсудим на созвоне?',
-                'Уже почти готово!',
-                'Спасибо за информацию'
-            ];
-            const randomReply = replies[Math.floor(Math.random() * replies.length)];
-            const time = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
-
-            const messagesContainer = document.getElementById('chatMessages');
-            const messageHTML = `
-                <div class="chat-message">
-                    <div class="chat-message-avatar">${randomAgent.avatar}</div>
-                    <div class="chat-message-content">
-                        <div class="chat-message-name">${randomAgent.name}</div>
-                        <div class="chat-message-bubble">${randomReply}</div>
-                        <div class="chat-message-time">${time}</div>
-                    </div>
-                </div>
-            `;
-
-            messagesContainer.insertAdjacentHTML('beforeend', messageHTML);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
 
         function escapeHtml(text) {
+            if (typeof text !== 'string') return '';
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
         }
 
-        // ==================== DRAG AND DROP ====================
-        let draggedElement = null;
-
-        function initDragAndDrop() {
-            const taskCards = document.querySelectorAll('.modal-task-card[draggable="true"]');
-            const taskList = document.getElementById('taskList');
-
-            taskCards.forEach(card => {
-                card.addEventListener('dragstart', handleDragStart);
-                card.addEventListener('dragend', handleDragEnd);
-            });
-
-            if (taskList) {
-                taskList.addEventListener('dragover', handleDragOver);
-                taskList.addEventListener('drop', handleDrop);
-                taskList.addEventListener('dragenter', handleDragEnter);
-                taskList.addEventListener('dragleave', handleDragLeave);
-            }
-        }
-
-        function handleDragStart(e) {
-            draggedElement = this;
-            this.classList.add('dragging');
-            e.dataTransfer.effectAllowed = 'move';
-            e.dataTransfer.setData('text/html', this.innerHTML);
-        }
-
-        function handleDragEnd(e) {
-            this.classList.remove('dragging');
-            draggedElement = null;
-            
-            document.querySelectorAll('.modal-task-card').forEach(card => {
-                card.classList.remove('drag-over');
-            });
-        }
-
-        function handleDragOver(e) {
-            e.preventDefault();
-            e.dataTransfer.dropEffect = 'move';
-        }
-
-        function handleDragEnter(e) {
-            e.preventDefault();
-            if (this !== draggedElement && this.classList.contains('modal-task-card')) {
-                this.classList.add('drag-over');
-            }
-        }
-
-        function handleDragLeave(e) {
-            if (this.classList.contains('modal-task-card')) {
-                this.classList.remove('drag-over');
-            }
-        }
-
-        function handleDrop(e) {
-            e.preventDefault();
-            
-            if (draggedElement && this !== draggedElement) {
-                const allCards = [...this.parentNode.querySelectorAll('.modal-task-card')];
-                const draggedIndex = allCards.indexOf(draggedElement);
-                const targetIndex = allCards.indexOf(this);
-
-                if (draggedIndex < targetIndex) {
-                    this.parentNode.insertBefore(draggedElement, this.nextSibling);
-                } else {
-                    this.parentNode.insertBefore(draggedElement, this);
-                }
-
-                // Animate the change
-                draggedElement.style.animation = 'fadeInScale 0.3s ease';
-            }
-
-            document.querySelectorAll('.modal-task-card').forEach(card => {
-                card.classList.remove('drag-over');
-            });
-        }
-
-        // ==================== PROJECT DISPLAY ANIMATION (SECURE) ====================
-        // Animate project change on screens with XSS protection
-        function animateProjectChangeSecure(monitor, newProject, newTask) {
-            const projectEl = monitor.querySelector('.screen-project');
-            const taskEl = monitor.querySelector('.screen-task');
-            
-            if (!projectEl || !taskEl) return;
-            
-            // SECURITY: Используем textContent вместо innerHTML
-            // Это предотвращает XSS-атаки
-            
-            // Fade out
-            projectEl.style.transition = 'opacity 0.3s ease';
-            taskEl.style.transition = 'opacity 0.3s ease';
-            projectEl.style.opacity = '0';
-            taskEl.style.opacity = '0';
-            
-            setTimeout(() => {
-                // SECURITY: textContent автоматически экранирует HTML
-                projectEl.textContent = newProject || 'Unknown';
-                taskEl.textContent = newTask || 'No task';
-                
-                // Fade in
-                projectEl.style.opacity = '1';
-                taskEl.style.opacity = '1';
-            }, 300);
-        }
-        
-        // Legacy function - deprecated, use animateProjectChangeSecure
-        function animateProjectChange(monitor, newProject, newTask) {
-            // Redirect to secure version
-            animateProjectChangeSecure(monitor, newProject, newTask);
-        }
-
-        // Example: Update project every 10 seconds for demo
-        // In real app, this would be triggered by WebSocket or API
-        setInterval(() => {
-            const monitors = document.querySelectorAll('.monitor');
-            const randomMonitor = monitors[Math.floor(Math.random() * monitors.length)];
-            const projects = [
-                { project: 'Meetify', task: 'Виртуальный фон' },
-                { project: 'Meetify', task: 'Запись встреч' },
-                { project: 'AI Team Office', task: 'Тестирование' },
-                { project: 'AI Team Office', task: 'DevOps' },
-                { project: 'AI Team Office', task: 'Документация' },
-                { project: 'AI Team Office', task: 'Security' }
-            ];
-            const randomProject = projects[Math.floor(Math.random() * projects.length)];
-            animateProjectChange(randomMonitor, randomProject.project, randomProject.task);
-        }, 10000);
-
-        // ==================== AGENT STATUS API + WEBSOCKET ====================
-        const API_ENDPOINT = '/ai-office/api/agents/status';
-        const UPDATE_INTERVAL = 30000; // 30 секунд (fallback polling)
-        let agentsStatusCache = {};
-        let apiAvailable = true;
-        let socket = null;
-        let isWebSocketConnected = false;
-
-        // Fallback данные (статичные, если API недоступен)
-        const fallbackAgents = [
-            { id: '1', name: 'Алексей', status: 'working', location: 'work-zone', statusRing: 'green', statusRingColor: '#22c55e', project: 'Meetify', task: 'Виртуальный фон', progress: 75, emoji: '👨‍🎨', role: 'UI Designer', deskId: '1' },
-            { id: '2', name: 'Мария', status: 'working', location: 'work-zone', statusRing: 'green', statusRingColor: '#22c55e', project: 'Meetify', task: 'Запись встреч', progress: 60, emoji: '👨‍💼', role: 'Fullstack разработчик', deskId: '2' },
-            { id: '3', name: 'Иван', status: 'working', location: 'work-zone', statusRing: 'green', statusRingColor: '#22c55e', project: 'AI Team Office', task: 'Тестирование', progress: 85, emoji: '👩‍🔬', role: 'QA инженер', deskId: '3' },
-            { id: '4', name: 'Дмитрий', status: 'working', location: 'work-zone', statusRing: 'green', statusRingColor: '#22c55e', project: 'AI Team Office', task: 'CI/CD Pipeline', progress: 45, emoji: '👨‍🚀', role: 'DevOps инженер', deskId: '4' },
-            { id: '5', name: 'Ольга', status: 'working', location: 'work-zone', statusRing: 'green', statusRingColor: '#22c55e', project: 'DataVision', task: 'Анализ метрик', progress: 70, emoji: '👨‍💻', role: 'Data Scientist', deskId: '5' },
-            { id: '6', name: 'Андрей', status: 'working', location: 'work-zone', statusRing: 'green', statusRingColor: '#22c55e', project: 'SecureFlow', task: 'Security Audit', progress: 30, emoji: '👩‍✈️', role: 'Security инженер', deskId: '6' }
-        ];
-
-        // Получение статусов агентов с API (REST fallback)
-        async function fetchAgentsStatus() {
-            try {
-                const response = await fetch(API_ENDPOINT);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const data = await response.json();
-                apiAvailable = true;
-                // API возвращает объект с полем agents
-                return data.agents || data;
-            } catch (error) {
-                console.warn('[AgentStatus] API недоступен, используем fallback:', error.message);
-                apiAvailable = false;
-                return fallbackAgents;
-            }
-        }
-
-        // ==================== WEBSOCKET CONNECTION ====================
+        // ==================== WEBSOCKET ====================
         function initWebSocket() {
             const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
             const wsUrl = `${wsProtocol}//${window.location.host}`;
             
-            console.log('[WebSocket] Подключение к', wsUrl);
+            console.log('[WebSocket] Connecting to:', wsUrl);
             
-            socket = io(wsUrl, {
-                transports: ['websocket', 'polling'],
-                reconnection: true,
-                reconnectionAttempts: 5,
-                reconnectionDelay: 1000
-            });
-            
-            socket.on('connect', () => {
-                console.log('[WebSocket] Подключено:', socket.id);
-                isWebSocketConnected = true;
+            try {
+                socket = io(wsUrl, {
+                    transports: ['websocket', 'polling'],
+                    reconnection: true,
+                    reconnectionAttempts: 5,
+                    reconnectionDelay: 1000
+                });
                 
-                // Запрашиваем текущие статусы при подключении
-                socket.emit('request-agents-status');
-            });
-            
-            socket.on('disconnect', () => {
-                console.log('[WebSocket] Отключено');
-                isWebSocketConnected = false;
-            });
-            
-            socket.on('agents-status-update', (data) => {
-                console.log('[WebSocket] Получено обновление статусов:', data);
+                socket.on('connect', () => {
+                    console.log('[WebSocket] Connected');
+                    isWebSocketConnected = true;
+                    socket.emit('request-agents-status');
+                });
                 
-                if (data.agents && Array.isArray(data.agents)) {
-                    processAgentStatusChanges(data.agents);
-                    
-                    // Если есть изменения, анонсируем их
-                    if (data.changes && data.changes.length > 0) {
-                        const changeNames = data.changes.map(c => c.name).join(', ');
-                        announceToScreenReader(`Обновление статусов: ${changeNames}`);
+                socket.on('disconnect', () => {
+                    console.log('[WebSocket] Disconnected');
+                    isWebSocketConnected = false;
+                });
+                
+                socket.on('agents-status-update', (data) => {
+                    console.log('[WebSocket] Status update received:', data);
+                    if (data.agents && Array.isArray(data.agents)) {
+                        updateAgentsData(data.agents);
+                        renderWorkArea(data.agents);
+                        renderRestRoom(data.agents);
+                        updateStatusBar(data.agents);
                     }
-                }
-            });
-            
-            socket.on('error', (error) => {
-                console.error('[WebSocket] Ошибка:', error);
-            });
-        }
-
-        // ==================== AGENT MOVEMENT ANIMATIONS ====================
-        
-        /**
-         * Переместить агента в комнату отдыха
-         * 🟡 Жёлтое кольцо, плавная анимация
-         */
-        function moveToRestRoom(agent) {
-            console.log(`[AgentMovement] ${agent.name} → rest-room`);
-
-            // 1. Проверить что в комнате отдыха его ещё нет (предотвращаем дублирование)
-            const existingRestAgent = document.querySelector(`.rest-agent[data-agent-name="${agent.name}"]`);
-            if (existingRestAgent) {
-                console.log(`[AgentMovement] ${agent.name} уже в комнате отдыха, пропускаем`);
-                return;
-            }
-
-            // 2. Удалить из рабочей зоны (если есть deskId)
-            if (agent.deskId) {
-                const desk = document.querySelector(`.desk-station[data-agent-id="${agent.deskId}"]`);
-                if (desk) {
-                    // Анимируем исчезновение с рабочего места
-                    animateDeskExit(desk, agent);
-                }
-            }
-
-            // 3. Создать в комнате отдыха
-            addAgentToRestRoom(agent);
-
-            // Объявляем для screen readers
-            announceToScreenReader(`${agent.name} перешёл в комнату отдыха`);
-        }
-
-        /**
-         * Переместить агента на рабочее место
-         * 🟢 Зелёное кольцо, плавная анимация
-         */
-        function moveToWorkZone(agent) {
-            console.log(`[AgentMovement] ${agent.name} → work-zone`);
-
-            // 1. Проверить что на рабочем месте его ещё нет (предотвращаем дублирование)
-            if (agent.deskId) {
-                const desk = document.querySelector(`.desk-station[data-agent-id="${agent.deskId}"]`);
-                if (desk) {
-                    const agentEmoji = desk.querySelector('.agent-emoji');
-                    const statusRing = desk.querySelector('.agent-status-ring');
-                    // Если агент уже виден и активен, просто обновляем статус
-                    if (agentEmoji && desk.style.opacity !== '0.6' && statusRing && !statusRing.classList.contains('resting')) {
-                        console.log(`[AgentMovement] ${agent.name} уже на рабочем месте, пропускаем`);
-                        return;
-                    }
-                }
-            }
-
-            // 2. Убрать из комнаты отдыха если там есть
-            const existingRestAgent = document.querySelector(`.rest-agent[data-agent-name="${agent.name}"]`);
-            if (existingRestAgent) {
-                removeAgentFromRestRoom(agent);
-            }
-
-            // 3. Добавить на рабочее место
-            if (agent.deskId) {
-                const desk = document.querySelector(`.desk-station[data-agent-id="${agent.deskId}"]`);
-                if (desk) {
-                    animateDeskEntry(desk, agent);
-                }
-            }
-
-            // Объявляем для screen readers
-            announceToScreenReader(`${agent.name} вернулся на рабочее место`);
-        }
-
-        /**
-         * Анимация ухода агента с рабочего места
-         */
-        function animateDeskExit(desk, agent) {
-            const agentContainer = desk.querySelector('.agent-container');
-            const agentEmoji = desk.querySelector('.agent-emoji');
-            const statusRing = desk.querySelector('.agent-status-ring');
-            
-            // Добавляем класс для анимации
-            desk.classList.add('agent-leaving');
-            
-            // Меняем цвет кольца на жёлтый
-            if (statusRing) {
-                statusRing.style.background = '#f59e0b';
-                statusRing.style.boxShadow = '0 0 10px #f59e0b';
-                statusRing.classList.add('resting');
-            }
-            
-            // Анимируем emoji
-            if (agentEmoji) {
-                agentEmoji.classList.remove('typing');
-                agentEmoji.style.animation = 'agentExit 0.8s ease forwards';
-            }
-            
-            // Затемняем рабочее место
-            desk.style.opacity = '0.6';
-            desk.style.transform = 'scale(0.95)';
-            desk.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
-            
-            // Убираем класс после анимации
-            setTimeout(() => {
-                desk.classList.remove('agent-leaving');
-            }, 800);
-        }
-
-        /**
-         * Анимация появления агента на рабочем месте
-         */
-        function animateDeskEntry(desk, agent) {
-            // Проверяем, не отображается ли агент уже на этом месте активно
-            const agentEmoji = desk.querySelector('.agent-emoji');
-            const statusRing = desk.querySelector('.agent-status-ring');
-            
-            if (agentEmoji && desk.style.opacity === '1' && statusRing && !statusRing.classList.contains('resting')) {
-                console.log(`[AgentMovement] ${agent.name} уже активен на рабочем месте`);
-                return;
-            }
-            
-            // Добавляем класс для анимации
-            desk.classList.add('agent-entering');
-            
-            // Меняем цвет кольца на зелёный
-            if (statusRing) {
-                statusRing.style.background = '#22c55e';
-                statusRing.style.boxShadow = '0 0 10px #22c55e';
-                statusRing.classList.remove('resting');
-            }
-            
-            // Возвращаем opacity и scale
-            desk.style.opacity = '1';
-            desk.style.transform = 'scale(1)';
-            desk.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
-            
-            // Анимируем emoji
-            if (agentEmoji) {
-                agentEmoji.classList.add('typing');
-                agentEmoji.style.animation = 'agentEnter 0.8s ease forwards';
-            }
-            
-            // Убираем класс после анимации
-            setTimeout(() => {
-                desk.classList.remove('agent-entering');
-                if (agentEmoji) agentEmoji.style.animation = '';
-            }, 800);
-        }
-
-        /**
-         * Добавить агента в комнату отдыха
-         */
-        function addAgentToRestRoom(agent) {
-            // Проверяем, есть ли уже этот агент в динамическом списке
-            const existingRestAgent = document.querySelector(`.rest-agent[data-agent-name="${agent.name}"]`);
-            if (existingRestAgent) {
-                console.log(`[AgentMovement] ${agent.name} уже в списке комнаты отдыха, пропускаем создание`);
-                return;
-            }
-
-            // Проверяем, есть ли агент в статичной разметке зон (шезлонг/PlayStation)
-            const staticZone = document.querySelector(`[data-rest-agent="${agent.name}"]`);
-            if (staticZone) {
-                console.log(`[AgentMovement] ${agent.name} уже в статичной зоне отдыха`);
-                // Просто обновляем видимость
-                updateRestRoomZones(agent, true);
-                return;
-            }
-
-            const restRoomContent = document.querySelector('.rest-room-content');
-            if (!restRoomContent) {
-                console.warn(`[AgentMovement] Не найдена комната отдыха`);
-                return;
-            }
-
-            console.log(`[AgentMovement] Создаём ${agent.name} в комнате отдыха`);
-
-            // Создаём элемент агента в комнате отдыха
-            const restAgentEl = document.createElement('div');
-            restAgentEl.className = 'rest-agent';
-            restAgentEl.setAttribute('data-agent-name', agent.name);
-            restAgentEl.innerHTML = `
-                <div class="rest-agent-avatar">
-                    <span class="rest-agent-emoji">${agent.emoji}</span>
-                    <span class="rest-status-ring" aria-label="Статус: отдыхает"></span>
-                </div>
-                <div class="rest-agent-info">
-                    <div class="rest-agent-name">${agent.name} (${agent.role})</div>
-                    <div class="rest-agent-status">Отдыхает</div>
-                </div>
-            `;
-
-            // Добавляем стили для анимации появления
-            restAgentEl.style.cssText = `
-                display: flex;
-                align-items: center;
-                gap: 12px;
-                padding: 12px 16px;
-                background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(234, 179, 8, 0.05));
-                border: 1px solid rgba(245, 158, 11, 0.2);
-                border-radius: 12px;
-                margin-bottom: 10px;
-                animation: restAgentEnter 0.6s ease forwards;
-                opacity: 0;
-                transform: translateX(-20px);
-            `;
-
-            // Вставляем в начало комнаты отдыха (перед lounge-area)
-            const firstChild = restRoomContent.firstElementChild;
-            restRoomContent.insertBefore(restAgentEl, firstChild);
-
-            // Обновляем статус в существующих зонах если нужно
-            updateRestRoomZones(agent, true);
-        }
-
-        /**
-         * Убрать агента из комнаты отдыха
-         */
-        function removeAgentFromRestRoom(agent) {
-            // Удаляем из динамического списка
-            const restAgentEl = document.querySelector(`.rest-agent[data-agent-name="${agent.name}"]`);
-            if (restAgentEl) {
-                // Анимируем исчезновение
-                restAgentEl.style.animation = 'restAgentExit 0.5s ease forwards';
-                setTimeout(() => {
-                    restAgentEl.remove();
-                }, 500);
-            }
-            
-            // Обновляем статус в статичных зонах (шезлонг/PlayStation)
-            updateRestRoomZones(agent, false);
-        }
-
-        /**
-         * Обновить зоны комнаты отдыха (шезлонг, игровая зона)
-         */
-        function updateRestRoomZones(agent, isResting) {
-            // Сергей - шезлонг
-            if (agent.name === 'Сергей') {
-                const loungePerson = document.querySelector('.lounge-person');
-                const loungeName = document.querySelector('.lounge-name');
-                const loungeStatus = document.querySelector('.lounge-status');
+                });
                 
-                if (loungePerson) {
-                    const statusRing = loungePerson.querySelector('.rest-status-ring');
-                    if (isResting) {
-                        loungePerson.style.display = 'block';
-                        if (statusRing) statusRing.style.display = 'block';
-                    } else {
-                        loungePerson.style.display = 'none';
-                    }
-                }
-                if (loungeName) loungeName.textContent = isResting ? `${agent.name} (${agent.role})` : 'Свободно';
-                if (loungeStatus) loungeStatus.textContent = isResting ? 'Отдыхает' : 'Свободно';
-            }
-            
-            // Елена - игровая зона
-            if (agent.name === 'Елена') {
-                const gamingPerson = document.querySelector('.gaming-person');
-                const gamingName = document.querySelector('.gaming-name');
-                const gamingStatus = document.querySelector('.gaming-status');
-                
-                if (gamingPerson) {
-                    const statusRing = gamingPerson.querySelector('.rest-status-ring');
-                    if (isResting) {
-                        gamingPerson.style.display = 'block';
-                        if (statusRing) statusRing.style.display = 'block';
-                    } else {
-                        gamingPerson.style.display = 'none';
-                    }
-                }
-                if (gamingName) gamingName.textContent = isResting ? `${agent.name} (${agent.role})` : 'Свободно';
-                if (gamingStatus) gamingStatus.textContent = isResting ? 'Играет' : 'Свободно';
-            }
-        }
-
-        // Обновление DOM агента на рабочем месте
-        function updateAgentDOM(agent) {
-            // Ищем desk по deskId или id
-            const deskId = agent.deskId || agent.id;
-            const desk = document.querySelector(`.desk-station[data-agent-id="${deskId}"]`);
-            
-            if (desk) {
-                console.log(`[updateAgentDOM] Обновляем агента ${agent.name} на desk ${deskId}`);
-                
-                // Обновляем экран монитора
-                const projectEl = desk.querySelector('.screen-project');
-                const taskEl = desk.querySelector('.screen-task');
-                const progressFill = desk.querySelector('.progress-fill');
-                const progressText = desk.querySelector('.progress-text');
-                const statusRing = desk.querySelector('.agent-status-ring');
-                const agentEmoji = desk.querySelector('.agent-emoji');
-                const tooltipTask = desk.querySelector('.tooltip-task');
-                const tooltipProgressFill = desk.querySelector('.agent-task-tooltip .progress-fill');
-                const tooltipProgressText = desk.querySelector('.agent-task-tooltip .progress-text');
-
-                if (projectEl && agent.project) {
-                    projectEl.textContent = agent.project;
-                }
-                if (taskEl && agent.task) {
-                    taskEl.textContent = agent.task;
-                }
-                if (progressFill && agent.progress !== undefined) {
-                    progressFill.style.width = agent.progress + '%';
-                }
-                if (progressText && agent.progress !== undefined) {
-                    progressText.textContent = agent.progress + '%';
-                }
-                
-                // Обновляем tooltip - заменяем одну задачу на список issues
-                const tooltip = desk.querySelector('.agent-task-tooltip');
-                if (tooltip) {
-                    // Удаляем старый блок задачи если есть
-                    const oldTaskEl = tooltip.querySelector('.tooltip-task');
-                    const oldProgressEl = tooltip.querySelector('.tooltip-progress');
-                    
-                    // Создаём или обновляем блок issues
-                    let issuesContainer = tooltip.querySelector('.agent-issues');
-                    if (!issuesContainer) {
-                        issuesContainer = document.createElement('div');
-                        issuesContainer.className = 'agent-issues';
-                        tooltip.appendChild(issuesContainer);
-                    }
-                    
-                    // Если есть массив issues - отображаем их
-                    if (agent.issues && Array.isArray(agent.issues) && agent.issues.length > 0) {
-                        let issuesHTML = '<div class="agent-issues-title">GitHub Issues</div>';
-                        issuesHTML += '<div class="agent-issues-list">';
-                        
-                        agent.issues.forEach(issue => {
-                            const repo = issue.repo || issue.repository || 'dkyitdevops/ai-team-office';
-                            const issueUrl = `https://github.com/${repo}/issues/${issue.number}`;
-                            const statusClass = issue.state === 'open' ? 'issue-status-open' : 'issue-status-closed';
-                            const statusText = issue.state === 'open' ? '[OPEN]' : '[CLOSED]';
-                            
-                            issuesHTML += `
-                                <a href="${issueUrl}" target="_blank" rel="noopener noreferrer">
-                                    #${issue.number}: ${issue.title} <span class="${statusClass}">${statusText}</span>
-                                </a>
-                            `;
-                        });
-                        
-                        issuesHTML += '</div>';
-                        issuesContainer.innerHTML = issuesHTML;
-                        
-                        // Скрываем старую задачу и прогресс если они есть
-                        if (oldTaskEl) oldTaskEl.style.display = 'none';
-                        if (oldProgressEl) oldProgressEl.style.display = 'none';
-                    } else if (agent.task) {
-                        // Fallback: если нет issues но есть task
-                        issuesContainer.innerHTML = '';
-                        if (oldTaskEl) {
-                            oldTaskEl.style.display = 'block';
-                            oldTaskEl.textContent = '📝 ' + agent.task;
-                        }
-                        if (oldProgressEl) oldProgressEl.style.display = 'flex';
-                    }
-                }
-                
-                // Обновляем прогресс в tooltip (если ещё нужен)
-                if (tooltipProgressFill && agent.progress !== undefined) {
-                    tooltipProgressFill.style.width = agent.progress + '%';
-                }
-                if (tooltipProgressText && agent.progress !== undefined) {
-                    tooltipProgressText.textContent = agent.progress + '%';
-                }
-
-                // Обновляем цвет кольца статуса
-                if (statusRing) {
-                    if (agent.status === 'resting' || agent.location === 'rest-room') {
-                        statusRing.style.background = '#f59e0b';
-                        statusRing.style.boxShadow = '0 0 10px #f59e0b';
-                        statusRing.classList.add('resting');
-                    } else {
-                        statusRing.style.background = '#22c55e';
-                        statusRing.style.boxShadow = '0 0 10px #22c55e';
-                        statusRing.classList.remove('resting');
-                    }
-                }
-
-                // Обновляем анимацию emoji
-                if (agentEmoji) {
-                    if (agent.status === 'working') {
-                        agentEmoji.classList.add('typing');
-                    } else {
-                        agentEmoji.classList.remove('typing');
-                    }
-                }
-
-                // Обновляем data-атрибуты
-                desk.dataset.project = agent.project || '';
-                desk.dataset.task = agent.task || '';
-                desk.dataset.progress = agent.progress || 0;
-            } else {
-                console.warn(`[updateAgentDOM] Desk не найден для агента ${agent.name} (deskId: ${deskId})`);
-            }
-        }
-
-        // Обновление статус-бара
-        function updateStatusBar(agents) {
-            const workingCount = agents.filter(a => a.status === 'working').length;
-            const restingCount = agents.filter(a => a.status === 'resting').length;
-            const totalCount = agents.length;
-
-            const statusItems = document.querySelectorAll('.status-item');
-            if (statusItems.length >= 3) {
-                statusItems[0].querySelector('.status-value').textContent = totalCount;
-                statusItems[1].querySelector('.status-value').textContent = workingCount;
-                statusItems[2].querySelector('.status-value').textContent = restingCount;
-            }
-        }
-
-        // Обработка изменений статусов
-        function processAgentStatusChanges(newAgents) {
-            newAgents.forEach(agent => {
-                const oldAgent = agentsStatusCache[agent.id];
-                
-                // Определяем локацию из API
-                const isResting = agent.status === 'resting' || agent.location === 'rest-room';
-                const wasResting = oldAgent && (oldAgent.status === 'resting' || oldAgent.location === 'rest-room');
-                
-                if (oldAgent) {
-                    // Проверяем смену статуса
-                    if (wasResting !== isResting) {
-                        console.log(`[AgentStatus] ${agent.name}: ${wasResting ? 'resting' : 'working'} → ${isResting ? 'resting' : 'working'}`);
-                        
-                        if (isResting) {
-                            moveToRestRoom(agent);
-                        } else {
-                            moveToWorkZone(agent);
-                        }
-                    }
-                } else {
-                    // Новый агент - размещаем согласно статусу
-                    if (isResting) {
-                        addAgentToRestRoom(agent);
-                    }
-                }
-                
-                // Обновляем DOM (только если у агента есть deskId)
-                if (agent.deskId) {
-                    updateAgentDOM(agent);
-                }
-                
-                // Кэшируем статус
-                agentsStatusCache[agent.id] = { ...agent };
-            });
-
-            // Обновляем статус-бар
-            updateStatusBar(newAgents);
-        }
-
-        // Основная функция обновления
-        async function updateAgentsStatus() {
-            const agents = await fetchAgentsStatus();
-            if (agents && agents.length > 0) {
-                processAgentStatusChanges(agents);
+                socket.on('error', (error) => {
+                    console.error('[WebSocket] Error:', error);
+                });
+            } catch (error) {
+                console.warn('[WebSocket] Failed to initialize:', error.message);
             }
         }
 
         // ==================== INITIALIZATION ====================
         document.addEventListener('DOMContentLoaded', function() {
-            // Random typing animation for agents
-            const agents = document.querySelectorAll('.agent-emoji');
+            console.log('[Init] AI Team Office starting...');
             
-            function toggleTyping() {
-                const randomAgent = agents[Math.floor(Math.random() * agents.length)];
-                randomAgent.classList.add('typing');
-                
-                setTimeout(() => {
-                    randomAgent.classList.remove('typing');
-                }, 2000);
-            }
-
-            setInterval(toggleTyping, 3000);
-
-            // Click handlers for desk stations (open modal)
-            const desks = document.querySelectorAll('.desk-station');
-            desks.forEach(desk => {
-                desk.addEventListener('click', () => {
-                    const agentId = desk.dataset.agentId;
-                    if (agentId) {
-                        openModal(agentId);
-                    }
-                });
-
-                // Keyboard accessibility for desk stations
-                desk.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        const agentId = desk.dataset.agentId;
-                        if (agentId) {
-                            openModal(agentId);
-                        }
-                    }
-                });
-
-                desk.addEventListener('mouseenter', () => {
-                    const agent = desk.querySelector('.agent-emoji');
-                    agent.style.transform = 'scale(1.2) rotate(5deg)';
-                });
-                
-                desk.addEventListener('mouseleave', () => {
-                    const agent = desk.querySelector('.agent-emoji');
-                    agent.style.transform = '';
-                });
-            });
-
-            // Initialize drag and drop
-            initDragAndDrop();
-
-            // Scroll chat to bottom
-            const chatMessages = document.getElementById('chatMessages');
-            if (chatMessages) {
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-            }
-
-            // ==================== WEBSOCKET INITIALIZATION ====================
-            // Инициализируем WebSocket для real-time обновлений
-            initWebSocket();
-            
-            // ==================== API INITIALIZATION ====================
-            // Первоначальная загрузка статусов (REST fallback)
+            // Initial load
             updateAgentsStatus();
             
-            // Периодическое обновление каждые 30 секунд (fallback если WebSocket не работает)
+            // Initialize WebSocket
+            initWebSocket();
+            
+            // Periodic update (fallback)
             setInterval(() => {
                 if (!isWebSocketConnected) {
-                    console.log('[AgentStatus] WebSocket не подключен, используем REST polling');
+                    console.log('[Polling] WebSocket not connected, using REST polling');
                     updateAgentsStatus();
                 }
             }, UPDATE_INTERVAL);
