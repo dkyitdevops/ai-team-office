@@ -80,6 +80,8 @@ jobs:
           SERVER_USER: ${{ secrets.SERVER_USER }}
           DEPLOY_DIR: ${{ secrets.DEPLOY_DIR || '/opt/ai-team-office' }}
           IMAGE_TAG: ${{ needs.build-and-push.outputs.image_tag }}
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GHCR_USER: ${{ github.actor }}
         run: |
           # Создание директории на сервере
           ssh $SERVER_USER@$SERVER_HOST "mkdir -p $DEPLOY_DIR"
@@ -88,11 +90,11 @@ jobs:
           scp docker-compose.yml docker-compose.prod.yml $SERVER_USER@$SERVER_HOST:$DEPLOY_DIR/
           
           # Деплой
-          ssh $SERVER_USER@$SERVER_HOST << EOF
-            cd $DEPLOY_DIR
+          ssh $SERVER_USER@$SERVER_HOST "export DEPLOY_DIR='$DEPLOY_DIR' GHCR_TOKEN='$GHCR_TOKEN' GHCR_USER='$GHCR_USER'; bash -s" << 'EOF'
+            cd "$DEPLOY_DIR"
             
             # Login в GitHub Container Registry
-            echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
             
             # Pull и запуск
             docker compose pull
