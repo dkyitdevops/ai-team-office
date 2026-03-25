@@ -1,19 +1,30 @@
-# GitHub Actions SSH Key Fix
+# GitHub Actions SSH Key Fix - Issue #25
 
 ## Проблема
-GitHub Actions падает на шаге "Setup SSH" из-за отсутствия SSH ключа.
+GitHub Actions падает на шаге "Setup SSH" из-за отсутствия/невалидности SSH ключа.
 
-## Выполнено
-✅ Сгенерирован новый SSH ключ пара (ed25519)
-✅ Публичный ключ добавлен на сервер 46.149.68.9 в `~/.ssh/authorized_keys`
+## Выполнено ✅
 
-## Что нужно сделать вручную
+### 1. Сгенерирован новый SSH ключ
+- Тип: ed25519
+- Комментарий: github-actions
 
-### 1. Обновить секрет SSH_PRIVATE_KEY в GitHub
+### 2. Публичный ключ добавлен на сервер
+Сервер: 46.149.68.9
+Файл: `~/.ssh/authorized_keys`
 
-Перейти: https://github.com/dkyitdevops/ai-team-office/settings/secrets/actions
+### 3. Исправлен workflow
+Файл: `.github/workflows/deploy.yml`
+- Заменен `secrets.SSH_KNOWN_HOSTS` на `ssh-keyscan` (автоматическое получение fingerprint)
+- Это устраняет необходимость вручную поддерживать fingerprint в секретах
 
-Найти секрет `SSH_PRIVATE_KEY` и обновить его значение на:
+## Что нужно сделать вручную ⚠️
+
+### Обновить секрет SSH_PRIVATE_KEY в GitHub
+
+1. Перейти: https://github.com/dkyitdevops/ai-team-office/settings/secrets/actions
+
+2. Найти секрет `SSH_PRIVATE_KEY` и обновить его значение:
 
 ```
 -----BEGIN OPENSSH PRIVATE KEY-----
@@ -25,35 +36,28 @@ K1wOfEiJGY3LEun+lDh/AAAADmdpdGh1Yi1hY3Rpb25zAQIDBAUGBw==
 -----END OPENSSH PRIVATE KEY-----
 ```
 
-### 2. Проверить другие секреты
+### Проверить другие секреты
 
 Убедитесь что установлены:
-- `SERVER_HOST` = 46.149.68.9
-- `SERVER_USER` = root
-- `SSH_KNOWN_HOSTS` = (fingerprint сервера)
-
-Получить fingerprint:
-```bash
-ssh-keyscan -t ed25519 46.149.68.9
-```
-
-Значение для `SSH_KNOWN_HOSTS`:
-```
-46.149.68.9 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHI7rckZqHLxZMxEHLMV0iHo2izLxmQr3nZo6d7sXA9J
-```
-
-### 3. Перезапустить workflow
-
-После обновления секрета перейти:
-https://github.com/dkyitdevops/ai-team-office/actions
-
-Найти последний failed run и нажать "Re-run jobs" → "Re-run all jobs"
+- ✅ `SERVER_HOST` = `46.149.68.9`
+- ✅ `SERVER_USER` = `root`
+- ❌ `SSH_KNOWN_HOSTS` — больше не нужен (удалите или оставьте)
 
 ## Публичный ключ (уже на сервере)
 ```
 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJ8hLoX/FvnBNwjA9+mbq5I2K1wOfEiJGY3LEun+lDh/ github-actions
 ```
 
-## После успешного деплоя
-- Закрыть Issue #25
+## После обновления секрета
+
+1. Перейти: https://github.com/dkyitdevops/ai-team-office/actions
+2. Найти последний failed run
+3. Нажать "Re-run jobs" → "Re-run all jobs"
+
+## Ожидаемый результат
+- Статус workflow: ✅ **success**
+- Issue #25 можно закрыть
 - Перезапустить деплой для Issue #24
+
+---
+Commit: `52be4b4`
