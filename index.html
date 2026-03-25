@@ -2525,7 +2525,7 @@
     <script src="security.js?v=3"></script>
     <script>
         // ==================== CONFIGURATION ====================
-        const API_ENDPOINT = '/ai-office/api/agents/status';
+        const API_ENDPOINT = '/api/agents/status';
         const UPDATE_INTERVAL = 30000;
         let agentsStatusCache = {};
         let apiAvailable = true;
@@ -2688,6 +2688,8 @@
             restingAgents.forEach(agent => {
                 const restAgentEl = document.createElement('div');
                 restAgentEl.className = 'rest-agent';
+                restAgentEl.style.cursor = 'pointer';
+                restAgentEl.onclick = () => openModal(agent.name);
                 restAgentEl.innerHTML = `
                     <div class="rest-agent-avatar">
                         <span class="rest-agent-emoji">${agent.emoji || '😴'}</span>

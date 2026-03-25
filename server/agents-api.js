@@ -13,6 +13,58 @@ const router = express.Router();
 // Конфигурация
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const GITHUB_API_BASE = 'https://api.github.com';
+const TEST_MODE = process.env.TEST_MODE === 'true';
+
+// Тестовые данные для E2E тестов
+const TEST_AGENTS_DATA = [
+  {
+    id: '3',
+    name: 'Иван',
+    role: 'QA инженер',
+    emoji: '👨‍🔬',
+    deskId: '3',
+    status: 'working',
+    location: 'work-zone',
+    task: 'Тестирование Issue #15',
+    project: 'Meetify',
+    progress: 50,
+    issues: [
+      { number: 15, title: 'Bug: Login page error', state: 'open', repo: 'dkyitdevops/meetify' }
+    ],
+    openIssuesCount: 1,
+    closedIssuesCount: 0
+  },
+  {
+    id: 'elena',
+    name: 'Елена',
+    role: 'КЭП ТСО',
+    emoji: '👩‍💼',
+    deskId: null,
+    status: 'resting',
+    location: 'rest-room',
+    task: 'Ожидание вопросов',
+    project: null,
+    progress: 0,
+    issues: [],
+    openIssuesCount: 0,
+    closedIssuesCount: 0
+  },
+  {
+    id: 'sergey',
+    name: 'Сергей',
+    role: 'Backend разработчик',
+    emoji: '👨‍💻',
+    deskId: null,
+    status: 'resting',
+    location: 'rest-room',
+    task: 'Перерыв',
+    project: null,
+    progress: 0,
+    issues: [],
+    openIssuesCount: 0,
+    closedIssuesCount: 0
+  }
+];
 
 // Репозитории для получения issues
 const REPOS = [
@@ -289,6 +341,12 @@ function buildAgentObject(agentName) {
  * Получить статусы всех агентов
  */
 async function getAllAgentsStatus() {
+  // В тестовом режиме возвращаем тестовые данные
+  if (TEST_MODE) {
+    console.log('[Agents API] Returning test data');
+    return TEST_AGENTS_DATA;
+  }
+  
   const issues = await getGitHubIssues();
   const filteredIssues = issues.filter(issue => !issue.pull_request);
   
@@ -321,6 +379,23 @@ async function getAllAgentsStatus() {
 async function getAgentStatus(agentName) {
   if (!AGENTS_CONFIG[agentName]) {
     return null;
+  }
+  
+  // В тестовом режиме возвращаем тестовые данные
+  if (TEST_MODE) {
+    const testAgent = TEST_AGENTS_DATA.find(a => a.name === agentName);
+    if (testAgent) {
+      return {
+        agent: testAgent.name,
+        role: testAgent.role,
+        project: testAgent.project,
+        task: testAgent.task,
+        progress: testAgent.progress,
+        status: testAgent.status,
+        location: testAgent.location,
+        issues: testAgent.issues
+      };
+    }
   }
   
   // Получаем issues по label agent:{имя_агента} напрямую из API

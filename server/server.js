@@ -19,15 +19,23 @@ app.use(cors({
 }));
 
 // Apply security middleware
-app.use(helmet());
-app.use(cookieParser());
-app.use(csrf({ cookie: true }));
-
-// Middleware для передачи CSRF токена в ответы
-app.use((req, res, next) => {
-  res.locals.csrfToken = req.csrfToken();
-  next();
-});
+if (process.env.TEST_MODE === 'true') {
+  // В тестовом режиме отключаем CSP и CSRF
+  app.use(helmet({
+    contentSecurityPolicy: false,
+    crossOriginEmbedderPolicy: false
+  }));
+} else {
+  app.use(helmet());
+  app.use(cookieParser());
+  app.use(csrf({ cookie: true }));
+  
+  // Middleware для передачи CSRF токена в ответы
+  app.use((req, res, next) => {
+    res.locals.csrfToken = req.csrfToken();
+    next();
+  });
+}
 
 // Подключаем Agents API (GitHub Issue #14)
 const { router: agentsApiRouter, getAllAgentsStatus } = require('./agents-api');
