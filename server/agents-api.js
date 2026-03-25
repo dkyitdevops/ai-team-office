@@ -67,7 +67,7 @@ const AGENTS_CONFIG = {
   'Елена': {
     githubUsername: null,
     role: 'КЭП ТСО',
-    emoji: '📚',
+    emoji: '👩‍💼',
     deskId: null
   }
 };
