@@ -334,6 +334,14 @@ io.on('connection', (socket) => {
   });
 });
 
+// Health check endpoint (GitHub Issue #6)
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    timestamp: new Date().toISOString()
+  });
+});
+
 // API routes
 app.get('/api/agents', (req, res) => res.json(agents));
 app.get('/api/tasks', (req, res) => res.json(tasks));

@@ -132,7 +132,7 @@ jobs:
       - name: Check application health
         run: |
           curl -f --retry 5 --retry-delay 10 \
-            "${{ secrets.HEALTHCHECK_URL || 'http://${{ secrets.SERVER_HOST }}:3001/api/agents' }}" \
+            "http://${{ secrets.SERVER_HOST }}:3001/health" \
             || exit 1
 
       - name: Notify on success
