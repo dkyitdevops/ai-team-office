@@ -68,6 +68,14 @@ jobs:
         uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          log-public-key: false
+
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "StrictHostKeyChecking=no" >> ~/.ssh/config
+          echo "UserKnownHostsFile=/dev/null" >> ~/.ssh/config
+          chmod 600 ~/.ssh/config
 
       - name: Add server to known hosts
         env:
@@ -77,8 +85,7 @@ jobs:
           # Извлекаем хост без порта если есть
           HOST=$(echo "$SERVER_HOST" | cut -d':' -f1)
           echo "Adding host: $HOST"
-          ssh-keyscan -t ed25519,rsa -H "$HOST" >> ~/.ssh/known_hosts 2>/dev/null || \
-            (echo "Warning: ssh-keyscan failed, using strict off" && echo "StrictHostKeyChecking=no" >> ~/.ssh/config)
+          ssh-keyscan -t ed25519,rsa "$HOST" >> ~/.ssh/known_hosts 2>/dev/null || echo "ssh-keyscan failed, continuing with StrictHostKeyChecking=no"
 
       - name: Deploy to server
         env:
