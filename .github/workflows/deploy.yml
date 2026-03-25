@@ -64,29 +64,26 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Create deploy script
+      - name: Verify secrets are configured
         run: |
-          cat > deploy.sh << 'SCRIPT'
-          #!/bin/bash
-          set -e
-          cd "${DEPLOY_DIR}"
-          
-          # Login в GitHub Container Registry
-          echo "${GHCR_TOKEN}" | docker login ghcr.io -u "${GHCR_USER}" --password-stdin
-          
-          # Pull и запуск
-          docker compose pull
-          docker compose up -d --remove-orphans
-          
-          # Очистка старых образов
-          docker image prune -af --filter "until=168h"
-          
-          # Проверка статуса
-          docker compose ps
-          sleep 5
-          docker compose logs --tail=20
-          SCRIPT
-          chmod +x deploy.sh
+          echo "Checking required secrets..."
+          if [ -z "${{ secrets.SERVER_HOST }}" ]; then
+            echo "❌ ERROR: SERVER_HOST secret is not set"
+            echo "Please add SERVER_HOST=46.149.68.9 to GitHub Secrets"
+            exit 1
+          fi
+          if [ -z "${{ secrets.SERVER_USER }}" ]; then
+            echo "❌ ERROR: SERVER_USER secret is not set"
+            echo "Please add SERVER_USER=root to GitHub Secrets"
+            exit 1
+          fi
+          if [ -z "${{ secrets.SSH_PRIVATE_KEY }}" ]; then
+            echo "❌ ERROR: SSH_PRIVATE_KEY secret is not set"
+            echo "Please add SSH_PRIVATE_KEY to GitHub Secrets"
+            echo "See GITHUB_ACTIONS_FIX.md for the key value"
+            exit 1
+          fi
+          echo "✅ All required secrets are configured"
 
       - name: Copy docker-compose files
         uses: appleboy/scp-action@v0.1.7
@@ -106,12 +103,24 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SERVER_PORT || '22' }}
-          script_stop: true
-          envs: DEPLOY_DIR,GHCR_TOKEN,GHCR_USER
-        env:
-          DEPLOY_DIR: ${{ secrets.DEPLOY_DIR || '/opt/ai-team-office' }}
-          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GHCR_USER: ${{ github.actor }}
+          script: |
+            set -e
+            cd "${{ secrets.DEPLOY_DIR || '/opt/ai-team-office' }}"
+            
+            # Login в GitHub Container Registry
+            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+            
+            # Pull и запуск
+            docker compose pull
+            docker compose up -d --remove-orphans
+            
+            # Очистка старых образов
+            docker image prune -af --filter "until=168h"
+            
+            # Проверка статуса
+            docker compose ps
+            sleep 5
+            docker compose logs --tail=20
 
   healthcheck:
     needs: deploy
