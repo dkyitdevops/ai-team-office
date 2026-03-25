@@ -64,88 +64,54 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup SSH
-        uses: webfactory/ssh-agent@v0.9.0
+      - name: Create deploy script
+        run: |
+          cat > deploy.sh << 'SCRIPT'
+          #!/bin/bash
+          set -e
+          cd "${DEPLOY_DIR}"
+          
+          # Login в GitHub Container Registry
+          echo "${GHCR_TOKEN}" | docker login ghcr.io -u "${GHCR_USER}" --password-stdin
+          
+          # Pull и запуск
+          docker compose pull
+          docker compose up -d --remove-orphans
+          
+          # Очистка старых образов
+          docker image prune -af --filter "until=168h"
+          
+          # Проверка статуса
+          docker compose ps
+          sleep 5
+          docker compose logs --tail=20
+          SCRIPT
+          chmod +x deploy.sh
+
+      - name: Copy docker-compose files
+        uses: appleboy/scp-action@v0.1.7
         with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-          log-public-key: false
-
-      - name: Configure SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "StrictHostKeyChecking=no" >> ~/.ssh/config
-          echo "UserKnownHostsFile=/dev/null" >> ~/.ssh/config
-          chmod 600 ~/.ssh/config
-
-      - name: Add server to known hosts
-        env:
-          SERVER_HOST: ${{ secrets.SERVER_HOST }}
-        run: |
-          mkdir -p ~/.ssh
-          # Извлекаем хост без порта если есть
-          HOST=$(echo "$SERVER_HOST" | cut -d':' -f1)
-          echo "Adding host: $HOST"
-          ssh-keyscan -t ed25519,rsa "$HOST" >> ~/.ssh/known_hosts 2>/dev/null || echo "ssh-keyscan failed, continuing with StrictHostKeyChecking=no"
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SERVER_PORT || '22' }}
+          source: "docker-compose.yml,docker-compose.prod.yml"
+          target: ${{ secrets.DEPLOY_DIR || '/opt/ai-team-office' }}
+          strip_components: 0
 
       - name: Deploy to server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SERVER_PORT || '22' }}
+          script_stop: true
+          envs: DEPLOY_DIR,GHCR_TOKEN,GHCR_USER
         env:
-          SERVER_HOST: ${{ secrets.SERVER_HOST }}
-          SERVER_USER: ${{ secrets.SERVER_USER }}
           DEPLOY_DIR: ${{ secrets.DEPLOY_DIR || '/opt/ai-team-office' }}
-          IMAGE_TAG: ${{ needs.build-and-push.outputs.image_tag }}
           GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GHCR_USER: ${{ github.actor }}
-        run: |
-          # Проверка переменных
-          if [ -z "$SERVER_HOST" ]; then
-            echo "❌ ERROR: SERVER_HOST is not set"
-            exit 1
-          fi
-          if [ -z "$SERVER_USER" ]; then
-            echo "❌ ERROR: SERVER_USER is not set"
-            exit 1
-          fi
-          
-          echo "✓ SERVER_HOST is set"
-          echo "✓ SERVER_USER is set: $SERVER_USER"
-          
-          # Извлекаем хост и порт отдельно
-          if echo "$SERVER_HOST" | grep -q ':'; then
-            SSH_HOST=$(echo "$SERVER_HOST" | cut -d':' -f1)
-            SSH_PORT=$(echo "$SERVER_HOST" | cut -d':' -f2)
-            SSH_OPTS="-p $SSH_PORT"
-          else
-            SSH_HOST="$SERVER_HOST"
-            SSH_OPTS=""
-          fi
-          
-          echo "Deploying to $SSH_HOST as $SERVER_USER"
-          
-          # Создание директории на сервере
-          ssh $SSH_OPTS $SERVER_USER@$SSH_HOST "mkdir -p $DEPLOY_DIR"
-          
-          # Копирование docker-compose и .env
-          scp $SSH_OPTS docker-compose.yml docker-compose.prod.yml $SERVER_USER@$SSH_HOST:$DEPLOY_DIR/
-          
-          # Деплой
-          ssh $SSH_OPTS $SERVER_USER@$SSH_HOST "export DEPLOY_DIR='$DEPLOY_DIR' GHCR_TOKEN='$GHCR_TOKEN' GHCR_USER='$GHCR_USER'; bash -s" << 'EOF'
-            cd "$DEPLOY_DIR"
-            
-            # Login в GitHub Container Registry
-            echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
-            
-            # Pull и запуск
-            docker compose pull
-            docker compose up -d --remove-orphans
-            
-            # Очистка старых образов
-            docker image prune -af --filter "until=168h"
-            
-            # Проверка статуса
-            docker compose ps
-            sleep 5
-            docker compose logs --tail=20
-          EOF
 
   healthcheck:
     needs: deploy
