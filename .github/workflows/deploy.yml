@@ -89,6 +89,19 @@ jobs:
           GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GHCR_USER: ${{ github.actor }}
         run: |
+          # Проверка переменных
+          if [ -z "$SERVER_HOST" ]; then
+            echo "❌ ERROR: SERVER_HOST is not set"
+            exit 1
+          fi
+          if [ -z "$SERVER_USER" ]; then
+            echo "❌ ERROR: SERVER_USER is not set"
+            exit 1
+          fi
+          
+          echo "✓ SERVER_HOST is set"
+          echo "✓ SERVER_USER is set: $SERVER_USER"
+          
           # Извлекаем хост и порт отдельно
           if echo "$SERVER_HOST" | grep -q ':'; then
             SSH_HOST=$(echo "$SERVER_HOST" | cut -d':' -f1)
