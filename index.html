@@ -2558,7 +2558,9 @@
                 apiAvailable = true;
                 console.log('[API] Raw data received:', data);
                 const agents = data.agents || data;
-                const normalizedAgents = normalizeAgentsData(agents);
+                // Ensure agents is an array
+                const agentsArray = Array.isArray(agents) ? agents : [];
+                const normalizedAgents = normalizeAgentsData(agentsArray);
                 console.log('[API] Normalized agents:', normalizedAgents.map(a => ({ id: a.id, name: a.name, issuesCount: a.issues.length })));
                 return normalizedAgents;
             } catch (error) {
@@ -2597,6 +2599,10 @@
         }
 
         function normalizeAgentsData(agents) {
+            if (!Array.isArray(agents)) {
+                console.warn('[API] Expected array but got:', typeof agents, agents);
+                return [];
+            }
             return agents.map(normalizeAgent);
         }
 
@@ -2604,6 +2610,12 @@
         function renderWorkArea(agents) {
             const workArea = document.getElementById('workArea');
             if (!workArea) return;
+            
+            if (!Array.isArray(agents)) {
+                console.warn('[RenderWorkArea] Expected array but got:', typeof agents);
+                workArea.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--text-secondary);">Ошибка загрузки данных</div>';
+                return;
+            }
 
             // Filter only working agents with physical desks (deskId 1-6)
             const workingAgents = agents.filter(a => a.status === 'working' && (!a.deskId || a.deskId <= 6));
@@ -2714,6 +2726,13 @@
         // ==================== RENDER REST ROOM ====================
         function renderRestRoom(agents) {
             const restRoom = document.getElementById('restRoom');
+            if (!restRoom) return;
+            
+            if (!Array.isArray(agents)) {
+                console.warn('[RenderRestRoom] Expected array but got:', typeof agents);
+                restRoom.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--text-secondary);">Ошибка загрузки данных</div>';
+                return;
+            }
             
             // Filter only resting agents
             const restingAgents = agents.filter(a => a.status === 'resting');
@@ -2745,6 +2764,10 @@
 
         // ==================== UPDATE STATUS BAR ====================
         function updateStatusBar(agents) {
+            if (!Array.isArray(agents)) {
+                console.warn('[StatusBar] Expected array but got:', typeof agents);
+                return;
+            }
             const totalCount = agents.length;
             const workingCount = agents.filter(a => a.status === 'working').length;
             const restingCount = agents.filter(a => a.status === 'resting').length;
