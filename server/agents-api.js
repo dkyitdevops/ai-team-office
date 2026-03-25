@@ -31,13 +31,13 @@ const AGENTS_CONFIG = {
   'Мария': { 
     githubUsername: null,
     role: 'Fullstack разработчик', 
-    emoji: '👨‍💼',
+    emoji: '👩‍💼',
     deskId: '2'
   },
   'Иван': { 
     githubUsername: null,
     role: 'QA инженер', 
-    emoji: '👩‍🔬',
+    emoji: '👨‍🔬',
     deskId: '3'
   },
   'Дмитрий': { 
@@ -49,25 +49,25 @@ const AGENTS_CONFIG = {
   'Ольга': { 
     githubUsername: null,
     role: 'Аналитик', 
-    emoji: '👨‍💻',
+    emoji: '👩‍💻',
     deskId: '5'
   },
   'Андрей': { 
     githubUsername: null,
     role: 'Security инженер', 
-    emoji: '👩‍✈️',
+    emoji: '👨‍✈️',
     deskId: '6'
   },
   'Сергей': {
     githubUsername: null,
     role: 'Backend разработчик',
-    emoji: '😴',
+    emoji: '👨‍💻',
     deskId: null
   },
   'Елена': {
     githubUsername: null,
     role: 'КЭП ТСО',
-    emoji: '🧑‍🎮',
+    emoji: '📚',
     deskId: null
   }
 };
