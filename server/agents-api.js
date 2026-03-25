@@ -189,6 +189,20 @@ function getProjectFromRepo(repo) {
 }
 
 /**
+ * Issue #19: Унифицированная фильтрация issues для агента
+ * Только по label, без fallback на assignee/title/body
+ */
+function filterIssuesForAgent(issues, agentName) {
+  const agentLabel = `agent:${agentName}`;
+  
+  return issues.filter(issue => {
+    // Проверка по label только
+    const hasLabel = issue.labels && issue.labels.some(l => l.name === agentLabel);
+    return hasLabel;
+  });
+}
+
+/**
  * Определить статус агента на основе assigned issues
  * - working: есть открытые issues с label agent:{имя_агента}
  * - resting: нет открытых issues
@@ -199,27 +213,8 @@ function determineAgentStatus(agentName, issues) {
     return { status: 'resting', issues: [], project: null, task: null, progress: 0 };
   }
 
-  // Формируем label для поиска: agent:{имя_агента}
-  const agentLabel = `agent:${agentName}`;
-
-  // Ищем issues по label agent:{имя_агента}
-  const assignedIssues = issues.filter(issue => {
-    // Проверяем labels у issue
-    const hasAgentLabel = issue.labels && issue.labels.some(label => 
-      label.name === agentLabel
-    );
-    
-    // Fallback: проверяем assignee для обратной совместимости
-    const assigneeMatch = issue.assignee && 
-      (issue.assignee.login === config.githubUsername ||
-       (issue.assignee.login && issue.assignee.login.toLowerCase().includes(agentName.toLowerCase())));
-    
-    // Fallback: проверяем title и body
-    const titleMatch = issue.title && issue.title.toLowerCase().includes(agentName.toLowerCase());
-    const bodyMatch = issue.body && issue.body && issue.body.toLowerCase().includes(agentName.toLowerCase());
-    
-    return hasAgentLabel || assigneeMatch || titleMatch || bodyMatch;
-  });
+  // Issue #19: Используем унифицированную фильтрацию
+  const assignedIssues = filterIssuesForAgent(issues, agentName);
 
   // Открытые и закрытые issues
   const openIssues = assignedIssues.filter(i => i.state === 'open');

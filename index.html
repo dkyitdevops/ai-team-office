@@ -6,11 +6,12 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>AI Team Office - Визуализация команды</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="animations.css?v=2">
+    <link rel="stylesheet" href="animations.css?v=3">
     <style>
         * {
             margin: 0;
@@ -2333,8 +2334,8 @@
     </div>
 
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-    <script src="animations.js?v=2"></script>
-    <script src="security.js?v=2"></script>
+    <script src="animations.js?v=3"></script>
+    <script src="security.js?v=3"></script>
     <script>
         // ==================== CONFIGURATION ====================
         const API_ENDPOINT = '/ai-office/api/agents/status';
@@ -2372,12 +2373,18 @@
         }
 
         // ==================== NORMALIZE AGENT DATA ====================
-        // API возвращает поле 'agent' вместо 'name', нормализуем данные
-        function normalizeAgentData(agent) {
+        // API возвращает разные поля (id, name, agent), нормализуем данные
+        // Используем нормализованное имя как единый ключ для всего
+        function normalizeAgent(agent) {
+            const name = (agent.name || agent.agent || agent.id || 'unknown')
+                .toString()
+                .normalize('NFC')
+                .trim();
+
             return {
                 ...agent,
-                id: agent.id || agent.agent || 'unknown',
-                name: agent.name || agent.agent || 'Unknown',
+                id: name,  // используем name как единый ключ
+                name: name,
                 role: agent.role || 'Developer',
                 status: agent.status || 'working',
                 emoji: agent.emoji || '🧑‍💻',
@@ -2388,8 +2395,13 @@
             };
         }
 
+        // Для обратной совместимости - псевдоним
+        function normalizeAgentData(agent) {
+            return normalizeAgent(agent);
+        }
+
         function normalizeAgentsData(agents) {
-            return agents.map(normalizeAgentData);
+            return agents.map(normalizeAgent);
         }
 
         // ==================== RENDER WORK AREA ====================
@@ -2403,8 +2415,8 @@
             workArea.innerHTML = workingAgents.map(agent => `
                 <div class="desk-station" role="button" tabindex="0"
                      aria-label="${agent.name}, ${agent.role}. Задача: ${agent.task || 'Нет задачи'}"
-                     data-agent-id="${agent.id}"
-                     onclick="openModal('${agent.id}')">
+                     data-agent-name="${agent.name}"
+                     onclick="openModal('${agent.name}')">
                     <div class="computer-setup">
                         <div class="monitor">
                             <div class="screen-content">
@@ -2497,7 +2509,8 @@
         // ==================== UPDATE AGENTS DATA CACHE ====================
         function updateAgentsData(agents) {
             agents.forEach(agent => {
-                agentsData[agent.id] = agent;
+                // Используем agent.name как ключ для консистентности
+                agentsData[agent.name] = agent;
             });
         }
 
@@ -2515,13 +2528,26 @@
         // ==================== MODAL FUNCTIONS ====================
         let currentAgentId = null;
 
-        async function openModal(agentId) {
-            currentAgentId = agentId;
-            // Ищем агента по id в agentsData
-            let agent = agentsData[agentId];
+        async function openModal(agentName) {
+            currentAgentId = agentName;
+            
+            // Нормализуем входное имя
+            const normalizedName = agentName.toString().normalize('NFC').trim();
+            
+            // Ищем агента
+            let agent = agentsData[normalizedName];
+            
+            // Если не нашли — пробуем без учёта регистра
+            if (!agent) {
+                const lowerName = normalizedName.toLowerCase();
+                agent = Object.values(agentsData).find(a => 
+                    a.name && a.name.toLowerCase() === lowerName
+                );
+            }
             
             if (!agent) {
-                console.warn('[Modal] Agent not found in agentsData:', agentId);
+                console.warn('[Modal] Agent not found in agentsData:', agentName);
+                console.log('[Modal] Available keys:', Object.keys(agentsData));
                 return;
             }
 
@@ -2560,7 +2586,16 @@
             issuesList.style.display = 'none';
             issuesList.innerHTML = '';
 
+            // Сначала проверяем кэшированные данные
+            const cachedAgent = agentsData[agentName];
+            let openIssues = [];
+            
+            if (cachedAgent && cachedAgent.issues) {
+                openIssues = cachedAgent.issues.filter(issue => issue.state === 'open');
+            }
+
             try {
+                // Делаем API запрос для получения свежих данных
                 const timestamp = Date.now();
                 const url = `${API_ENDPOINT}/${encodeURIComponent(agentName)}?t=${timestamp}`;
                 const response = await fetch(url);
@@ -2569,29 +2604,32 @@
                 }
                 const agentData = await response.json();
                 
-                // Фильтруем только открытые задачи
-                const openIssues = agentData.issues ? agentData.issues.filter(issue => issue.state === 'open') : [];
-                
-                if (openIssues.length > 0) {
-                    issuesList.innerHTML = openIssues.map(issue => `
-                        <div class="issue-item">
-                            <span class="issue-number">#${issue.number}</span>
-                            <a href="https://github.com/${issue.repo}/issues/${issue.number}" target="_blank" rel="noopener" class="issue-title-text" style="color: var(--neon-blue); text-decoration: none;">
-                                ${escapeHtml(issue.title)}
-                            </a>
-                            <span class="issue-state open">OPEN</span>
-                        </div>
-                    `).join('');
-                } else {
-                    issuesList.innerHTML = '<div style="color: var(--text-secondary); text-align: center; padding: 20px;">Нет открытых задач</div>';
+                // Всегда обновлять issues, даже если пустой массив
+                if (agentData.issues) {
+                    openIssues = agentData.issues.filter(issue => issue.state === 'open');
                 }
             } catch (error) {
-                console.warn('[Modal] Error loading issues:', error.message);
-                issuesList.innerHTML = '<div style="color: var(--text-secondary); text-align: center; padding: 20px;">Не удалось загрузить задачи</div>';
-            } finally {
-                loader.style.display = 'none';
-                issuesList.style.display = 'flex';
+                console.warn('[Modal] Error loading issues from API, using cached:', error.message);
+                // Используем кэшированные данные если API недоступен
             }
+            
+            // Отображаем issues
+            if (openIssues.length > 0) {
+                issuesList.innerHTML = openIssues.map(issue => `
+                    <div class="issue-item">
+                        <span class="issue-number">#${issue.number}</span>
+                        <a href="https://github.com/${issue.repo}/issues/${issue.number}" target="_blank" rel="noopener" class="issue-title-text" style="color: var(--neon-blue); text-decoration: none;">
+                            ${escapeHtml(issue.title)}
+                        </a>
+                        <span class="issue-state open">OPEN</span>
+                    </div>
+                `).join('');
+            } else {
+                issuesList.innerHTML = '<div style="color: var(--text-secondary); text-align: center; padding: 20px;">Нет открытых задач</div>';
+            }
+            
+            loader.style.display = 'none';
+            issuesList.style.display = 'flex';
         }
 
         function closeModal() {
