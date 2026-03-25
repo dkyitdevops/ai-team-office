@@ -89,14 +89,26 @@ jobs:
           GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GHCR_USER: ${{ github.actor }}
         run: |
+          # Извлекаем хост и порт отдельно
+          if echo "$SERVER_HOST" | grep -q ':'; then
+            SSH_HOST=$(echo "$SERVER_HOST" | cut -d':' -f1)
+            SSH_PORT=$(echo "$SERVER_HOST" | cut -d':' -f2)
+            SSH_OPTS="-p $SSH_PORT"
+          else
+            SSH_HOST="$SERVER_HOST"
+            SSH_OPTS=""
+          fi
+          
+          echo "Deploying to $SSH_HOST as $SERVER_USER"
+          
           # Создание директории на сервере
-          ssh $SERVER_USER@$SERVER_HOST "mkdir -p $DEPLOY_DIR"
+          ssh $SSH_OPTS $SERVER_USER@$SSH_HOST "mkdir -p $DEPLOY_DIR"
           
           # Копирование docker-compose и .env
-          scp docker-compose.yml docker-compose.prod.yml $SERVER_USER@$SERVER_HOST:$DEPLOY_DIR/
+          scp $SSH_OPTS docker-compose.yml docker-compose.prod.yml $SERVER_USER@$SSH_HOST:$DEPLOY_DIR/
           
           # Деплой
-          ssh $SERVER_USER@$SERVER_HOST "export DEPLOY_DIR='$DEPLOY_DIR' GHCR_TOKEN='$GHCR_TOKEN' GHCR_USER='$GHCR_USER'; bash -s" << 'EOF'
+          ssh $SSH_OPTS $SERVER_USER@$SSH_HOST "export DEPLOY_DIR='$DEPLOY_DIR' GHCR_TOKEN='$GHCR_TOKEN' GHCR_USER='$GHCR_USER'; bash -s" << 'EOF'
             cd "$DEPLOY_DIR"
             
             # Login в GitHub Container Registry
