@@ -2610,14 +2610,14 @@
             
             workArea.innerHTML = workingAgents.map(agent => `
                 <div class="desk-station" role="button" tabindex="0"
-                     aria-label="${agent.name}, ${agent.role}. Задача: ${agent.task || 'Нет задачи'}"
-                     data-agent-name="${agent.name}"
-                     onclick="openModal('${agent.name}')">
+                     aria-label="${escapeHtml(agent.name)}, ${escapeHtml(agent.role)}. Задача: ${escapeHtml(agent.task || 'Нет задачи')}"
+                     data-agent-name="${escapeHtml(agent.name)}"
+                     onclick="openModal('${escapeHtml(agent.name)}')">
                     <div class="computer-setup">
                         <div class="monitor">
                             <div class="screen-content">
-                                <div class="screen-project">${agent.project || 'No Project'}</div>
-                                <div class="screen-task">${agent.task || 'No Task'}</div>
+                                <div class="screen-project">${escapeHtml(agent.project || 'No Project')}</div>
+                                <div class="screen-task">${escapeHtml(agent.task || 'No Task')}</div>
                                 <div class="screen-code-line"></div>
                             </div>
                         </div>
@@ -2630,14 +2630,14 @@
                         <div class="desk-surface"></div>
                     </div>
                     <div class="agent-container">
-                        <div class="agent-emoji typing" role="img" aria-label="${agent.name} работает">${agent.emoji || '🧑‍💻'}</div>
+                        <div class="agent-emoji typing" role="img" aria-label="${escapeHtml(agent.name)} работает">${agent.emoji || '🧑‍💻'}</div>
                         <span class="agent-status-ring" aria-label="Статус: работает"></span>
                         <div class="agent-info">
-                            <div class="agent-name">${agent.name} (${agent.role})</div>
-                            <div class="agent-role">${agent.role}</div>
+                            <div class="agent-name">${escapeHtml(agent.name)} (${escapeHtml(agent.role)})</div>
+                            <div class="agent-role">${escapeHtml(agent.role)}</div>
                             <div class="agent-task-tooltip">
-                                <div class="tooltip-header">${agent.emoji || '🧑‍💻'} ${agent.name}</div>
-                                <div class="tooltip-task">${agent.task || 'Нет активной задачи'}</div>
+                                <div class="tooltip-header">${agent.emoji || '🧑‍💻'} ${escapeHtml(agent.name)}</div>
+                                <div class="tooltip-task">${escapeHtml(agent.task || 'Нет активной задачи')}</div>
                                 ${agent.issues && agent.issues.filter(i => i.state === 'open').length > 0 ? `
                                     <div class="agent-issues">
                                         <div class="agent-issues-title">Открытые задачи (${agent.issues.filter(i => i.state === 'open').length})</div>
@@ -2677,21 +2677,21 @@
             
             remoteAgentsContainer.innerHTML = remoteAgents.map(agent => `
                 <div class="remote-agent-card" role="button" tabindex="0"
-                     aria-label="${agent.name}, ${agent.role}. Статус: ${agent.status === 'working' ? 'работает' : 'отдыхает'}. Задача: ${agent.task || 'Нет задачи'}"
-                     data-agent-name="${agent.name}"
-                     onclick="openModal('${agent.name}')">
+                     aria-label="${escapeHtml(agent.name)}, ${escapeHtml(agent.role)}. Статус: ${agent.status === 'working' ? 'работает' : 'отдыхает'}. Задача: ${escapeHtml(agent.task || 'Нет задачи')}"
+                     data-agent-name="${escapeHtml(agent.name)}"
+                     onclick="openModal('${escapeHtml(agent.name)}')">
                     <div class="remote-agent-avatar">
                         <span class="remote-agent-emoji">${agent.emoji || '🧑‍💻'}</span>
                         <span class="remote-agent-status ${agent.status === 'resting' ? 'resting' : ''}" aria-label="Статус: ${agent.status === 'working' ? 'работает' : 'отдыхает'}"></span>
                     </div>
                     <div class="remote-agent-info">
-                        <div class="remote-agent-name">${agent.name}</div>
-                        <div class="remote-agent-role">${agent.role}</div>
-                        <div class="remote-agent-task">${agent.task || 'Нет задачи'}</div>
+                        <div class="remote-agent-name">${escapeHtml(agent.name)}</div>
+                        <div class="remote-agent-role">${escapeHtml(agent.role)}</div>
+                        <div class="remote-agent-task">${escapeHtml(agent.task || 'Нет задачи')}</div>
                     </div>
                     <div class="agent-task-tooltip">
-                        <div class="tooltip-header">${agent.emoji || '🧑‍💻'} ${agent.name} — ${agent.role}</div>
-                        <div class="tooltip-task">${agent.task || 'Нет активной задачи'}</div>
+                        <div class="tooltip-header">${agent.emoji || '🧑‍💻'} ${escapeHtml(agent.name)} — ${escapeHtml(agent.role)}</div>
+                        <div class="tooltip-task">${escapeHtml(agent.task || 'Нет активной задачи')}</div>
                         ${agent.issues && agent.issues.filter(i => i.state === 'open').length > 0 ? `
                             <div class="agent-issues">
                                 <div class="agent-issues-title">Открытые задачи (${agent.issues.filter(i => i.state === 'open').length})</div>
@@ -2735,7 +2735,7 @@
                         <span class="rest-status-ring" aria-label="Статус: отдыхает"></span>
                     </div>
                     <div class="rest-agent-info">
-                        <div class="rest-agent-name">${agent.name} (${agent.role})</div>
+                        <div class="rest-agent-name">${escapeHtml(agent.name)} (${escapeHtml(agent.role)})</div>
                         <div class="rest-agent-status">Отдыхает</div>
                     </div>
                 `;
