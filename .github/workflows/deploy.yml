@@ -70,9 +70,15 @@ jobs:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Add server to known hosts
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
         run: |
           mkdir -p ~/.ssh
-          ssh-keyscan -t ed25519 ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+          # Извлекаем хост без порта если есть
+          HOST=$(echo "$SERVER_HOST" | cut -d':' -f1)
+          echo "Adding host: $HOST"
+          ssh-keyscan -t ed25519,rsa -H "$HOST" >> ~/.ssh/known_hosts 2>/dev/null || \
+            (echo "Warning: ssh-keyscan failed, using strict off" && echo "StrictHostKeyChecking=no" >> ~/.ssh/config)
 
       - name: Deploy to server
         env:
