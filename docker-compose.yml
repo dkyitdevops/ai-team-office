@@ -2,9 +2,7 @@ version: '3.8'
 
 services:
   ai-team-office:
-    build:
-      context: ./server
-      dockerfile: Dockerfile
+    image: ghcr.io/dkyitdevops/ai-team-office:latest
     container_name: ai-team-office-server
     restart: unless-stopped
     ports:
@@ -18,7 +16,7 @@ services:
     networks:
       - ai-office-network
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3001/api/agents/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
       interval: 30s
       timeout: 10s
       retries: 3
