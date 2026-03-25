@@ -1,30 +1,72 @@
-# GitHub Actions SSH Key Fix - Issue #25
+# 🔧 GitHub Actions Fix - Issue #25
 
-## Проблема
-GitHub Actions падает на шаге "Setup SSH" из-за отсутствия/невалидности SSH ключа.
+## Диагностика
 
-## Выполнено ✅
+### Проблема
+GitHub Actions падает на шаге **"Setup SSH"** с ошибкой `failure`.
 
-### 1. Сгенерирован новый SSH ключ
-- Тип: ed25519
-- Комментарий: github-actions
+### Причина
+Секрет `SSH_PRIVATE_KEY` в GitHub отсутствует или содержит невалидный ключ.
+
+### Проверено
+- ✅ Workflow файл корректен
+- ✅ SSH доступ к серверу 46.149.68.9 работает
+- ✅ Публичный ключ добавлен в `~/.ssh/authorized_keys` на сервере
+- ❌ Секрет `SSH_PRIVATE_KEY` в GitHub не обновлён
+
+---
+
+## ✅ Выполненные действия
+
+### 1. Сгенерирована новая SSH ключ-пара
+```bash
+ssh-keygen -t ed25519 -C "github-actions" -f /tmp/github_actions_key
+```
+
+**Публичный ключ:**
+```
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJ8hLoX/FvnBNwjA9+mbq5I2K1wOfEiJGY3LEun+lDh/ github-actions
+```
+
+**Приватный ключ:**
+```
+-----BEGIN OPENSSH PRIVATE KEY-----
+b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW
+QyNTUxOQAAACCfIS6F/xb5wTcIwPfpm6uSNitcDnxIiRmNyxLp/pQ4fwAAAJiunSz1rp0s
+9QAAAAtzc2gtZWQyNTUxOQAAACCfIS6F/xb5wTcIwPfpm6uSNitcDnxIiRmNyxLp/pQ4fw
+AAAEDnkp+EuhL1JDWzxcnS2CmQ68UA9Ozg0zcQT6Va1muLvJ8hLoX/FvnBNwjA9+mbq5I2
+K1wOfEiJGY3LEun+lDh/AAAADmdpdGh1Yi1hY3Rpb25zAQIDBAUGBw==
+-----END OPENSSH PRIVATE KEY-----
+```
 
 ### 2. Публичный ключ добавлен на сервер
-Сервер: 46.149.68.9
-Файл: `~/.ssh/authorized_keys`
+```bash
+ssh root@46.149.68.9 "echo 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJ8hLoX/FvnBNwjA9+mbq5I2K1wOfEiJGY3LEun+lDh/ github-actions' >> ~/.ssh/authorized_keys"
+```
 
 ### 3. Исправлен workflow
 Файл: `.github/workflows/deploy.yml`
-- Заменен `secrets.SSH_KNOWN_HOSTS` на `ssh-keyscan` (автоматическое получение fingerprint)
-- Это устраняет необходимость вручную поддерживать fingerprint в секретах
 
-## Что нужно сделать вручную ⚠️
+**Изменение:** Заменено использование `secrets.SSH_KNOWN_HOSTS` на `ssh-keyscan`:
+```yaml
+# Было:
+echo "${{ secrets.SSH_KNOWN_HOSTS }}" >> ~/.ssh/known_hosts
 
-### Обновить секрет SSH_PRIVATE_KEY в GitHub
+# Стало:
+ssh-keyscan -t ed25519 ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+```
+
+Это устраняет необходимость вручную поддерживать fingerprint сервера в секретах.
+
+---
+
+## ⚠️ Требуется действие пользователя
+
+### Обновить секрет SSH_PRIVATE_KEY
 
 1. Перейти: https://github.com/dkyitdevops/ai-team-office/settings/secrets/actions
 
-2. Найти секрет `SSH_PRIVATE_KEY` и обновить его значение:
+2. Найти секрет `SSH_PRIVATE_KEY` и обновить его значение на:
 
 ```
 -----BEGIN OPENSSH PRIVATE KEY-----
@@ -41,18 +83,15 @@ K1wOfEiJGY3LEun+lDh/AAAADmdpdGh1Yi1hY3Rpb25zAQIDBAUGBw==
 Убедитесь что установлены:
 - ✅ `SERVER_HOST` = `46.149.68.9`
 - ✅ `SERVER_USER` = `root`
-- ❌ `SSH_KNOWN_HOSTS` — больше не нужен (удалите или оставьте)
+- ❌ `SSH_KNOWN_HOSTS` — больше не нужен (можно удалить)
 
-## Публичный ключ (уже на сервере)
-```
-ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJ8hLoX/FvnBNwjA9+mbq5I2K1wOfEiJGY3LEun+lDh/ github-actions
-```
+---
 
-## После обновления секрета
+## 🚀 После обновления секрета
 
 1. Перейти: https://github.com/dkyitdevops/ai-team-office/actions
 2. Найти последний failed run
-3. Нажать "Re-run jobs" → "Re-run all jobs"
+3. Нажать **"Re-run jobs"** → **"Re-run all jobs"**
 
 ## Ожидаемый результат
 - Статус workflow: ✅ **success**
@@ -60,4 +99,17 @@ ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJ8hLoX/FvnBNwjA9+mbq5I2K1wOfEiJGY3LEun+lDh/
 - Перезапустить деплой для Issue #24
 
 ---
-Commit: `52be4b4`
+
+## История запусков
+
+| Run | Commit | Статус | Примечание |
+|-----|--------|--------|------------|
+| #13 | `0bdebda` | ❌ failure | Нужно обновить SSH_PRIVATE_KEY |
+| #12 | `52be4b4` | ❌ failure | Workflow исправлен, но ключ невалиден |
+| #11 | `dd2a41a` | ❌ failure | Исходная ошибка |
+
+---
+
+## Связанные коммиты
+- `52be4b4` - fix(ci): auto-scan SSH host key instead of using secret
+- `0bdebda` - docs: update fix instructions
