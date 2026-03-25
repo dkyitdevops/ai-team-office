@@ -447,10 +447,19 @@
         }
 
         .agent-emoji {
-            font-size: 48px;
+            font-size: 42px;
             transition: transform 0.3s ease;
             filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5));
             animation: agentIdle 3s ease-in-out infinite;
+        }
+
+        .rest-agent-emoji {
+            font-size: 42px;
+            filter: drop-shadow(0 3px 6px rgba(0,0,0,0.3));
+        }
+
+        .lounge-person {
+            font-size: 42px;
         }
 
         .agent-emoji.typing {
@@ -467,7 +476,7 @@
             border-radius: 50%;
             border: 3px solid var(--bg-panel);
             box-shadow: 0 0 10px var(--neon-green);
-            animation: statusPulse 2s infinite;
+            animation: statusPulse 2s infinite, pulse 2s infinite;
         }
 
         .agent-status-ring.resting {
@@ -687,8 +696,14 @@
         }
 
         @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+            0%, 100% { 
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% { 
+                opacity: 0.6;
+                transform: scale(1.2);
+            }
         }
 
         @keyframes screenFlicker {
@@ -982,6 +997,33 @@
                 height: 44px;
                 min-width: 44px;
                 min-height: 44px;
+            }
+
+            /* Remote work section mobile */
+            .remote-work-section {
+                margin-top: 20px;
+                padding: 15px;
+            }
+
+            .remote-work-section::before {
+                font-size: 10px;
+                left: 15px;
+            }
+
+            .remote-agents {
+                flex-direction: column;
+            }
+
+            .remote-agent-card {
+                width: 100%;
+            }
+
+            .remote-agent-avatar {
+                font-size: 36px;
+            }
+
+            .remote-agent-emoji {
+                font-size: 36px;
             }
         }
 
@@ -1361,6 +1403,149 @@
             pointer-events: none;
             z-index: 100;
             box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+
+        /* Remote Work Section */
+        .remote-work-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(236, 72, 153, 0.05));
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: 16px;
+            position: relative;
+        }
+
+        .remote-work-section::before {
+            content: '🌐 УДАЛЁННАЯ РАБОТА';
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: var(--bg-dark);
+            padding: 0 12px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--neon-purple);
+            letter-spacing: 1.5px;
+        }
+
+        .remote-work-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding-left: 5px;
+        }
+
+        .remote-work-icon {
+            font-size: 24px;
+        }
+
+        .remote-work-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--neon-purple);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .remote-agents {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .remote-agent-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .remote-agent-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--neon-purple);
+            box-shadow: 0 5px 20px rgba(168, 85, 247, 0.3);
+        }
+
+        .remote-agent-avatar {
+            position: relative;
+            font-size: 42px;
+        }
+
+        .remote-agent-emoji {
+            filter: drop-shadow(0 3px 6px rgba(0,0,0,0.3));
+        }
+
+        .remote-agent-status {
+            position: absolute;
+            top: -3px;
+            right: -3px;
+            width: 14px;
+            height: 14px;
+            background: var(--neon-green);
+            border-radius: 50%;
+            border: 2px solid var(--bg-card);
+            box-shadow: 0 0 8px var(--neon-green);
+            animation: pulse 2s infinite;
+        }
+
+        .remote-agent-status.resting {
+            background: var(--neon-orange);
+            box-shadow: 0 0 8px var(--neon-orange);
+            animation: none;
+        }
+
+        .remote-agent-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .remote-agent-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .remote-agent-role {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .remote-agent-task {
+            font-size: 11px;
+            color: var(--neon-purple);
+            max-width: 150px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Tooltip for remote agents */
+        .remote-agent-card .agent-task-tooltip {
+            bottom: auto;
+            top: 100%;
+            transform: translateX(-50%) translateY(10px);
+            margin-top: 10px;
+        }
+
+        .remote-agent-card .agent-task-tooltip::after {
+            top: auto;
+            bottom: 100%;
+            border-top-color: transparent;
+            border-bottom-color: var(--bg-card);
+        }
+
+        .remote-agent-card:hover .agent-task-tooltip {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(5px);
         }
 
         .agent-task-tooltip::after {
@@ -2234,6 +2419,17 @@
                 <div class="desks-layout" id="workArea">
                     <!-- Desks will be populated by JavaScript -->
                 </div>
+                
+                <!-- Remote Work Section -->
+                <div class="remote-work-section" id="remoteWorkSection">
+                    <div class="remote-work-header">
+                        <span class="remote-work-icon">🌐</span>
+                        <span class="remote-work-title">Удалённая работа</span>
+                    </div>
+                    <div class="remote-agents" id="remoteAgents">
+                        <!-- Remote agents will be populated by JavaScript -->
+                    </div>
+                </div>
             </div>
 
             <!-- Rest Room -->
@@ -2409,8 +2605,8 @@
             const workArea = document.getElementById('workArea');
             if (!workArea) return;
 
-            // Filter only working agents
-            const workingAgents = agents.filter(a => a.status === 'working');
+            // Filter only working agents with physical desks (deskId 1-6)
+            const workingAgents = agents.filter(a => a.status === 'working' && (!a.deskId || a.deskId <= 6));
             
             workArea.innerHTML = workingAgents.map(agent => `
                 <div class="desk-station" role="button" tabindex="0"
@@ -2441,6 +2637,7 @@
                             <div class="agent-role">${agent.role}</div>
                             <div class="agent-task-tooltip">
                                 <div class="tooltip-header">${agent.emoji || '🧑‍💻'} ${agent.name}</div>
+                                <div class="tooltip-task">${agent.task || 'Нет активной задачи'}</div>
                                 ${agent.issues && agent.issues.filter(i => i.state === 'open').length > 0 ? `
                                     <div class="agent-issues">
                                         <div class="agent-issues-title">Открытые задачи (${agent.issues.filter(i => i.state === 'open').length})</div>
@@ -2457,6 +2654,58 @@
                                 ` : '<div class="tooltip-task">Нет открытых задач</div>'}
                             </div>
                         </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Render remote agents section
+            renderRemoteAgents(agents);
+        }
+
+        // ==================== RENDER REMOTE AGENTS ====================
+        function renderRemoteAgents(agents) {
+            const remoteAgentsContainer = document.getElementById('remoteAgents');
+            if (!remoteAgentsContainer) return;
+
+            // Filter remote agents (deskId > 6 or explicitly marked as remote)
+            const remoteAgents = agents.filter(a => a.deskId > 6 || a.location === 'remote' || ['Елена', 'Сергей'].includes(a.name));
+            
+            if (remoteAgents.length === 0) {
+                remoteAgentsContainer.innerHTML = '<div style="color: var(--text-secondary); font-size: 13px;">Нет удалённых агентов</div>';
+                return;
+            }
+            
+            remoteAgentsContainer.innerHTML = remoteAgents.map(agent => `
+                <div class="remote-agent-card" role="button" tabindex="0"
+                     aria-label="${agent.name}, ${agent.role}. Статус: ${agent.status === 'working' ? 'работает' : 'отдыхает'}. Задача: ${agent.task || 'Нет задачи'}"
+                     data-agent-name="${agent.name}"
+                     onclick="openModal('${agent.name}')">
+                    <div class="remote-agent-avatar">
+                        <span class="remote-agent-emoji">${agent.emoji || '🧑‍💻'}</span>
+                        <span class="remote-agent-status ${agent.status === 'resting' ? 'resting' : ''}" aria-label="Статус: ${agent.status === 'working' ? 'работает' : 'отдыхает'}"></span>
+                    </div>
+                    <div class="remote-agent-info">
+                        <div class="remote-agent-name">${agent.name}</div>
+                        <div class="remote-agent-role">${agent.role}</div>
+                        <div class="remote-agent-task">${agent.task || 'Нет задачи'}</div>
+                    </div>
+                    <div class="agent-task-tooltip">
+                        <div class="tooltip-header">${agent.emoji || '🧑‍💻'} ${agent.name} — ${agent.role}</div>
+                        <div class="tooltip-task">${agent.task || 'Нет активной задачи'}</div>
+                        ${agent.issues && agent.issues.filter(i => i.state === 'open').length > 0 ? `
+                            <div class="agent-issues">
+                                <div class="agent-issues-title">Открытые задачи (${agent.issues.filter(i => i.state === 'open').length})</div>
+                                <div class="agent-issues-list">
+                                    ${agent.issues.filter(i => i.state === 'open').slice(0, 3).map(issue => `
+                                        <a href="https://github.com/${issue.repo}/issues/${issue.number}" target="_blank" rel="noopener">
+                                            #${issue.number}: ${escapeHtml(issue.title)}
+                                            <span class="issue-status-open">[OPEN]</span>
+                                        </a>
+                                    `).join('')}
+                                    ${agent.issues.filter(i => i.state === 'open').length > 3 ? `<div style="font-size: 11px; color: var(--text-secondary); padding: 4px 8px;">...и ещё ${agent.issues.filter(i => i.state === 'open').length - 3}</div>` : ''}
+                                </div>
+                            </div>
+                        ` : '<div class="tooltip-task">Нет открытых задач</div>'}
                     </div>
                 </div>
             `).join('');
