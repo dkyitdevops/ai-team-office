@@ -73,54 +73,87 @@ const REPOS = [
 ];
 
 // Список агентов с их GitHub usernames и ролями
+// Обновлено: 2026-03-25 — соответствие SESSION_STATE.md
 const AGENTS_CONFIG = {
-  'Алексей': { 
+  'agent-001': { 
     githubUsername: null,
+    name: 'UI Designer',
     role: 'UI Designer', 
-    emoji: '👨‍🎨',
-    deskId: '1'
+    emoji: '🎨',
+    deskId: '1',
+    currentTask: 'Meetify #47, #44; AI Office #24, #11, #3',
+    project: 'Meetify / AI Office',
+    status: 'working'
   },
-  'Мария': { 
+  'agent-002': { 
     githubUsername: null,
-    role: 'Fullstack разработчик', 
-    emoji: '👩‍💼',
-    deskId: '2'
+    name: 'Frontend Developer',
+    role: 'Frontend Developer', 
+    emoji: '⚡',
+    deskId: '2',
+    currentTask: 'Meetify #47, #44, #43, #41, #40; AI Office #24, #3',
+    project: 'Meetify / AI Office',
+    status: 'working'
   },
-  'Иван': { 
+  'agent-003': { 
     githubUsername: null,
-    role: 'QA инженер', 
-    emoji: '👨‍🔬',
-    deskId: '3'
+    name: 'Backend Developer',
+    role: 'Backend Developer', 
+    emoji: '🔧',
+    deskId: '3',
+    currentTask: 'Meetify #44, #43',
+    project: 'Meetify',
+    status: 'working'
   },
-  'Дмитрий': { 
+  'agent-004': { 
     githubUsername: null,
-    role: 'DevOps инженер', 
-    emoji: '👨‍🚀',
-    deskId: '4'
+    name: 'QA Engineer',
+    role: 'QA Engineer', 
+    emoji: '🧪',
+    deskId: '4',
+    currentTask: 'Meetify #40; AI Office #5',
+    project: 'Meetify / AI Office',
+    status: 'working'
   },
-  'Ольга': { 
+  'agent-005': { 
     githubUsername: null,
-    role: 'Аналитик', 
-    emoji: '👩‍💻',
-    deskId: '5'
+    name: 'DevOps Engineer',
+    role: 'DevOps Engineer', 
+    emoji: '🚀',
+    deskId: '5',
+    currentTask: 'Деплой',
+    project: 'Meetify',
+    status: 'working'
   },
-  'Андрей': { 
+  'agent-006': { 
     githubUsername: null,
-    role: 'Security инженер', 
-    emoji: '👨‍✈️',
-    deskId: '6'
+    name: 'Security Engineer',
+    role: 'Security Engineer', 
+    emoji: '🛡️',
+    deskId: '6',
+    currentTask: 'Свободен',
+    project: null,
+    status: 'resting'
   },
-  'Сергей': {
+  'agent-007': {
     githubUsername: null,
-    role: 'Backend разработчик',
-    emoji: '👨‍💻',
-    deskId: null
+    name: 'Unix Engineer',
+    role: 'Unix Engineer',
+    emoji: '🐧',
+    deskId: null,
+    currentTask: 'Свободен',
+    project: null,
+    status: 'resting'
   },
-  'Елена': {
+  'agent-008': {
     githubUsername: null,
-    role: 'КЭП ТСО',
-    emoji: '👩‍💼',
-    deskId: null
+    name: 'Аналитик',
+    role: 'Аналитик (КЭП ТСО)',
+    emoji: '📊',
+    deskId: null,
+    currentTask: 'ТЗ написано',
+    project: null,
+    status: 'resting'
   }
 };
 
@@ -255,18 +288,17 @@ function filterIssuesForAgent(issues, agentName) {
 }
 
 /**
- * Определить статус агента на основе assigned issues
- * - working: есть открытые issues с label agent:{имя_агента}
- * - resting: нет открытых issues
+ * Определить статус агента на основе конфигурации
+ * Issue #24: Статус берётся напрямую из AGENTS_CONFIG
  */
-function determineAgentStatus(agentName, issues) {
-  const config = AGENTS_CONFIG[agentName];
+function determineAgentStatus(agentId, issues) {
+  const config = AGENTS_CONFIG[agentId];
   if (!config) {
     return { status: 'resting', issues: [], project: null, task: null, progress: 0 };
   }
 
   // Issue #19: Используем унифицированную фильтрацию
-  const assignedIssues = filterIssuesForAgent(issues, agentName);
+  const assignedIssues = filterIssuesForAgent(issues, agentId);
 
   // Открытые и закрытые issues
   const openIssues = assignedIssues.filter(i => i.state === 'open');
@@ -278,14 +310,11 @@ function determineAgentStatus(agentName, issues) {
     ? Math.round((closedIssues.length / totalIssues) * 100)
     : 0;
   
-  // Определяем статус
-  const isWorking = openIssues.length > 0;
-  
-  // Берём данные из первого открытого issue или первого issue
-  const primaryIssue = openIssues[0] || assignedIssues[0];
+  // Статус берём из конфига, а не из issues
+  const status = config.status || (openIssues.length > 0 ? 'working' : 'resting');
   
   return {
-    status: isWorking ? 'working' : 'resting',
+    status: status,
     issues: assignedIssues.map(i => ({ 
       number: i.number, 
       title: i.title,
@@ -294,8 +323,8 @@ function determineAgentStatus(agentName, issues) {
     })),
     openIssuesCount: openIssues.length,
     closedIssuesCount: closedIssues.length,
-    project: primaryIssue ? getProjectFromRepo(primaryIssue.repository) : null,
-    task: primaryIssue ? primaryIssue.title : null,
+    project: config.project,
+    task: config.currentTask,
     progress: progress
   };
 }
@@ -323,22 +352,27 @@ function determineAgentLocation(status) {
 
 /**
  * Сформировать полный объект агента
+ * Issue #24: Исправлено — статус берётся из конфига агента
  */
-function buildAgentObject(agentName) {
-  const config = AGENTS_CONFIG[agentName];
+function buildAgentObject(agentId) {
+  const config = AGENTS_CONFIG[agentId];
   if (!config) return null;
 
   return {
-    id: config.deskId || agentName.toLowerCase().replace(/\s/g, '-'),
-    name: agentName,
+    id: agentId,
+    name: config.name,
     role: config.role,
     emoji: config.emoji,
-    deskId: config.deskId
+    deskId: config.deskId,
+    status: config.status,
+    currentTask: config.currentTask,
+    project: config.project
   };
 }
 
 /**
  * Получить статусы всех агентов
+ * Issue #24: Исправлено — статус берётся из конфига
  */
 async function getAllAgentsStatus() {
   // В тестовом режиме возвращаем тестовые данные
@@ -350,9 +384,9 @@ async function getAllAgentsStatus() {
   const issues = await getGitHubIssues();
   const filteredIssues = issues.filter(issue => !issue.pull_request);
   
-  const agents = Object.keys(AGENTS_CONFIG).map(agentName => {
-    const baseAgent = buildAgentObject(agentName);
-    const statusInfo = determineAgentStatus(agentName, filteredIssues);
+  const agents = Object.keys(AGENTS_CONFIG).map(agentId => {
+    const baseAgent = buildAgentObject(agentId);
+    const statusInfo = determineAgentStatus(agentId, filteredIssues);
     const locationInfo = determineAgentLocation(statusInfo.status);
     
     return {
@@ -362,11 +396,14 @@ async function getAllAgentsStatus() {
     };
   });
   
-  // Сортируем: сначала working (по алфавиту), потом resting
+  // Сортируем: сначала working (по deskId), потом resting
   agents.sort((a, b) => {
     if (a.status === 'working' && b.status !== 'working') return -1;
     if (a.status !== 'working' && b.status === 'working') return 1;
-    return a.name.localeCompare(b.name);
+    // Сортируем по deskId внутри группы
+    const deskA = parseInt(a.deskId) || 99;
+    const deskB = parseInt(b.deskId) || 99;
+    return deskA - deskB;
   });
   
   return agents;
@@ -374,16 +411,17 @@ async function getAllAgentsStatus() {
 
 /**
  * Получить статус конкретного агента
- * Использует прямой запрос по label agent:{имя_агента}
+ * Использует прямой запрос по label agent:{agentId}
+ * Issue #24: Исправлено — статус берётся из конфига
  */
-async function getAgentStatus(agentName) {
-  if (!AGENTS_CONFIG[agentName]) {
+async function getAgentStatus(agentId) {
+  if (!AGENTS_CONFIG[agentId]) {
     return null;
   }
   
   // В тестовом режиме возвращаем тестовые данные
   if (TEST_MODE) {
-    const testAgent = TEST_AGENTS_DATA.find(a => a.name === agentName);
+    const testAgent = TEST_AGENTS_DATA.find(a => a.id === agentId);
     if (testAgent) {
       return {
         agent: testAgent.name,
@@ -398,12 +436,12 @@ async function getAgentStatus(agentName) {
     }
   }
   
-  // Получаем issues по label agent:{имя_агента} напрямую из API
-  const issues = await getGitHubIssuesForAgent(agentName);
+  // Получаем issues по label agent:{agentId} напрямую из API
+  const issues = await getGitHubIssuesForAgent(agentId);
   const filteredIssues = issues.filter(issue => !issue.pull_request);
   
-  const baseAgent = buildAgentObject(agentName);
-  const statusInfo = determineAgentStatus(agentName, filteredIssues);
+  const baseAgent = buildAgentObject(agentId);
+  const statusInfo = determineAgentStatus(agentId, filteredIssues);
   const locationInfo = determineAgentLocation(statusInfo.status);
   
   return {
@@ -445,21 +483,21 @@ router.get('/status', async (req, res) => {
 });
 
 /**
- * GET /api/agents/status/:name
+ * GET /api/agents/status/:agentId
  * Получить статус конкретного агента
  */
-router.get('/status/:name', async (req, res) => {
+router.get('/status/:agentId', async (req, res) => {
   try {
-    const { name } = req.params;
+    const { agentId } = req.params;
     
-    if (!AGENTS_CONFIG[name]) {
+    if (!AGENTS_CONFIG[agentId]) {
       return res.status(404).json({
         error: 'Agent not found',
         availableAgents: Object.keys(AGENTS_CONFIG)
       });
     }
     
-    const agent = await getAgentStatus(name);
+    const agent = await getAgentStatus(agentId);
     
     res.json({
       agent: agent.name,
