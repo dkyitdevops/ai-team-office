@@ -72,7 +72,7 @@ jobs:
       - name: Add server to known hosts
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_KNOWN_HOSTS }}" >> ~/.ssh/known_hosts
+          ssh-keyscan -t ed25519 ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
 
       - name: Deploy to server
         env:
